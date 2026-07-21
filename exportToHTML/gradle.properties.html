@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>gradle.properties</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #808080;}
+.s4 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+gradle.properties</font>
+</center></td></tr></table>
+<pre><span class="s0"># Sets default memory used for gradle commands. Can be overridden by user or command line properties.</span>
+<span class="s2">org.gradle.jvmargs</span><span class="s3">=</span><span class="s4">-Xmx1G</span>
+<span class="s2">org.gradle.daemon</span><span class="s3">=</span><span class="s4">true</span>
+<span class="s2">org.gradle.debug</span><span class="s3">=</span><span class="s4">false</span>
+
+<span class="s0">#read more on this at https://github.com/neoforged/NeoGradle/blob/NG_7.0/README.md#apply-parchment-mappings</span>
+<span class="s0"># you can also find the latest versions at: https://parchmentmc.org/docs/getting-started</span>
+<span class="s2">neogradle.subsystems.parchment.minecraftVersion</span><span class="s3">=</span><span class="s4">1.21.1</span>
+<span class="s2">neogradle.subsystems.parchment.mappingsVersion</span><span class="s3">=</span><span class="s4">2024.11.17</span>
+<span class="s0"># Environment Properties</span>
+<span class="s0"># You can find the latest versions here: https://projects.neoforged.net/neoforged/neoforge</span>
+<span class="s0"># The Minecraft version must agree with the Neo version to get a valid artifact</span>
+<span class="s2">minecraft_version</span><span class="s3">=</span><span class="s4">1.21.1</span>
+<span class="s0"># The Minecraft version range can use any release version of Minecraft as bounds.</span>
+<span class="s0"># Snapshots, pre-releases, and release candidates are not guaranteed to sort properly</span>
+<span class="s0"># as they do not follow standard versioning conventions.</span>
+<span class="s2">minecraft_version_range</span><span class="s3">=</span><span class="s4">[1.21.1,1.22)</span>
+<span class="s0"># The Neo version must agree with the Minecraft version to get a valid artifact</span>
+<span class="s2">neo_version</span><span class="s3">=</span><span class="s4">21.1.176</span>
+<span class="s0"># The Neo version range can use any version of Neo as bounds</span>
+<span class="s2">neo_version_range</span><span class="s3">=</span><span class="s4">[21.1.0,)</span>
+<span class="s0"># The loader version range can only use the major version of FML as bounds</span>
+<span class="s2">loader_version_range</span><span class="s3">=</span><span class="s4">[4,)</span>
+
+<span class="s0">## Mod Properties</span>
+
+<span class="s0"># The unique mod identifier for the mod. Must be lowercase in English locale. Must fit the regex [a-z][a-z0-9_]{1,63}</span>
+<span class="s0"># Must match the String constant located in the main mod class annotated with @Mod.</span>
+<span class="s2">mod_id</span><span class="s3">=</span><span class="s4">examplemod</span>
+<span class="s0"># The human-readable display name for the mod.</span>
+<span class="s2">mod_name</span><span class="s3">=</span><span class="s4">Example Mod</span>
+<span class="s0"># The license of the mod. Review your options at https://choosealicense.com/. All Rights Reserved is the default.</span>
+<span class="s2">mod_license</span><span class="s3">=</span><span class="s4">All Rights Reserved</span>
+<span class="s0"># The mod version. See https://semver.org/</span>
+<span class="s2">mod_version</span><span class="s3">=</span><span class="s4">1.0.0</span>
+<span class="s0"># The group ID for the mod. It is only important when publishing as an artifact to a Maven repository.</span>
+<span class="s0"># This should match the base package used for the mod sources.</span>
+<span class="s0"># See https://maven.apache.org/guides/mini/guide-naming-conventions.html</span>
+<span class="s2">mod_group_id</span><span class="s3">=</span><span class="s4">com.example.examplemod</span>
+<span class="s0"># The authors of the mod. This is a simple text string that is used for display purposes in the mod list.</span>
+<span class="s2">mod_authors</span><span class="s3">=</span><span class="s4">YourNameHere, OtherNameHere</span>
+<span class="s0"># The description of the mod. This is a simple multiline text string that is used for display purposes in the mod list.</span>
+<span class="s2">mod_description</span><span class="s3">=</span><span class="s4">Example mod description.\nNewline characters can be used and will be replaced properly.</span>
+</pre>
+</body>
+</html>

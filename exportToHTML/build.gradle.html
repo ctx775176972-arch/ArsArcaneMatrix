@@ -1,0 +1,195 @@
+<html>
+<head>
+<title>build.gradle</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bcbec4;}
+.s1 { color: #bcbec4;}
+.s2 { color: #6aab73;}
+.s3 { color: #7a7e85;}
+.s4 { color: #2aacb8;}
+.s5 { color: #cf8e6d;}
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+build.gradle</font>
+</center></td></tr></table>
+<pre><span class="s0">plugins </span><span class="s1">{</span>
+    <span class="s0">id </span><span class="s2">'java-library'</span>
+    <span class="s0">id </span><span class="s2">'eclipse'</span>
+    <span class="s0">id </span><span class="s2">'idea'</span>
+    <span class="s0">id </span><span class="s2">'maven-publish'</span>
+    <span class="s0">id </span><span class="s2">'net.neoforged.gradle.userdev' </span><span class="s0">version </span><span class="s2">'7.0.170'</span>
+<span class="s1">}</span>
+
+<span class="s0">tasks.named</span><span class="s1">(</span><span class="s2">'wrapper'</span><span class="s0">, Wrapper</span><span class="s1">)</span><span class="s0">.configure </span><span class="s1">{</span>
+    <span class="s3">// Define wrapper values here so as to not have to always do so when updating gradlew.properties.</span>
+    <span class="s3">// Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with</span>
+    <span class="s3">// documentation attached on cursor hover of gradle classes and methods. However, this comes with increased</span>
+    <span class="s3">// file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.</span>
+    <span class="s3">// (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)</span>
+    <span class="s0">distributionType </span><span class="s1">= </span><span class="s0">Wrapper.DistributionType.BIN</span>
+<span class="s1">}</span>
+
+<span class="s0">version </span><span class="s1">= </span><span class="s0">mod_version</span>
+<span class="s0">group </span><span class="s1">= </span><span class="s0">mod_group_id</span>
+
+<span class="s0">repositories </span><span class="s1">{</span>
+    <span class="s0">mavenLocal</span><span class="s1">()</span>
+<span class="s1">}</span>
+
+<span class="s0">base </span><span class="s1">{</span>
+    <span class="s0">archivesName </span><span class="s1">= </span><span class="s0">mod_id</span>
+<span class="s1">}</span>
+
+<span class="s3">// Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.</span>
+<span class="s0">java.toolchain.languageVersion </span><span class="s1">= </span><span class="s0">JavaLanguageVersion.of</span><span class="s1">(</span><span class="s4">21</span><span class="s1">)</span>
+
+<span class="s3">//minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')</span>
+<span class="s3">//minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager</span>
+
+<span class="s3">// Default run configurations.</span>
+<span class="s3">// These can be tweaked, removed, or duplicated as needed.</span>
+<span class="s0">runs </span><span class="s1">{</span>
+    <span class="s3">// applies to all the run configs below</span>
+    <span class="s0">configureEach </span><span class="s1">{</span>
+        <span class="s3">// Recommended logging data for a userdev environment</span>
+        <span class="s3">// The markers can be added/remove as needed separated by commas.</span>
+        <span class="s3">// &quot;SCAN&quot;: For mods scan.</span>
+        <span class="s3">// &quot;REGISTRIES&quot;: For firing of registry events.</span>
+        <span class="s3">// &quot;REGISTRYDUMP&quot;: For getting the contents of all registries.</span>
+        <span class="s0">systemProperty </span><span class="s2">'forge.logging.markers'</span><span class="s0">, </span><span class="s2">'REGISTRIES'</span>
+
+        <span class="s3">// Recommended logging level for the console</span>
+        <span class="s3">// You can set various levels here.</span>
+        <span class="s3">// Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels</span>
+        <span class="s0">systemProperty </span><span class="s2">'forge.logging.console.level'</span><span class="s0">, </span><span class="s2">'debug'</span>
+
+        <span class="s0">modSource project.sourceSets.main</span>
+    <span class="s1">}</span>
+
+    <span class="s0">client </span><span class="s1">{</span>
+        <span class="s3">// Comma-separated list of namespaces to load gametests from. Empty = all namespaces.</span>
+        <span class="s0">systemProperty </span><span class="s2">'forge.enabledGameTestNamespaces'</span><span class="s0">, project.mod_id</span>
+    <span class="s1">}</span>
+
+    <span class="s0">server </span><span class="s1">{</span>
+        <span class="s0">systemProperty </span><span class="s2">'forge.enabledGameTestNamespaces'</span><span class="s0">, project.mod_id</span>
+        <span class="s0">argument </span><span class="s2">'--nogui'</span>
+    <span class="s1">}</span>
+
+    <span class="s3">// This run config launches GameTestServer and runs all registered gametests, then exits.</span>
+    <span class="s3">// By default, the server will crash when no gametests are provided.</span>
+    <span class="s3">// The gametest system is also enabled by default for other run configs under the /test command.</span>
+    <span class="s0">gameTestServer </span><span class="s1">{</span>
+        <span class="s0">systemProperty </span><span class="s2">'forge.enabledGameTestNamespaces'</span><span class="s0">, project.mod_id</span>
+    <span class="s1">}</span>
+
+    <span class="s0">data </span><span class="s1">{</span>
+        <span class="s3">// example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it</span>
+        <span class="s3">// workingDirectory project.file('run-data')</span>
+
+        <span class="s3">// Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.</span>
+        <span class="s0">arguments.addAll </span><span class="s2">'--mod'</span><span class="s0">, project.mod_id, </span><span class="s2">'--all'</span><span class="s0">, </span><span class="s2">'--output'</span><span class="s0">, file</span><span class="s1">(</span><span class="s2">'src/generated/resources/'</span><span class="s1">)</span><span class="s0">.getAbsolutePath</span><span class="s1">()</span><span class="s0">, </span><span class="s2">'--existing'</span><span class="s0">, file</span><span class="s1">(</span><span class="s2">'src/main/resources/'</span><span class="s1">)</span><span class="s0">.getAbsolutePath</span><span class="s1">()</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s3">// Include resources generated by data generators.</span>
+<span class="s0">sourceSets.main.resources </span><span class="s1">{ </span><span class="s0">srcDir </span><span class="s2">'src/generated/resources' </span><span class="s1">}</span>
+
+<span class="s3">// Sets up a dependency configuration called 'localRuntime'.</span>
+<span class="s3">// This configuration should be used instead of 'runtimeOnly' to declare</span>
+<span class="s3">// a dependency that will be present for runtime testing but that is</span>
+<span class="s3">// &quot;optional&quot;, meaning it will not be pulled by dependents of this mod.</span>
+<span class="s0">configurations </span><span class="s1">{</span>
+    <span class="s0">runtimeClasspath.extendsFrom localRuntime</span>
+<span class="s1">}</span>
+
+<span class="s0">dependencies </span><span class="s1">{</span>
+    <span class="s3">// Specify the version of Minecraft to use.</span>
+    <span class="s3">// Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.</span>
+    <span class="s3">// The group for userdev is net.neoforged, the module name is neoforge, and the version is the same as the neoforge version.</span>
+    <span class="s3">// You can however also use the vanilla plugin (net.neoforged.gradle.vanilla) to use a version of Minecraft without the neoforge loader.</span>
+    <span class="s3">// And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.</span>
+    <span class="s3">// For all intends and purposes: You can treat this dependency as if it is a normal library you would use.</span>
+    <span class="s0">implementation </span><span class="s2">&quot;net.neoforged:neoforge:</span><span class="s0">$</span><span class="s1">{</span><span class="s0">neo_version</span><span class="s1">}</span><span class="s2">&quot;</span>
+
+    <span class="s3">// Example optional mod dependency with JEI</span>
+    <span class="s3">// The JEI API is declared for compile time use, while the full JEI artifact is used at runtime</span>
+    <span class="s3">// compileOnly &quot;mezz.jei:jei-${mc_version}-common-api:${jei_version}&quot;</span>
+    <span class="s3">// compileOnly &quot;mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}&quot;</span>
+    <span class="s3">// We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it</span>
+    <span class="s3">// localRuntime &quot;mezz.jei:jei-${mc_version}-neoforge:${jei_version}&quot;</span>
+
+    <span class="s3">// Example mod dependency using a mod jar from ./libs with a flat dir repository</span>
+    <span class="s3">// This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar</span>
+    <span class="s3">// The group id is ignored when searching -- in this case, it is &quot;blank&quot;</span>
+    <span class="s3">// implementation &quot;blank:coolmod-${mc_version}:${coolmod_version}&quot;</span>
+
+    <span class="s3">// Example mod dependency using a file as dependency</span>
+    <span class="s3">// implementation files(&quot;libs/coolmod-${mc_version}-${coolmod_version}.jar&quot;)</span>
+
+    <span class="s3">// Example project dependency using a sister or child project:</span>
+    <span class="s3">// implementation project(&quot;:myproject&quot;)</span>
+
+    <span class="s3">// For more info:</span>
+    <span class="s3">// http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html</span>
+    <span class="s3">// http://www.gradle.org/docs/current/userguide/dependency_management.html</span>
+<span class="s1">}</span>
+
+<span class="s3">// This block of code expands all declared replace properties in the specified resource targets.</span>
+<span class="s3">// A missing property will result in an error. Properties are expanded using ${} Groovy notation.</span>
+<span class="s3">// When &quot;copyIdeResources&quot; is enabled, this will also run before the game launches in IDE environments.</span>
+<span class="s3">// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html</span>
+<span class="s0">tasks.withType</span><span class="s1">(</span><span class="s0">ProcessResources</span><span class="s1">)</span><span class="s0">.configureEach </span><span class="s1">{</span>
+    <span class="s5">var </span><span class="s0">replaceProperties </span><span class="s1">= [</span>
+            <span class="s0">minecraft_version      : minecraft_version,</span>
+            <span class="s0">minecraft_version_range: minecraft_version_range,</span>
+            <span class="s0">neo_version            : neo_version,</span>
+            <span class="s0">neo_version_range      : neo_version_range,</span>
+            <span class="s0">loader_version_range   : loader_version_range,</span>
+            <span class="s0">mod_id                 : mod_id,</span>
+            <span class="s0">mod_name               : mod_name,</span>
+            <span class="s0">mod_license            : mod_license,</span>
+            <span class="s0">mod_version            : mod_version,</span>
+            <span class="s0">mod_authors            : mod_authors,</span>
+            <span class="s0">mod_description        : mod_description</span>
+    <span class="s1">]</span>
+    <span class="s0">inputs.properties replaceProperties</span>
+
+    <span class="s0">filesMatching</span><span class="s1">([</span><span class="s2">'META-INF/neoforge.mods.toml'</span><span class="s1">]) {</span>
+        <span class="s0">expand replaceProperties</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s3">// Example configuration to allow publishing using the maven-publish plugin</span>
+<span class="s0">publishing </span><span class="s1">{</span>
+    <span class="s0">publications </span><span class="s1">{</span>
+        <span class="s0">register</span><span class="s1">(</span><span class="s2">'mavenJava'</span><span class="s0">, MavenPublication</span><span class="s1">) {</span>
+            <span class="s0">from components.java</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s0">repositories </span><span class="s1">{</span>
+        <span class="s0">maven </span><span class="s1">{</span>
+            <span class="s0">url </span><span class="s2">&quot;file://</span><span class="s0">$</span><span class="s1">{</span><span class="s0">project.projectDir</span><span class="s1">}</span><span class="s2">/repo&quot;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s0">tasks.withType</span><span class="s1">(</span><span class="s0">JavaCompile</span><span class="s1">)</span><span class="s0">.configureEach </span><span class="s1">{</span>
+    <span class="s0">options.encoding </span><span class="s1">= </span><span class="s2">'UTF-8' </span><span class="s3">// Use the UTF-8 charset for Java compilation</span>
+<span class="s1">}</span>
+
+<span class="s3">// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.</span>
+<span class="s0">idea </span><span class="s1">{</span>
+    <span class="s0">module </span><span class="s1">{</span>
+        <span class="s0">downloadSources </span><span class="s1">= </span><span class="s5">true</span>
+        <span class="s0">downloadJavadoc </span><span class="s1">= </span><span class="s5">true</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

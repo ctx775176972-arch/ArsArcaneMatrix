@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>settings.gradle</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bcbec4;}
+.s1 { color: #bcbec4;}
+.s2 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+settings.gradle</font>
+</center></td></tr></table>
+<pre><span class="s0">pluginManagement </span><span class="s1">{</span>
+    <span class="s0">repositories </span><span class="s1">{</span>
+        <span class="s0">mavenLocal</span><span class="s1">()</span>
+        <span class="s0">gradlePluginPortal</span><span class="s1">()</span>
+        <span class="s0">maven </span><span class="s1">{ </span><span class="s0">url </span><span class="s1">= </span><span class="s2">'https://maven.neoforged.net/releases' </span><span class="s1">}</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s0">plugins </span><span class="s1">{</span>
+    <span class="s0">id </span><span class="s2">'org.gradle.toolchains.foojay-resolver-convention' </span><span class="s0">version </span><span class="s2">'1.0.0'</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>
