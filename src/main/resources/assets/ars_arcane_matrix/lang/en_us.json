@@ -1,0 +1,17 @@
+{
+  "block.ars_arcane_matrix.matrix_core": "Arcane Matrix Core",
+  "book.ars_arcane_matrix.matrix_core.overview": "The $(item)Arcane Matrix Core$() is an endgame Source generator crafted with an Enchanting Apparatus. Place it at the center of three mutually perpendicular 5 by 5 rings made from Source Gem Blocks.$(br2)It stores generated Source internally.",
+  "documentation.ars_arcane_matrix.matrix_core.overview": "The Arcane Matrix Core is an endgame Source generator crafted with an Enchanting Apparatus. Build three mutually perpendicular 5 by 5 rings around the core using Source Gem Blocks. It stores generated Source internally.",
+  "itemGroup.ars_arcane_matrix": "Ars Arcane Matrix",
+  "message.ars_arcane_matrix.matrix_core.started": "Arcane Matrix started.",
+  "message.ars_arcane_matrix.matrix_core.status": "Arcane Matrix\nStructure: %s\nFrame: %s / %s\nStatus: %s\nSource: %s / %s\nGeneration: %s Source/s\nOutput: %s Source/s (range: %s)",
+  "message.ars_arcane_matrix.matrix_core.stopped": "Arcane Matrix stopped.",
+  "message.ars_arcane_matrix.matrix_core.structure_incomplete": "The multiblock structure is incomplete.",
+  "message.ars_arcane_matrix.state.active": "Active",
+  "message.ars_arcane_matrix.state.formed": "Formed",
+  "message.ars_arcane_matrix.state.inactive": "Inactive",
+  "message.ars_arcane_matrix.state.unformed": "Unformed",
+  "tooltip.ars_arcane_matrix.matrix_core.frame": "Frame: %s / %s | Generation: %s Source/s",
+  "tooltip.ars_arcane_matrix.matrix_core.source_exact": "Source: %s / %s",
+  "tooltip.ars_arcane_matrix.matrix_core.source_percent": "Source: %s%%"
+}
