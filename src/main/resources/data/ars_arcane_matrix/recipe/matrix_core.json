@@ -1,0 +1,38 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    {
+      "item": "minecraft:crying_obsidian"
+    },
+    {
+      "item": "minecraft:crying_obsidian"
+    },
+    {
+      "item": "minecraft:crying_obsidian"
+    },
+    {
+      "item": "minecraft:crying_obsidian"
+    },
+    {
+      "item": "minecraft:nether_star"
+    },
+    {
+      "item": "minecraft:nether_star"
+    },
+    {
+      "item": "ars_nouveau:wilden_tribute"
+    },
+    {
+      "item": "minecraft:heart_of_the_sea"
+    }
+  ],
+  "reagent": {
+    "item": "ars_nouveau:arcane_core"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_arcane_matrix:matrix_core"
+  },
+  "sourceCost": 10000
+}

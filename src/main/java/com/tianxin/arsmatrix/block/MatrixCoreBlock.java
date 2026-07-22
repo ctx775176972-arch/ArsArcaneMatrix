@@ -1,11 +1,12 @@
 package com.tianxin.arsmatrix.block;
 
+import com.mojang.serialization.MapCodec;
 import com.tianxin.arsmatrix.blockentity.MatrixCoreBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -20,8 +21,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class MatrixCoreBlock extends BaseEntityBlock {
 
+    public static final MapCodec<MatrixCoreBlock> CODEC = simpleCodec(MatrixCoreBlock::new);
+
     public MatrixCoreBlock(BlockBehaviour.Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -63,9 +71,10 @@ public class MatrixCoreBlock extends BaseEntityBlock {
             BlockEntity be = level.getBlockEntity(pos);
 
             if (be instanceof MatrixCoreBlockEntity core) {
-
-                player.sendSystemMessage(core.getStatusComponent());
-
+                Component message = player.isShiftKeyDown()
+                        ? core.getStatusComponent()
+                        : core.toggleActive();
+                player.sendSystemMessage(message);
             }
 
         }
@@ -90,8 +99,6 @@ public class MatrixCoreBlock extends BaseEntityBlock {
     @Override
     protected boolean isPathfindable(
             BlockState state,
-            BlockGetter level,
-            BlockPos pos,
             net.minecraft.world.level.pathfinder.PathComputationType type
     ) {
         return false;
