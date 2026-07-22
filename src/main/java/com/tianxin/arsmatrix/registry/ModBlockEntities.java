@@ -22,6 +22,8 @@ public final class ModBlockEntities {
     /**
      * Matrix Core BlockEntity
      */
+    // NeoForge uses null here when the mod does not provide a vanilla DataFixer type.
+    //noinspection DataFlowIssue
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MatrixCoreBlockEntity>> MATRIX_CORE =
             BLOCK_ENTITY_TYPES.register(
                     "matrix_core",
