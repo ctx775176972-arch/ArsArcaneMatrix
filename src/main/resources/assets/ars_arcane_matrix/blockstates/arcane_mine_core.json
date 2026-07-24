@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "ars_arcane_matrix:block/arcane_mine_core"
+    }
+  }
+}

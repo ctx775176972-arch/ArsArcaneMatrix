@@ -1,0 +1,84 @@
+{
+  "category": "ars_nouveau:source",
+  "icon": "ars_arcane_matrix:arcane_mine_core",
+  "name": "block.ars_arcane_matrix.arcane_mine_core",
+  "sortnum": 21,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "block.ars_arcane_matrix.arcane_mine_core",
+      "text": "book.ars_arcane_matrix.arcane_mine.overview"
+    },
+    {
+      "type": "ars_nouveau:apparatus_recipe",
+      "recipe": "ars_arcane_matrix:arcane_mine_core"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "mapping": {
+          "0": "ars_arcane_matrix:arcane_mine_core",
+          "F": "ars_nouveau:sourcestone",
+          "N": "ars_nouveau:source_gem_block"
+        },
+        "pattern": [
+          [
+            "         ",
+            "         ",
+            "         ",
+            "         ",
+            "    0    ",
+            "         ",
+            "         ",
+            "         ",
+            "         "
+          ],
+          [
+            "         ",
+            "         ",
+            "         ",
+            "   NFN   ",
+            "   FNF   ",
+            "   NFN   ",
+            "         ",
+            "         ",
+            "         "
+          ],
+          [
+            "         ",
+            "         ",
+            "  NFFFN  ",
+            "  FFFFF  ",
+            "  FFNFF  ",
+            "  FFFFF  ",
+            "  NFFFN  ",
+            "         ",
+            "         "
+          ],
+          [
+            "         ",
+            " NFFFFFN ",
+            " FFFFFFF ",
+            " FFFFFFF ",
+            " FFFNFFF ",
+            " FFFFFFF ",
+            " FFFFFFF ",
+            " NFFFFFN ",
+            "         "
+          ],
+          [
+            "NFFFFFFFN",
+            "FFFFFFFFF",
+            "FFFFFFFFF",
+            "FFFFFFFFF",
+            "FFFFNFFFF",
+            "FFFFFFFFF",
+            "FFFFFFFFF",
+            "FFFFFFFFF",
+            "NFFFFFFFN"
+          ]
+        ]
+      }
+    }
+  ]
+}
