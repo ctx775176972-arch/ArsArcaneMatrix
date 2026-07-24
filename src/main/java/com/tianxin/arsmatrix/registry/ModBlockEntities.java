@@ -2,6 +2,7 @@ package com.tianxin.arsmatrix.registry;
 
 import com.tianxin.arsmatrix.ArsArcaneMatrix;
 import com.tianxin.arsmatrix.blockentity.MatrixCoreBlockEntity;
+import com.tianxin.arsmatrix.blockentity.ArcaneMineCoreBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -30,6 +31,17 @@ public final class ModBlockEntities {
                     () -> BlockEntityType.Builder.of(
                             MatrixCoreBlockEntity::new,
                             ModBlocks.MATRIX_CORE.get()
+                    ).build(null)
+            );
+
+    // NeoForge uses null here when the mod does not provide a vanilla DataFixer type.
+    //noinspection DataFlowIssue
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ArcaneMineCoreBlockEntity>> ARCANE_MINE_CORE =
+            BLOCK_ENTITY_TYPES.register(
+                    "arcane_mine_core",
+                    () -> BlockEntityType.Builder.of(
+                            ArcaneMineCoreBlockEntity::new,
+                            ModBlocks.ARCANE_MINE_CORE.get()
                     ).build(null)
             );
 

@@ -21,7 +21,10 @@ public final class ModCreativeTabs {
             CREATIVE_MODE_TABS.register("ars_arcane_matrix", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.ars_arcane_matrix"))
                     .icon(() -> ModItems.MATRIX_CORE.get().getDefaultInstance())
-                    .displayItems((parameters, output) -> output.accept(ModItems.MATRIX_CORE.get()))
+                    .displayItems((parameters, output) -> {
+                        output.accept(ModItems.MATRIX_CORE.get());
+                        output.accept(ModItems.ARCANE_MINE_CORE.get());
+                    })
                     .build());
 
     public static void register(IEventBus eventBus) {

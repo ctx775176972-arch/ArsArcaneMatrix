@@ -1,0 +1,38 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    {
+      "tag": "c:storage_blocks/coal"
+    },
+    {
+      "tag": "c:storage_blocks/copper"
+    },
+    {
+      "tag": "c:storage_blocks/iron"
+    },
+    {
+      "tag": "c:storage_blocks/gold"
+    },
+    {
+      "tag": "c:storage_blocks/redstone"
+    },
+    {
+      "tag": "c:storage_blocks/emerald"
+    },
+    {
+      "tag": "c:storage_blocks/lapis"
+    },
+    {
+      "tag": "c:storage_blocks/diamond"
+    }
+  ],
+  "reagent": {
+    "item": "ars_nouveau:arcane_core"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_arcane_matrix:arcane_mine_core"
+  },
+  "sourceCost": 10000
+}

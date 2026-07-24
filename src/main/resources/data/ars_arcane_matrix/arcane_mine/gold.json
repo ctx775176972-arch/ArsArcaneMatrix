@@ -1,0 +1,10 @@
+{
+  "output": {
+    "tag": "c:ores/gold",
+    "count": 1
+  },
+  "required_layers": 2,
+  "material_points": 24,
+  "source_cost": 2400,
+  "weight": 12
+}
