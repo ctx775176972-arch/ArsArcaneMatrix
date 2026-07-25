@@ -24,6 +24,18 @@ repositories {
         name = 'CurseMaven'
         url = 'https://cursemaven.com'
     }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter {
+            includeGroup 'maven.modrinth'
+        }
+    }
 }
 
 base {
@@ -93,6 +105,10 @@ dependencies {
     compileOnly files(arsNouveauJar)
     compileOnly files(extractedNuggetsJar)
     localRuntime files(arsNouveauJar)
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    compileOnly "maven.modrinth:nvQzSEkH:${jade_version_id}"
+    localRuntime "maven.modrinth:nvQzSEkH:${jade_version_id}"
 }
 
 tasks.withType(ProcessResources).configureEach {

@@ -25,5 +25,17 @@
   "tooltip.ars_arcane_matrix.matrix_core.source_percent": "魔源：%s%%",
   "tooltip.ars_arcane_matrix.arcane_mine.source_exact": "魔源：%s / %s",
   "tooltip.ars_arcane_matrix.arcane_mine.source_percent": "魔源：%s%%",
-  "tooltip.ars_arcane_matrix.arcane_mine.layers": "结构层：%s / %s｜材料：%s 点"
+  "tooltip.ars_arcane_matrix.arcane_mine.layers": "结构层：%s / %s｜材料：%s 点",
+  "jei.ars_arcane_matrix.arcane_mining": "奥术矿化",
+  "jei.ars_arcane_matrix.arcane_mining.requirements": "%s 层结构 · %s 材料点",
+  "jei.ars_arcane_matrix.arcane_mining.source": "%s 魔源",
+  "jei.ars_arcane_matrix.matrix_core.info": "三个环形多方块结构完整时自动产生魔源。",
+  "jei.ars_arcane_matrix.arcane_mine_core.info": "消耗材料点与魔源生成数据驱动的矿石；更大的结构可以解锁更珍贵的矿物。",
+  "jade.ars_arcane_matrix.matrix.status": "矩阵：%s",
+  "jade.ars_arcane_matrix.matrix.source": "魔源：%s / %s",
+  "jade.ars_arcane_matrix.matrix.frames": "框架：%s / %s · 每秒 %s 魔源",
+  "jade.ars_arcane_matrix.mine.status": "矿井：%s",
+  "jade.ars_arcane_matrix.mine.source": "魔源：%s / %s",
+  "jade.ars_arcane_matrix.mine.operation": "层数：%s · 材料：%s · 冷却：%s 刻",
+  "jade.ars_arcane_matrix.mine.links": "材料连接：%s · 输出：%s"
 }

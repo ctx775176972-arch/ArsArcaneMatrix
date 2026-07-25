@@ -614,6 +614,30 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         return sourceStorage;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public int getCompletedLayers() {
+        return completedLayers;
+    }
+
+    public int getMaterialPoints() {
+        return materialPoints;
+    }
+
+    public int getCooldownTicks() {
+        return cooldownTicks;
+    }
+
+    public int getMaterialContainerCount() {
+        return materialContainers.size();
+    }
+
+    public boolean hasOutputContainer() {
+        return outputContainer != null;
+    }
+
     @Override
     public int getMaxSource() {
         return MatrixConfig.MINE_SOURCE_CAPACITY.get();

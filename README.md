@@ -58,6 +58,15 @@ Place the Arcane Matrix Core at the center of three mutually perpendicular 5×5 
 
 The full structure can be viewed in the Ars Nouveau Worn Notebook and spell-book documentation.
 
+### Optional integrations
+
+- JEI adds an Arcane Mining category for data-driven ore outputs, including
+  required structure layers, material-point equivalents, Source cost, and the
+  Arcane Mine Core catalyst.
+- Jade displays live Matrix and Mine structure state, Source storage,
+  production, material buffer, cooldown, and container-link information.
+- Both integrations are optional; Ars Arcane Matrix still loads without either mod.
+
 Horizontal layers, viewed from above (`F` = valid frame position, `C` = core):
 
 ```text

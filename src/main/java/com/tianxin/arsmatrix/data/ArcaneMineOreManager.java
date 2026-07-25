@@ -108,9 +108,6 @@ public final class ArcaneMineOreManager extends SimpleJsonResourceReloadListener
             if (!tagId.getNamespace().equals("c") || !tagId.getPath().startsWith("ores/")) {
                 return;
             }
-            if (tagId.getPath().equals("ores/netherite_scrap")) {
-                return;
-            }
             String outputKey = "#" + tagId;
             if (configuredOutputs.containsKey(outputKey)) {
                 return;

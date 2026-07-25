@@ -25,5 +25,17 @@
   "tooltip.ars_arcane_matrix.matrix_core.source_percent": "Source: %s%%",
   "tooltip.ars_arcane_matrix.arcane_mine.source_exact": "Source: %s / %s",
   "tooltip.ars_arcane_matrix.arcane_mine.source_percent": "Source: %s%%",
-  "tooltip.ars_arcane_matrix.arcane_mine.layers": "Layers: %s / %s | Material: %s points"
+  "tooltip.ars_arcane_matrix.arcane_mine.layers": "Layers: %s / %s | Material: %s points",
+  "jei.ars_arcane_matrix.arcane_mining": "Arcane Mining",
+  "jei.ars_arcane_matrix.arcane_mining.requirements": "%s layer(s) · %s material points",
+  "jei.ars_arcane_matrix.arcane_mining.source": "%s Source",
+  "jei.ars_arcane_matrix.matrix_core.info": "Automatically generates Source while its three-ring multiblock structure is complete.",
+  "jei.ars_arcane_matrix.arcane_mine_core.info": "Consumes material points and Source to produce data-driven ore outputs. Larger structures unlock more valuable ores.",
+  "jade.ars_arcane_matrix.matrix.status": "Matrix: %s",
+  "jade.ars_arcane_matrix.matrix.source": "Source: %s / %s",
+  "jade.ars_arcane_matrix.matrix.frames": "Frames: %s / %s · %s Source/s",
+  "jade.ars_arcane_matrix.mine.status": "Mine: %s",
+  "jade.ars_arcane_matrix.mine.source": "Source: %s / %s",
+  "jade.ars_arcane_matrix.mine.operation": "Layers: %s · Material: %s · Cooldown: %s ticks",
+  "jade.ars_arcane_matrix.mine.links": "Material links: %s · Output: %s"
 }
