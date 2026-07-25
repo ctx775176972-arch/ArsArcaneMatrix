@@ -19,6 +19,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> MATRIX_CORE =
             ITEMS.registerSimpleBlockItem("matrix_core", ModBlocks.MATRIX_CORE, new Item.Properties());
 
+    public static final DeferredItem<BlockItem> ARCANE_MINE_CORE =
+            ITEMS.registerSimpleBlockItem("arcane_mine_core", ModBlocks.ARCANE_MINE_CORE, new Item.Properties());
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

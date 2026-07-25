@@ -1,25 +1,24 @@
 package com.tianxin.arsmatrix.block;
 
 import com.mojang.serialization.MapCodec;
-import com.tianxin.arsmatrix.blockentity.MatrixCoreBlockEntity;
+import com.tianxin.arsmatrix.blockentity.ArcaneMineCoreBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class MatrixCoreBlock extends BaseEntityBlock {
+/** Controller block at the bottom point of the inverted-beacon Arcane Mine. */
+public class ArcaneMineCoreBlock extends BaseEntityBlock {
 
-    public static final MapCodec<MatrixCoreBlock> CODEC = simpleCodec(MatrixCoreBlock::new);
+    public static final MapCodec<ArcaneMineCoreBlock> CODEC = simpleCodec(ArcaneMineCoreBlock::new);
 
-    public MatrixCoreBlock(BlockBehaviour.Properties properties) {
+    public ArcaneMineCoreBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
@@ -36,7 +35,7 @@ public class MatrixCoreBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new MatrixCoreBlockEntity(pos, state);
+        return new ArcaneMineCoreBlockEntity(pos, state);
     }
 
     @Nullable
@@ -46,25 +45,26 @@ public class MatrixCoreBlock extends BaseEntityBlock {
             BlockState state,
             BlockEntityType<T> type
     ) {
-        return level.isClientSide ? null : (lvl, blockPos, blockState, blockEntity) -> {
-            if (blockEntity instanceof MatrixCoreBlockEntity core) {
+        return level.isClientSide ? null : (tickLevel, tickPos, tickState, blockEntity) -> {
+            if (blockEntity instanceof ArcaneMineCoreBlockEntity core) {
                 core.serverTick();
             }
         };
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return super.getStateForPlacement(context);
-    }
-
-    @Override
-    protected boolean canSurvive(
+    protected void onRemove(
             BlockState state,
-            LevelReader level,
-            BlockPos pos
+            Level level,
+            BlockPos pos,
+            BlockState newState,
+            boolean isMoving
     ) {
-        return true;
+        if (!state.is(newState.getBlock())
+                && level.getBlockEntity(pos) instanceof ArcaneMineCoreBlockEntity core) {
+            core.dropBufferedContents();
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     @Override

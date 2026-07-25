@@ -3,6 +3,7 @@ package com.tianxin.arsmatrix;
 import com.mojang.logging.LogUtils;
 import com.tianxin.arsmatrix.compat.arsnouveau.ModDocumentation;
 import com.tianxin.arsmatrix.config.MatrixConfig;
+import com.tianxin.arsmatrix.data.ArcaneMineOreManager;
 import com.tianxin.arsmatrix.registry.ModBlockEntities;
 import com.tianxin.arsmatrix.registry.ModBlocks;
 import com.tianxin.arsmatrix.registry.ModCapabilities;
@@ -29,6 +30,7 @@ public class ArsArcaneMatrix {
         ModBlockEntities.register(modBus);
         ModCreativeTabs.register(modBus);
         modBus.addListener(ModCapabilities::register);
+        NeoForge.EVENT_BUS.addListener(ArcaneMineOreManager::registerReloadListener);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             NeoForge.EVENT_BUS.addListener(ModDocumentation::addEntries);
         }

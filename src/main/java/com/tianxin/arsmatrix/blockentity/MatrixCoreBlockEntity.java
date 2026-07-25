@@ -41,11 +41,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
      */
     private boolean formed = false;
 
-    /**
-     * 是否已经启动
-     */
-    private boolean active = false;
-
     /** 当前位于潮涌核心式框架有效位置上的魔源宝石块数量。 */
     private int frameBlockCount = 0;
 
@@ -73,9 +68,7 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         refreshSourceStorageLimits();
 
         if (formed) {
-            if (active) {
-                generateSource();
-            }
+            generateSource();
             outputSource();
         }
     }
@@ -210,9 +203,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         boolean wasFormed = formed;
         frameBlockCount = newFrameBlockCount;
         formed = structureFormed;
-        if (!formed) {
-            active = false;
-        }
 
         setChangedAndSyncClient();
 
@@ -255,44 +245,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         );
     }
 
-    /**
-     * 玩家右键显示状态
-     */
-    public Component getStatusComponent() {
-        return Component.translatable(
-                "message.ars_arcane_matrix.matrix_core.status",
-                Component.translatable(formed
-                        ? "message.ars_arcane_matrix.state.formed"
-                        : "message.ars_arcane_matrix.state.unformed"),
-                frameBlockCount,
-                getMaximumFrameBlocks(),
-                Component.translatable(active
-                        ? "message.ars_arcane_matrix.state.active"
-                        : "message.ars_arcane_matrix.state.inactive"),
-                getSource(),
-                getMaxSource(),
-                getSourceGenerationPerSecond(),
-                getSourceTransferPerSecond(),
-                getSourceOutputRange()
-        );
-    }
-
-    /**
-     * 切换矩阵的运行状态。未形成多方块结构时不能启动。
-     */
-    public Component toggleActive() {
-        if (!formed) {
-            return Component.translatable("message.ars_arcane_matrix.matrix_core.structure_incomplete");
-        }
-
-        active = !active;
-        setChanged();
-
-        return Component.translatable(active
-                ? "message.ars_arcane_matrix.matrix_core.started"
-                : "message.ars_arcane_matrix.matrix_core.stopped");
-    }
-
     /*========================*/
     /*        Getter          */
     /*========================*/
@@ -302,7 +254,7 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
     }
 
     public boolean isActive() {
-        return active;
+        return formed;
     }
 
     public long getStoredSource() {
@@ -322,7 +274,7 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         long generation = MatrixConfig.BASE_GENERATION.get().longValue()
                 + (long) (frameBlockCount - minimumFrames)
                 * MatrixConfig.GENERATION_PER_ADDITIONAL_FRAME.get();
-        return (int) Math.min(generation, Integer.MAX_VALUE);
+        return (int) Math.min(generation, MatrixConfig.MAX_GENERATION_PER_SECOND.get());
     }
 
     public int getFrameBlockCount() {
@@ -439,19 +391,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         }
 
         this.formed = formed;
-        if (!formed) {
-            active = false;
-        }
-        setChanged();
-    }
-
-    public void setActive(boolean active) {
-        boolean newActive = active && formed;
-        if (this.active == newActive) {
-            return;
-        }
-
-        this.active = newActive;
         setChanged();
     }
 
@@ -486,7 +425,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         super.saveAdditional(tag, registries);
 
         tag.putBoolean("Formed", formed);
-        tag.putBoolean("Active", active);
         tag.putInt("FrameBlockCount", frameBlockCount);
         tag.putLong("StoredSource", getSource());
     }
@@ -496,7 +434,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         super.loadAdditional(tag, registries);
 
         formed = tag.getBoolean("Formed");
-        active = formed && tag.getBoolean("Active");
         frameBlockCount = Math.max(0, Math.min(tag.getInt("FrameBlockCount"), getMaximumFrameBlocks()));
         refreshSourceStorageLimits();
         sourceStorage.setSource((int) Math.max(0, Math.min(tag.getLong("StoredSource"), getMaxSource())));

@@ -2,6 +2,7 @@ package com.tianxin.arsmatrix.registry;
 
 import com.tianxin.arsmatrix.ArsArcaneMatrix;
 import com.tianxin.arsmatrix.block.MatrixCoreBlock;
+import com.tianxin.arsmatrix.block.ArcaneMineCoreBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -26,6 +27,16 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> MATRIX_CORE =
             BLOCKS.register("matrix_core",
                     () -> new MatrixCoreBlock(
+                            BlockBehaviour.Properties.of()
+                                    .strength(8.0F, 1200.0F)
+                                    .requiresCorrectToolForDrops()
+                                    .sound(SoundType.AMETHYST)
+                    ));
+
+    /** Arcane Mine Core. */
+    public static final DeferredBlock<Block> ARCANE_MINE_CORE =
+            BLOCKS.register("arcane_mine_core",
+                    () -> new ArcaneMineCoreBlock(
                             BlockBehaviour.Properties.of()
                                     .strength(8.0F, 1200.0F)
                                     .requiresCorrectToolForDrops()

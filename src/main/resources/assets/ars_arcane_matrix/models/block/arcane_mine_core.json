@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side": "ars_arcane_matrix:block/matrix_core",
+    "top": "ars_nouveau:block/source_gem_block",
+    "bottom": "ars_nouveau:block/sourcestone"
+  },
+  "render_type": "translucent"
+}
