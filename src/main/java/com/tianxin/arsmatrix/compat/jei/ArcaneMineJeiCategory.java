@@ -98,27 +98,38 @@ public final class ArcaneMineJeiCategory implements IRecipeCategory<ArcaneMineOr
             double mouseY
     ) {
         var font = Minecraft.getInstance().font;
-        graphics.drawCenteredString(
+        drawCenteredWithoutShadow(
+                graphics,
                 font,
                 Component.translatable(
                         "jei.ars_arcane_matrix.arcane_mining.requirements",
                         recipe.requiredLayers(),
                         recipe.materialPoints()
                 ),
-                getWidth() / 2,
                 4,
                 0x404040
         );
-        graphics.drawCenteredString(
+        drawCenteredWithoutShadow(
+                graphics,
                 font,
                 Component.translatable(
                         "jei.ars_arcane_matrix.arcane_mining.source",
                         recipe.sourceCost()
                 ),
-                getWidth() / 2,
                 40,
                 0x404040
         );
+    }
+
+    private void drawCenteredWithoutShadow(
+            GuiGraphics graphics,
+            net.minecraft.client.gui.Font font,
+            Component text,
+            int y,
+            int color
+    ) {
+        int x = (getWidth() - font.width(text)) / 2;
+        graphics.drawString(font, text, x, y, color, false);
     }
 
     @Override
