@@ -65,14 +65,14 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     private static final TagKey<Block> NODE_BLOCKS = BlockTags.create(
             ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_node_blocks")
     );
-    private static final TagKey<Item> MATERIAL_ONE = ItemTags.create(
-            ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_material_1")
+    private static final TagKey<Item> MATERIAL_SOURCESTONE = ItemTags.create(
+            ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_material_sourcestone")
     );
-    private static final TagKey<Item> MATERIAL_EIGHT = ItemTags.create(
-            ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_material_8")
+    private static final TagKey<Item> MATERIAL_SOURCE_GEM = ItemTags.create(
+            ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_material_source_gem")
     );
-    private static final TagKey<Item> MATERIAL_THIRTY_TWO = ItemTags.create(
-            ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_material_32")
+    private static final TagKey<Item> MATERIAL_SOURCE_GEM_BLOCK = ItemTags.create(
+            ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_material_source_gem_block")
     );
 
     private final SourceStorage sourceStorage = createSourceStorage();
@@ -207,6 +207,10 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
     @Nullable
     private ArcaneMineOreRule resolveOrChooseTarget() {
+        Level currentLevel = level;
+        if (currentLevel == null) {
+            return null;
+        }
         if (targetRuleId != null) {
             Optional<ArcaneMineOreRule> existing = ArcaneMineOreManager.find(targetRuleId);
             if (existing.isPresent() && existing.get().requiredLayers() <= completedLayers
@@ -218,11 +222,14 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             setChangedAndSyncClient();
         }
 
-        Optional<ArcaneMineOreRule> selected = ArcaneMineOreManager.choose(completedLayers, level.random);
+        Optional<ArcaneMineOreRule> selected = ArcaneMineOreManager.choose(
+                completedLayers,
+                currentLevel.random
+        );
         if (selected.isEmpty()) {
             return null;
         }
-        ItemStack output = selected.get().createOutput(level.random);
+        ItemStack output = selected.get().createOutput(currentLevel.random);
         if (output.isEmpty()) {
             return null;
         }
@@ -503,11 +510,11 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         }
         dropStack(pendingOutput);
         int remaining = materialPoints;
-        remaining = dropMaterialUnits(remaining, 32, Items.AIR,
+        remaining = dropMaterialUnits(remaining, MatrixConfig.MINE_SOURCE_GEM_BLOCK_POINTS.get(), Items.AIR,
                 ResourceLocation.fromNamespaceAndPath("ars_nouveau", "source_gem_block"));
-        remaining = dropMaterialUnits(remaining, 8, Items.AIR,
+        remaining = dropMaterialUnits(remaining, MatrixConfig.MINE_SOURCE_GEM_POINTS.get(), Items.AIR,
                 ResourceLocation.fromNamespaceAndPath("ars_nouveau", "source_gem"));
-        dropMaterialUnits(remaining, 1, Items.AIR,
+        dropMaterialUnits(remaining, MatrixConfig.MINE_SOURCESTONE_POINTS.get(), Items.AIR,
                 ResourceLocation.fromNamespaceAndPath("ars_nouveau", "sourcestone"));
         pendingOutput = ItemStack.EMPTY;
         targetOutput = ItemStack.EMPTY;
@@ -529,29 +536,31 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     }
 
     private void dropStack(ItemStack stack) {
-        if (!stack.isEmpty()) {
-            Containers.dropItemStack(
-                    level,
-                    worldPosition.getX() + 0.5D,
-                    worldPosition.getY() + 0.5D,
-                    worldPosition.getZ() + 0.5D,
-                    stack.copy()
-            );
+        Level currentLevel = level;
+        if (currentLevel == null || stack.isEmpty()) {
+            return;
         }
+        Containers.dropItemStack(
+                currentLevel,
+                worldPosition.getX() + 0.5D,
+                worldPosition.getY() + 0.5D,
+                worldPosition.getZ() + 0.5D,
+                stack.copy()
+        );
     }
 
     private int materialValue(ItemStack stack) {
         if (stack.isEmpty()) {
             return 0;
         }
-        if (stack.is(MATERIAL_THIRTY_TWO)) {
-            return 32;
+        if (stack.is(MATERIAL_SOURCE_GEM_BLOCK)) {
+            return MatrixConfig.MINE_SOURCE_GEM_BLOCK_POINTS.get();
         }
-        if (stack.is(MATERIAL_EIGHT)) {
-            return 8;
+        if (stack.is(MATERIAL_SOURCE_GEM)) {
+            return MatrixConfig.MINE_SOURCE_GEM_POINTS.get();
         }
-        if (stack.is(MATERIAL_ONE)) {
-            return 1;
+        if (stack.is(MATERIAL_SOURCESTONE)) {
+            return MatrixConfig.MINE_SOURCESTONE_POINTS.get();
         }
         return 0;
     }

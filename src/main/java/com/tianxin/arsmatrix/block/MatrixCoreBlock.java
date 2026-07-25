@@ -3,9 +3,6 @@ package com.tianxin.arsmatrix.block;
 import com.mojang.serialization.MapCodec;
 import com.tianxin.arsmatrix.blockentity.MatrixCoreBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -16,7 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class MatrixCoreBlock extends BaseEntityBlock {
@@ -55,31 +51,6 @@ public class MatrixCoreBlock extends BaseEntityBlock {
                 core.serverTick();
             }
         };
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Player player,
-            BlockHitResult hit
-    ) {
-
-        if (!level.isClientSide) {
-
-            BlockEntity be = level.getBlockEntity(pos);
-
-            if (be instanceof MatrixCoreBlockEntity core) {
-                Component message = player.isShiftKeyDown()
-                        ? core.getStatusComponent()
-                        : core.toggleActive();
-                player.sendSystemMessage(message);
-            }
-
-        }
-
-        return InteractionResult.SUCCESS;
     }
 
     @Override

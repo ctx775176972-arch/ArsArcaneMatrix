@@ -38,6 +38,7 @@ Default values:
 | Output range | 5 blocks |
 | Base generation | 1,000 Source/second |
 | Generation per additional frame | 250 Source/second |
+| Maximum generation | 10,000 Source/second (configurable) |
 | Minimum frames | 16 |
 | Maximum frames | 42 |
 | Maximum output | 10,000 Source/second |
@@ -51,6 +52,7 @@ Place the Arcane Matrix Core at the center of three mutually perpendicular 5×5 
 - At least 16 valid frames are required by default.
 - Additional valid frames increase Source generation.
 - The structure is checked once per second.
+- A complete structure starts automatically.
 - An incomplete structure neither generates nor exports Source.
 - Completing the structure plays an activation sound and particle effect.
 
@@ -68,12 +70,6 @@ FFFFF                   F   F                   F C F
 ```
 
 Only Source Gem Blocks placed at these positions count toward the frame total. Blocks outside these positions are ignored.
-
-### Controls
-
-- Right-click the core with an empty hand to start or stop generation.
-- Shift-right-click with an empty hand to display structure, frame, Source, generation, and output status.
-- Stopping the core pauses generation but does not stop stored Source from being exported while the structure remains complete.
 
 The block requires a diamond or netherite pickaxe to drop when mined.
 
@@ -127,8 +123,8 @@ Default material values:
 | Material | Points |
 | --- | ---: |
 | Sourcestone | 1 |
-| Source Gem | 8 |
-| Source Gem Block | 32 |
+| Source Gem | 32 |
+| Source Gem Block | 128 |
 
 Horizontal item capability faces accept materials. The bottom item capability
 face exposes completed ore. The core accepts standard Ars Nouveau Source
@@ -196,6 +192,7 @@ sourceCapacity = 10000000
 outputRange = 5
 baseGenerationPerSecond = 1000
 generationPerAdditionalFrame = 250
+maxGenerationPerSecond = 10000
 minimumFrameBlocks = 16
 maximumFrameBlocks = 42
 maxOutputPerSecond = 10000
@@ -208,6 +205,9 @@ structureCheckInterval = 20
 sourceCapacity = 1000000
 sourceInputRange = 5
 maxSourceInputPerSecond = 10000
+sourcestonePoints = 1
+sourceGemPoints = 32
+sourceGemBlockPoints = 128
 materialPointCapacity = 1024
 maxMaterialContainers = 4
 cooldownTicksByLayer = [400, 300, 200, 100]

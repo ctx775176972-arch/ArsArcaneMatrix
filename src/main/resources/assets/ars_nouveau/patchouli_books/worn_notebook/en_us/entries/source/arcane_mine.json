@@ -23,13 +23,35 @@
         },
         "pattern": [
           [
+            "NFFFFFFFN",
+            "FFFFFFFFF",
+            "FFFFFFFFF",
+            "FFFFFFFFF",
+            "FFFFNFFFF",
+            "FFFFFFFFF",
+            "FFFFFFFFF",
+            "FFFFFFFFF",
+            "NFFFFFFFN"
+          ],
+          [
+            "         ",
+            " NFFFFFN ",
+            " FFFFFFF ",
+            " FFFFFFF ",
+            " FFFNFFF ",
+            " FFFFFFF ",
+            " FFFFFFF ",
+            " NFFFFFN ",
+            "         "
+          ],
+          [
             "         ",
             "         ",
-            "         ",
-            "         ",
-            "    0    ",
-            "         ",
-            "         ",
+            "  NFFFN  ",
+            "  FFFFF  ",
+            "  FFNFF  ",
+            "  FFFFF  ",
+            "  NFFFN  ",
             "         ",
             "         "
           ],
@@ -47,35 +69,13 @@
           [
             "         ",
             "         ",
-            "  NFFFN  ",
-            "  FFFFF  ",
-            "  FFNFF  ",
-            "  FFFFF  ",
-            "  NFFFN  ",
+            "         ",
+            "         ",
+            "    0    ",
+            "         ",
+            "         ",
             "         ",
             "         "
-          ],
-          [
-            "         ",
-            " NFFFFFN ",
-            " FFFFFFF ",
-            " FFFFFFF ",
-            " FFFNFFF ",
-            " FFFFFFF ",
-            " FFFFFFF ",
-            " NFFFFFN ",
-            "         "
-          ],
-          [
-            "NFFFFFFFN",
-            "FFFFFFFFF",
-            "FFFFFFFFF",
-            "FFFFFFFFF",
-            "FFFFNFFFF",
-            "FFFFFFFFF",
-            "FFFFFFFFF",
-            "FFFFFFFFF",
-            "NFFFFFFFN"
           ]
         ]
       }

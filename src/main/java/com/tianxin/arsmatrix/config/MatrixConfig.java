@@ -14,6 +14,7 @@ public final class MatrixConfig {
     public static final ModConfigSpec.IntValue OUTPUT_RANGE;
     public static final ModConfigSpec.IntValue BASE_GENERATION;
     public static final ModConfigSpec.IntValue GENERATION_PER_ADDITIONAL_FRAME;
+    public static final ModConfigSpec.IntValue MAX_GENERATION_PER_SECOND;
     public static final ModConfigSpec.IntValue MINIMUM_FRAME_BLOCKS;
     public static final ModConfigSpec.IntValue MAXIMUM_FRAME_BLOCKS;
     public static final ModConfigSpec.IntValue MAX_OUTPUT_PER_SECOND;
@@ -23,6 +24,9 @@ public final class MatrixConfig {
     public static final ModConfigSpec.IntValue MINE_SOURCE_CAPACITY;
     public static final ModConfigSpec.IntValue MINE_SOURCE_INPUT_RANGE;
     public static final ModConfigSpec.IntValue MINE_MAX_SOURCE_INPUT_PER_SECOND;
+    public static final ModConfigSpec.IntValue MINE_SOURCESTONE_POINTS;
+    public static final ModConfigSpec.IntValue MINE_SOURCE_GEM_POINTS;
+    public static final ModConfigSpec.IntValue MINE_SOURCE_GEM_BLOCK_POINTS;
     public static final ModConfigSpec.IntValue MINE_MATERIAL_POINT_CAPACITY;
     public static final ModConfigSpec.IntValue MINE_MAX_MATERIAL_CONTAINERS;
     public static final ModConfigSpec.BooleanValue MINE_ALLOW_CROSS_DIMENSION;
@@ -48,6 +52,9 @@ public final class MatrixConfig {
         GENERATION_PER_ADDITIONAL_FRAME = builder
                 .comment("Additional Source generated per second for each frame above the minimum.")
                 .defineInRange("generationPerAdditionalFrame", 250, 0, Integer.MAX_VALUE);
+        MAX_GENERATION_PER_SECOND = builder
+                .comment("Configurable Source generation cap per Matrix Core.")
+                .defineInRange("maxGenerationPerSecond", 10_000, 0, Integer.MAX_VALUE);
         MINIMUM_FRAME_BLOCKS = builder
                 .comment("Frames required to form the structure. Runtime value is capped by maximumFrameBlocks.")
                 .defineInRange("minimumFrameBlocks", 16, 1, PHYSICAL_FRAME_POSITIONS);
@@ -81,6 +88,15 @@ public final class MatrixConfig {
         MINE_MAX_SOURCE_INPUT_PER_SECOND = builder
                 .comment("Maximum Source pulled into one active Arcane Mine Core per second.")
                 .defineInRange("maxSourceInputPerSecond", 10_000, 0, Integer.MAX_VALUE);
+        MINE_SOURCESTONE_POINTS = builder
+                .comment("Material points supplied by one item in the arcane_mine_material_sourcestone tag.")
+                .defineInRange("sourcestonePoints", 1, 1, 1_000_000);
+        MINE_SOURCE_GEM_POINTS = builder
+                .comment("Material points supplied by one item in the arcane_mine_material_source_gem tag.")
+                .defineInRange("sourceGemPoints", 32, 1, 1_000_000);
+        MINE_SOURCE_GEM_BLOCK_POINTS = builder
+                .comment("Material points supplied by one item in the arcane_mine_material_source_gem_block tag.")
+                .defineInRange("sourceGemBlockPoints", 128, 1, 1_000_000);
         MINE_MATERIAL_POINT_CAPACITY = builder
                 .comment("Maximum converted material points buffered inside one core.")
                 .defineInRange("materialPointCapacity", 1_024, 32, 1_000_000);
