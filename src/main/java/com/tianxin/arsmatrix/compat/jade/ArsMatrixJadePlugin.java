@@ -55,7 +55,8 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                         "jade.ars_arcane_matrix.matrix.frames",
                         core.getFrameBlockCount(),
                         core.getMaximumFrameBlocks(),
-                        core.getSourceGenerationPerSecond()
+                        core.getSourceGenerationPerSecond(),
+                        core.getAmplifierCount()
                 ));
             } else if (accessor.getBlockEntity() instanceof ArcaneMineCoreBlockEntity mine) {
                 tooltip.add(Component.translatable(
@@ -73,7 +74,8 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                         "jade.ars_arcane_matrix.mine.operation",
                         mine.getCompletedLayers(),
                         mine.getMaterialPoints(),
-                        mine.getCooldownTicks()
+                        mine.getCooldownTicks(),
+                        mine.getAmplifierCount()
                 ));
                 tooltip.add(Component.translatable(
                         "jade.ars_arcane_matrix.mine.links",

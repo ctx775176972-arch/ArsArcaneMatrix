@@ -47,6 +47,10 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
                 ModBlocks.ARCANE_MINE_CORE.get(),
                 Component.translatable("jei.ars_arcane_matrix.arcane_mine_core.info")
         );
+        registration.addIngredientInfo(
+                ModBlocks.ARCANE_AMPLIFIER.get(),
+                Component.translatable("jei.ars_arcane_matrix.arcane_amplifier.info")
+        );
     }
 
     @Override

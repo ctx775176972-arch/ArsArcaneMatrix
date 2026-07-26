@@ -38,12 +38,14 @@ Default values:
 | Output range | 5 blocks |
 | Base generation | 1,000 Source/second |
 | Generation per additional frame | 250 Source/second |
-| Maximum generation | 10,000 Source/second (configurable) |
+| Maximum generation | 100,000 Source/second (configurable) |
 | Minimum frames | 16 |
 | Maximum frames | 42 |
-| Maximum output | 10,000 Source/second |
+| Maximum output | 100,000 Source/second |
 
 With all 42 frame positions filled, the default production rate is 7,500 Source per second.
+Replacing the six axial vertices with Arcane Amplifiers raises this to 18,750
+Source per second. Each amplifier adds 25% of the unamplified rate.
 
 ### Structure
 
@@ -51,6 +53,8 @@ Place the Arcane Matrix Core at the center of three mutually perpendicular 5×5 
 
 - At least 16 valid frames are required by default.
 - Additional valid frames increase Source generation.
+- Up to six Arcane Amplifiers are recognized at the six axial vertices. They do
+  not require a facing direction and continue to count as valid frames.
 - The structure is checked once per second.
 - A complete structure starts automatically.
 - An incomplete structure neither generates nor exports Source.
@@ -78,7 +82,8 @@ FFFFF                   F   F                   F C F
   F                       F                     FFFFF
 ```
 
-Only Source Gem Blocks placed at these positions count toward the frame total. Blocks outside these positions are ignored.
+Source Gem Blocks and valid vertex Arcane Amplifiers count toward the frame
+total. Blocks outside these positions are ignored.
 
 The block requires a diamond or netherite pickaxe to drop when mined.
 
@@ -113,8 +118,8 @@ automatic fallback rules for unconfigured `c:ores/*` item tags.
 
 Place the Arcane Mine Core at the bottom and build complete square layers above
 it. The default configured sizes are 3×3, 5×5, 7×7, and 9×9. Every layer uses a
-Source Gem Block at its center and four corners; all other positions use
-Sourcestone or Smooth Sourcestone.
+Source Gem Block at its center and four corners; an Arcane Amplifier may replace
+the center block. All other positions use Sourcestone or Smooth Sourcestone.
 
 - Layers must be complete and continuous from the core upward.
 - A complete first layer activates the mine automatically; breaking the
@@ -124,6 +129,11 @@ Sourcestone or Smooth Sourcestone.
   default.
 - The active mine continuously emits particles. Successful production produces
   a pulse at the core and at a loaded bound output container.
+- Each of the four center-column Arcane Amplifiers adds one ordinary ore to a
+  production cycle and raises both Source and material costs by 50%.
+- A full four-layer mine has a configurable 1% chance per successful cycle to
+  produce exactly one Arcane Amplifier as a separate byproduct. This byproduct
+  is never multiplied by installed amplifiers.
 
 ### Materials and automation
 
@@ -201,10 +211,11 @@ sourceCapacity = 10000000
 outputRange = 5
 baseGenerationPerSecond = 1000
 generationPerAdditionalFrame = 250
-maxGenerationPerSecond = 10000
+maxGenerationPerSecond = 100000
 minimumFrameBlocks = 16
 maximumFrameBlocks = 42
-maxOutputPerSecond = 10000
+maxOutputPerSecond = 100000
+amplifierBonusPerBlock = 0.25
 
 [arcane_mine.structure]
 layerSizes = [3, 5, 7, 9]
@@ -213,11 +224,14 @@ structureCheckInterval = 20
 [arcane_mine.operation]
 sourceCapacity = 1000000
 sourceInputRange = 5
-maxSourceInputPerSecond = 10000
+maxSourceInputPerSecond = 100000
+outputBonusPerAmplifier = 1
+costIncreasePerAmplifier = 0.5
+amplifierByproductChance = 0.01
 sourcestonePoints = 1
 sourceGemPoints = 32
 sourceGemBlockPoints = 128
-materialPointCapacity = 1024
+materialPointCapacity = 4096
 maxMaterialContainers = 4
 cooldownTicksByLayer = [400, 300, 200, 100]
 allowCrossDimension = true

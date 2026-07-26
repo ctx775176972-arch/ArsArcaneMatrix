@@ -9,6 +9,7 @@ import com.hollingsworth.arsnouveau.common.capability.SourceStorage;
 import com.tianxin.arsmatrix.ArsArcaneMatrix;
 import com.tianxin.arsmatrix.config.MatrixConfig;
 import com.tianxin.arsmatrix.registry.ModBlockEntities;
+import com.tianxin.arsmatrix.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -43,6 +44,9 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
 
     /** 当前位于潮涌核心式框架有效位置上的魔源宝石块数量。 */
     private int frameBlockCount = 0;
+
+    /** Arcane Amplifiers occupying the six axial vertices. */
+    private int amplifierCount = 0;
 
     /** Ars Nouveau 标准内部 Source 缓存。 */
     private final SourceStorage sourceStorage = createSourceStorage();
@@ -177,7 +181,10 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
                     }
 
                     BlockPos framePos = worldPosition.offset(xOffset, yOffset, zOffset);
-                    if (level.getBlockState(framePos).is(MATRIX_FRAME_BLOCKS)) {
+                    BlockState state = level.getBlockState(framePos);
+                    if (state.is(MATRIX_FRAME_BLOCKS)
+                            || isAmplifierPosition(xOffset, yOffset, zOffset)
+                            && state.is(ModBlocks.ARCANE_AMPLIFIER.get())) {
                         count++;
                     }
                 }
@@ -193,15 +200,44 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
                 || zOffset == 0 && (Math.abs(xOffset) == 2 || Math.abs(yOffset) == 2);
     }
 
+    private static boolean isAmplifierPosition(int xOffset, int yOffset, int zOffset) {
+        return Math.abs(xOffset) == 2 && yOffset == 0 && zOffset == 0
+                || xOffset == 0 && Math.abs(yOffset) == 2 && zOffset == 0
+                || xOffset == 0 && yOffset == 0 && Math.abs(zOffset) == 2;
+    }
+
+    private int countAmplifiers() {
+        if (level == null) {
+            return 0;
+        }
+        int count = 0;
+        int[][] vertices = {
+                {2, 0, 0}, {-2, 0, 0},
+                {0, 2, 0}, {0, -2, 0},
+                {0, 0, 2}, {0, 0, -2}
+        };
+        for (int[] vertex : vertices) {
+            if (level.getBlockState(worldPosition.offset(vertex[0], vertex[1], vertex[2]))
+                    .is(ModBlocks.ARCANE_AMPLIFIER.get())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private void updateStructureState() {
         int newFrameBlockCount = countFrameBlocks();
+        int newAmplifierCount = countAmplifiers();
         boolean structureFormed = newFrameBlockCount >= getMinimumFrameBlocks();
-        if (formed == structureFormed && frameBlockCount == newFrameBlockCount) {
+        if (formed == structureFormed
+                && frameBlockCount == newFrameBlockCount
+                && amplifierCount == newAmplifierCount) {
             return;
         }
 
         boolean wasFormed = formed;
         frameBlockCount = newFrameBlockCount;
+        amplifierCount = newAmplifierCount;
         formed = structureFormed;
 
         setChangedAndSyncClient();
@@ -267,18 +303,15 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
     }
 
     public int getSourceGenerationPerSecond() {
-        int minimumFrames = getMinimumFrameBlocks();
-        if (frameBlockCount < minimumFrames) {
-            return 0;
-        }
-        long generation = MatrixConfig.BASE_GENERATION.get().longValue()
-                + (long) (frameBlockCount - minimumFrames)
-                * MatrixConfig.GENERATION_PER_ADDITIONAL_FRAME.get();
-        return (int) Math.min(generation, MatrixConfig.MAX_GENERATION_PER_SECOND.get());
+        return MatrixConfig.matrixGenerationFor(frameBlockCount, amplifierCount);
     }
 
     public int getFrameBlockCount() {
         return frameBlockCount;
+    }
+
+    public int getAmplifierCount() {
+        return amplifierCount;
     }
 
     public int getSourceTransferPerSecond() {
@@ -379,6 +412,11 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
                 getMaximumFrameBlocks(),
                 getSourceGenerationPerSecond()
         ));
+        tooltip.add(Component.translatable(
+                "tooltip.ars_arcane_matrix.matrix_core.amplifiers",
+                amplifierCount,
+                MatrixConfig.MATRIX_AMPLIFIER_POSITIONS
+        ));
     }
 
     /*========================*/
@@ -426,6 +464,7 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
 
         tag.putBoolean("Formed", formed);
         tag.putInt("FrameBlockCount", frameBlockCount);
+        tag.putInt("AmplifierCount", amplifierCount);
         tag.putLong("StoredSource", getSource());
     }
 
@@ -435,6 +474,10 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
 
         formed = tag.getBoolean("Formed");
         frameBlockCount = Math.max(0, Math.min(tag.getInt("FrameBlockCount"), getMaximumFrameBlocks()));
+        amplifierCount = Math.max(0, Math.min(
+                tag.getInt("AmplifierCount"),
+                MatrixConfig.MATRIX_AMPLIFIER_POSITIONS
+        ));
         refreshSourceStorageLimits();
         sourceStorage.setSource((int) Math.max(0, Math.min(tag.getLong("StoredSource"), getMaxSource())));
     }

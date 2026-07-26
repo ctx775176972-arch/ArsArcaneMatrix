@@ -22,6 +22,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> ARCANE_MINE_CORE =
             ITEMS.registerSimpleBlockItem("arcane_mine_core", ModBlocks.ARCANE_MINE_CORE, new Item.Properties());
 
+    public static final DeferredItem<BlockItem> ARCANE_AMPLIFIER =
+            ITEMS.registerSimpleBlockItem("arcane_amplifier", ModBlocks.ARCANE_AMPLIFIER, new Item.Properties());
+
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
     }

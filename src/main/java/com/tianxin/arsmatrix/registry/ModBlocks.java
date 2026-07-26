@@ -43,6 +43,17 @@ public final class ModBlocks {
                                     .sound(SoundType.AMETHYST)
                     ));
 
+    /** Rare multiblock amplifier produced by a full Arcane Mine. */
+    public static final DeferredBlock<Block> ARCANE_AMPLIFIER =
+            BLOCKS.registerSimpleBlock(
+                    "arcane_amplifier",
+                    BlockBehaviour.Properties.of()
+                            .strength(8.0F, 1200.0F)
+                            .requiresCorrectToolForDrops()
+                            .lightLevel(state -> 10)
+                            .sound(SoundType.AMETHYST)
+            );
+
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
     }
