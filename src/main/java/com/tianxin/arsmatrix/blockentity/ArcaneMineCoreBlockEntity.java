@@ -12,11 +12,14 @@ import com.tianxin.arsmatrix.config.MatrixConfig;
 import com.tianxin.arsmatrix.data.ArcaneMineOreManager;
 import com.tianxin.arsmatrix.data.ArcaneMineOreRule;
 import com.tianxin.arsmatrix.registry.ModBlockEntities;
+import com.tianxin.arsmatrix.registry.ModBlocks;
+import com.tianxin.arsmatrix.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -48,8 +51,11 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import org.joml.Vector3f;
 
 /**
  * Source-powered, data-driven ore producer controlled by an inverted-beacon multiblock.
@@ -59,6 +65,18 @@ import java.util.Optional;
 public class ArcaneMineCoreBlockEntity extends BlockEntity
         implements ISourceTile, ITooltipProvider, IWandable {
 
+    private static final DustParticleOptions WHITELIST_PARTICLE = new DustParticleOptions(
+            new Vector3f(0.65F, 0.9F, 1.0F),
+            0.8F
+    );
+    private static final DustParticleOptions BLACKLIST_PARTICLE = new DustParticleOptions(
+            new Vector3f(0.35F, 0.02F, 0.02F),
+            0.8F
+    );
+    private static final DustParticleOptions REDSTONE_PAUSED_PARTICLE = new DustParticleOptions(
+            new Vector3f(0.45F, 0.03F, 0.05F),
+            0.65F
+    );
     private static final TagKey<Block> FRAME_BLOCKS = BlockTags.create(
             ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_frame_blocks")
     );
@@ -81,9 +99,16 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     private GlobalPos outputContainer;
 
     private boolean active;
+    private boolean redstonePaused;
+    private OperatingState operatingState = OperatingState.UNFORMED;
     private int completedLayers;
+    private int amplifierCount;
+    private int whitelistCount;
+    private int blacklistCount;
     private int materialPoints;
     private int cooldownTicks;
+    private int targetMaterialCost;
+    private int targetSourceCost;
     private int inputRoundRobin;
     private long tickCounter;
 
@@ -91,6 +116,11 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     private ResourceLocation targetRuleId;
     private ItemStack targetOutput = ItemStack.EMPTY;
     private ItemStack pendingOutput = ItemStack.EMPTY;
+    private ItemStack pendingByproduct = ItemStack.EMPTY;
+    private Set<ResourceLocation> whitelistedRules = Set.of();
+    private Set<ResourceLocation> blacklistedRules = Set.of();
+    private List<BlockPos> whitelistTuningPositions = List.of();
+    private List<BlockPos> blacklistTuningPositions = List.of();
 
     private final IItemHandler materialInputHandler = new MaterialInputHandler();
     private final IItemHandler mineralOutputHandler = new MineralOutputHandler();
@@ -110,7 +140,22 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         if (cooldownTicks > 0) {
             cooldownTicks--;
         }
+        boolean powered = level != null && level.hasNeighborSignal(worldPosition);
+        if (redstonePaused != powered) {
+            redstonePaused = powered;
+            setChangedAndSyncClient();
+        }
         if (!active || completedLayers <= 0) {
+            setOperatingState(OperatingState.UNFORMED);
+            return;
+        }
+
+        if (redstonePaused) {
+            setOperatingState(OperatingState.REDSTONE_PAUSED);
+            if (MatrixConfig.MINE_ENABLE_PARTICLES.get()
+                    && tickCounter % MatrixConfig.MINE_PARTICLE_INTERVAL.get() == 0) {
+                playRedstonePausedParticles();
+            }
             return;
         }
 
@@ -125,18 +170,30 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         pullNearbySource();
         flushPendingOutput();
         if (!pendingOutput.isEmpty()) {
+            setOperatingState(OperatingState.OUTPUT_BLOCKED);
             return;
         }
 
         ArcaneMineOreRule target = resolveOrChooseTarget();
         if (target == null) {
+            setOperatingState(OperatingState.NO_TARGET);
             return;
         }
 
-        pullMaterialPoints(target.materialPoints());
-        if (materialPoints < target.materialPoints()
-                || getSource() < target.sourceCost()
-                || cooldownTicks > 0) {
+        int materialCost = MatrixConfig.amplifiedMineCost(target.materialPoints(), amplifierCount);
+        int sourceCost = MatrixConfig.amplifiedMineCost(target.sourceCost(), amplifierCount);
+        setTargetCosts(materialCost, sourceCost);
+        pullMaterialPoints(materialCost);
+        if (materialPoints < materialCost) {
+            setOperatingState(OperatingState.MATERIAL_STARVED);
+            return;
+        }
+        if (getSource() < sourceCost) {
+            setOperatingState(OperatingState.SOURCE_STARVED);
+            return;
+        }
+        if (cooldownTicks > 0) {
+            setOperatingState(OperatingState.COOLDOWN);
             return;
         }
 
@@ -144,16 +201,37 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             IItemHandler output = resolveItemHandler(outputContainer);
             if (output == null
                     || !ItemHandlerHelper.insertItemStacked(output, targetOutput.copy(), true).isEmpty()) {
+                setOperatingState(OperatingState.OUTPUT_BLOCKED);
                 return;
             }
         }
 
-        materialPoints -= target.materialPoints();
-        setSource(getSource() - target.sourceCost());
+        boolean produceAmplifier = completedLayers >= MatrixConfig.mineLayerSizes().size()
+                && level != null
+                && level.random.nextDouble() < MatrixConfig.MINE_AMPLIFIER_DROP_CHANCE.get();
+        if (produceAmplifier && !canBufferAmplifierByproduct()) {
+            setOperatingState(OperatingState.OUTPUT_BLOCKED);
+            return;
+        }
+
+        materialPoints -= materialCost;
+        setSource(getSource() - sourceCost);
         pendingOutput = targetOutput.copy();
-        targetOutput = ItemStack.EMPTY;
-        targetRuleId = null;
-        cooldownTicks = MatrixConfig.mineCooldownForLayer(completedLayers);
+        if (produceAmplifier) {
+            if (pendingByproduct.isEmpty()) {
+                pendingByproduct = new ItemStack(ModItems.ARCANE_AMPLIFIER.get());
+            } else {
+                pendingByproduct.grow(1);
+            }
+        }
+        clearTargetSelection();
+        cooldownTicks = MatrixConfig.mineOperationCooldown(
+                completedLayers,
+                amplifierCount,
+                sourceCost,
+                materialCost
+        );
+        setOperatingState(OperatingState.COOLDOWN);
         setChangedAndSyncClient();
         flushPendingOutput();
         playCompletionEffects();
@@ -214,17 +292,18 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         if (targetRuleId != null) {
             Optional<ArcaneMineOreRule> existing = ArcaneMineOreManager.find(targetRuleId);
             if (existing.isPresent() && existing.get().requiredLayers() <= completedLayers
+                    && isRuleAllowed(existing.get())
                     && !targetOutput.isEmpty()) {
                 return existing.get();
             }
-            targetRuleId = null;
-            targetOutput = ItemStack.EMPTY;
+            clearTargetSelection();
             setChangedAndSyncClient();
         }
 
         Optional<ArcaneMineOreRule> selected = ArcaneMineOreManager.choose(
                 completedLayers,
-                currentLevel.random
+                currentLevel.random,
+                this::isRuleAllowed
         );
         if (selected.isEmpty()) {
             return null;
@@ -233,10 +312,17 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         if (output.isEmpty()) {
             return null;
         }
+        int bonus = amplifierCount * MatrixConfig.MINE_OUTPUT_BONUS_PER_AMPLIFIER.get();
+        output.grow(bonus);
         targetRuleId = selected.get().id();
         targetOutput = output;
         setChangedAndSyncClient();
         return selected.get();
+    }
+
+    private boolean isRuleAllowed(ArcaneMineOreRule rule) {
+        return (whitelistedRules.isEmpty() || whitelistedRules.contains(rule.id()))
+                && !blacklistedRules.contains(rule.id());
     }
 
     private void pullMaterialPoints(int targetPoints) {
@@ -261,31 +347,61 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         for (int slot = 0; slot < handler.getSlots() && materialPoints < targetPoints; slot++) {
             ItemStack available = handler.getStackInSlot(slot);
             int value = materialValue(available);
-            if (value <= 0 || materialPoints + value > MatrixConfig.MINE_MATERIAL_POINT_CAPACITY.get()) {
+            if (value <= 0) {
                 continue;
             }
-            ItemStack simulated = handler.extractItem(slot, 1, true);
+            int capacityItems = (getEffectiveMaterialPointCapacity() - materialPoints) / value;
+            int neededItems = (int) Math.min(
+                    Integer.MAX_VALUE,
+                    Math.max(
+                            1L,
+                            ((long) targetPoints - materialPoints + value - 1L) / value
+                    )
+            );
+            int requestedItems = Math.min(
+                    available.getCount(),
+                    Math.min(capacityItems, neededItems)
+            );
+            if (requestedItems <= 0) {
+                continue;
+            }
+            ItemStack simulated = handler.extractItem(slot, requestedItems, true);
             if (simulated.isEmpty() || materialValue(simulated) != value) {
                 continue;
             }
-            ItemStack extracted = handler.extractItem(slot, 1, false);
+            ItemStack extracted = handler.extractItem(slot, simulated.getCount(), false);
             if (!extracted.isEmpty()) {
-                materialPoints += materialValue(extracted);
+                materialPoints += extracted.getCount() * materialValue(extracted);
                 setChangedAndSyncClient();
             }
         }
     }
 
     private void flushPendingOutput() {
-        if (pendingOutput.isEmpty() || outputContainer == null) {
+        if (outputContainer == null) {
             return;
         }
         IItemHandler output = resolveItemHandler(outputContainer);
         if (output == null) {
             return;
         }
-        pendingOutput = ItemHandlerHelper.insertItemStacked(output, pendingOutput.copy(), false);
+        if (!pendingOutput.isEmpty()) {
+            pendingOutput = ItemHandlerHelper.insertItemStacked(output, pendingOutput.copy(), false);
+        }
+        if (!pendingByproduct.isEmpty()) {
+            pendingByproduct = ItemHandlerHelper.insertItemStacked(
+                    output,
+                    pendingByproduct.copy(),
+                    false
+            );
+        }
         setChangedAndSyncClient();
+    }
+
+    private boolean canBufferAmplifierByproduct() {
+        return pendingByproduct.isEmpty()
+                || pendingByproduct.is(ModItems.ARCANE_AMPLIFIER.get())
+                && pendingByproduct.getCount() < pendingByproduct.getMaxStackSize();
     }
 
     @Nullable
@@ -307,9 +423,23 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
     private void updateStructure() {
         int previous = completedLayers;
+        int previousAmplifiers = amplifierCount;
         completedLayers = countContinuousLayers();
+        amplifierCount = countAmplifiers(completedLayers);
+        TuningScan tuning = scanTuning(completedLayers);
+        boolean tuningChanged = !whitelistedRules.equals(tuning.whitelistedRules())
+                || !blacklistedRules.equals(tuning.blacklistedRules());
+        whitelistedRules = tuning.whitelistedRules();
+        blacklistedRules = tuning.blacklistedRules();
+        whitelistTuningPositions = tuning.whitelistPositions();
+        blacklistTuningPositions = tuning.blacklistPositions();
+        whitelistCount = whitelistedRules.size();
+        blacklistCount = blacklistedRules.size();
         active = completedLayers > 0;
-        if (previous != completedLayers) {
+        if (previous != completedLayers || previousAmplifiers != amplifierCount || tuningChanged) {
+            if (previousAmplifiers != amplifierCount || tuningChanged) {
+                clearTargetSelection();
+            }
             setChangedAndSyncClient();
             if (previous == 0 && completedLayers > 0) {
                 playStructureFormedEffect();
@@ -339,7 +469,9 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                     boolean node = x == 0 && z == 0
                             || Math.abs(x) == radius && Math.abs(z) == radius;
                     BlockState state = level.getBlockState(worldPosition.offset(x, y, z));
-                    if (node ? !state.is(NODE_BLOCKS) : !state.is(FRAME_BLOCKS)) {
+                    boolean validNode = state.is(NODE_BLOCKS)
+                            || x == 0 && z == 0 && state.is(ModBlocks.ARCANE_AMPLIFIER.get());
+                    if (node ? !validNode : !state.is(FRAME_BLOCKS)) {
                         valid = false;
                         break;
                     }
@@ -351,6 +483,98 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             complete++;
         }
         return complete;
+    }
+
+    private int countAmplifiers(int completeLayers) {
+        if (level == null) {
+            return 0;
+        }
+        int count = 0;
+        int checkedLayers = Math.min(completeLayers, MatrixConfig.MINE_AMPLIFIER_POSITIONS);
+        for (int layer = 0; layer < checkedLayers; layer++) {
+            if (level.getBlockState(worldPosition.above(layer + 1))
+                    .is(ModBlocks.ARCANE_AMPLIFIER.get())) {
+                count++;
+            }
+        }
+        return Math.min(count, MatrixConfig.MINE_AMPLIFIER_POSITIONS);
+    }
+
+    private TuningScan scanTuning(int completeLayers) {
+        Level currentLevel = level;
+        if (currentLevel == null || completeLayers <= 0) {
+            return TuningScan.EMPTY;
+        }
+        List<ArcaneMineOreRule> rules = ArcaneMineOreManager.allRules();
+        Set<ResourceLocation> whitelist = new LinkedHashSet<>();
+        Set<ResourceLocation> blacklist = new LinkedHashSet<>();
+        List<BlockPos> whitelistPositions = new ArrayList<>();
+        List<BlockPos> blacklistPositions = new ArrayList<>();
+        List<Integer> layerSizes = MatrixConfig.mineLayerSizes();
+
+        for (int layer = 0; layer < completeLayers; layer++) {
+            int radius = layerSizes.get(layer) / 2;
+            int yOffset = layer;
+            int[][] corners = {
+                    {radius, radius}, {radius, -radius},
+                    {-radius, radius}, {-radius, -radius}
+            };
+            int[][] cardinals = {
+                    {radius, 0}, {-radius, 0},
+                    {0, radius}, {0, -radius}
+            };
+            scanTuningSamples(
+                    currentLevel, corners, yOffset, rules, whitelist, whitelistPositions
+            );
+            scanTuningSamples(
+                    currentLevel, cardinals, yOffset, rules, blacklist, blacklistPositions
+            );
+        }
+
+        return new TuningScan(
+                Set.copyOf(whitelist),
+                Set.copyOf(blacklist),
+                List.copyOf(whitelistPositions),
+                List.copyOf(blacklistPositions)
+        );
+    }
+
+    private void scanTuningSamples(
+            Level currentLevel,
+            int[][] offsets,
+            int yOffset,
+            List<ArcaneMineOreRule> rules,
+            Set<ResourceLocation> matchedRules,
+            List<BlockPos> matchedPositions
+    ) {
+        for (int[] offset : offsets) {
+            BlockPos samplePos = worldPosition.offset(offset[0], yOffset, offset[1]);
+            ItemStack sample = currentLevel.getBlockState(samplePos)
+                    .getBlock()
+                    .asItem()
+                    .getDefaultInstance();
+            boolean matched = false;
+            for (ArcaneMineOreRule rule : rules) {
+                if (rule.matchesTuningSample(sample)) {
+                    matchedRules.add(rule.id());
+                    matched = true;
+                }
+            }
+            if (matched) {
+                matchedPositions.add(samplePos);
+            }
+        }
+    }
+
+    private record TuningScan(
+            Set<ResourceLocation> whitelistedRules,
+            Set<ResourceLocation> blacklistedRules,
+            List<BlockPos> whitelistPositions,
+            List<BlockPos> blacklistPositions
+    ) {
+        private static final TuningScan EMPTY = new TuningScan(
+                Set.of(), Set.of(), List.of(), List.of()
+        );
     }
 
     private void playActiveParticles() {
@@ -374,6 +598,41 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                 nodePos.getX() + 0.5D, nodePos.getY() + 0.7D, nodePos.getZ() + 0.5D,
                 Math.max(1, count / 2), 0.15D, 0.15D, 0.15D, 0.015D
         );
+        playTuningBeam(serverLevel);
+    }
+
+    private void playTuningBeam(ServerLevel serverLevel) {
+        int whitelistSize = whitelistTuningPositions.size();
+        int total = whitelistSize + blacklistTuningPositions.size();
+        if (total == 0) {
+            return;
+        }
+        int interval = MatrixConfig.MINE_PARTICLE_INTERVAL.get();
+        int index = (int) ((tickCounter / interval) % total);
+        boolean whitelist = index < whitelistSize;
+        BlockPos samplePos = whitelist
+                ? whitelistTuningPositions.get(index)
+                : blacklistTuningPositions.get(index - whitelistSize);
+        DustParticleOptions particle = whitelist ? WHITELIST_PARTICLE : BLACKLIST_PARTICLE;
+
+        double startX = samplePos.getX() + 0.5D;
+        double startY = samplePos.getY() + 0.5D;
+        double startZ = samplePos.getZ() + 0.5D;
+        double endX = worldPosition.getX() + 0.5D;
+        double endY = worldPosition.getY() + 0.6D;
+        double endZ = worldPosition.getZ() + 0.5D;
+        for (int step = 0; step <= 6; step++) {
+            double progress = step / 6.0D;
+            serverLevel.sendParticles(
+                    particle,
+                    startX + (endX - startX) * progress,
+                    startY + (endY - startY) * progress,
+                    startZ + (endZ - startZ) * progress,
+                    1,
+                    0.0D, 0.0D, 0.0D,
+                    0.0D
+            );
+        }
     }
 
     private void playStructureFormedEffect() {
@@ -391,6 +650,43 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                     SoundSource.BLOCKS, 1.0F, 0.8F
             );
         }
+    }
+
+    private void playRedstonePausedParticles() {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        serverLevel.sendParticles(
+                REDSTONE_PAUSED_PARTICLE,
+                worldPosition.getX() + 0.5D,
+                worldPosition.getY() + 0.65D,
+                worldPosition.getZ() + 0.5D,
+                1,
+                0.12D, 0.08D, 0.12D,
+                0.0D
+        );
+    }
+
+    private void setOperatingState(OperatingState state) {
+        if (operatingState != state) {
+            operatingState = state;
+            setChangedAndSyncClient();
+        }
+    }
+
+    private void setTargetCosts(int materialCost, int sourceCost) {
+        if (targetMaterialCost != materialCost || targetSourceCost != sourceCost) {
+            targetMaterialCost = materialCost;
+            targetSourceCost = sourceCost;
+            setChangedAndSyncClient();
+        }
+    }
+
+    private void clearTargetSelection() {
+        targetRuleId = null;
+        targetOutput = ItemStack.EMPTY;
+        targetMaterialCost = 0;
+        targetSourceCost = 0;
     }
 
     private void playCompletionEffects() {
@@ -509,6 +805,7 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             return;
         }
         dropStack(pendingOutput);
+        dropStack(pendingByproduct);
         int remaining = materialPoints;
         remaining = dropMaterialUnits(remaining, MatrixConfig.MINE_SOURCE_GEM_BLOCK_POINTS.get(), Items.AIR,
                 ResourceLocation.fromNamespaceAndPath("ars_nouveau", "source_gem_block"));
@@ -517,7 +814,8 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         dropMaterialUnits(remaining, MatrixConfig.MINE_SOURCESTONE_POINTS.get(), Items.AIR,
                 ResourceLocation.fromNamespaceAndPath("ars_nouveau", "sourcestone"));
         pendingOutput = ItemStack.EMPTY;
-        targetOutput = ItemStack.EMPTY;
+        pendingByproduct = ItemStack.EMPTY;
+        clearTargetSelection();
         materialPoints = 0;
     }
 
@@ -563,6 +861,25 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             return MatrixConfig.MINE_SOURCESTONE_POINTS.get();
         }
         return 0;
+    }
+
+    private int getEffectiveMaterialPointCapacity() {
+        int largestMaterialValue = Math.max(
+                MatrixConfig.MINE_SOURCE_GEM_BLOCK_POINTS.get(),
+                Math.max(
+                        MatrixConfig.MINE_SOURCE_GEM_POINTS.get(),
+                        MatrixConfig.MINE_SOURCESTONE_POINTS.get()
+                )
+        );
+        long targetWithRoundingRoom = (long) targetMaterialCost
+                + Math.max(0, largestMaterialValue - 1);
+        return (int) Math.min(
+                Integer.MAX_VALUE,
+                Math.max(
+                        MatrixConfig.MINE_MATERIAL_POINT_CAPACITY.get().longValue(),
+                        targetWithRoundingRoom
+                )
+        );
     }
 
     @Nullable
@@ -618,8 +935,36 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         return active;
     }
 
+    public boolean isRedstonePaused() {
+        return redstonePaused;
+    }
+
+    public OperatingState getOperatingState() {
+        return operatingState;
+    }
+
+    public int getTargetMaterialCost() {
+        return targetMaterialCost;
+    }
+
+    public int getTargetSourceCost() {
+        return targetSourceCost;
+    }
+
     public int getCompletedLayers() {
         return completedLayers;
+    }
+
+    public int getAmplifierCount() {
+        return amplifierCount;
+    }
+
+    public int getWhitelistCount() {
+        return whitelistCount;
+    }
+
+    public int getBlacklistCount() {
+        return blacklistCount;
     }
 
     public int getMaterialPoints() {
@@ -636,6 +981,10 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
     public boolean hasOutputContainer() {
         return outputContainer != null;
+    }
+
+    public int getPendingByproductCount() {
+        return pendingByproduct.getCount();
     }
 
     @Override
@@ -706,6 +1055,16 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                 "tooltip.ars_arcane_matrix.arcane_mine.layers",
                 completedLayers, MatrixConfig.mineLayerSizes().size(), materialPoints
         ));
+        tooltip.add(Component.translatable(
+                "tooltip.ars_arcane_matrix.arcane_mine.amplifiers",
+                amplifierCount,
+                MatrixConfig.MINE_AMPLIFIER_POSITIONS
+        ));
+        tooltip.add(Component.translatable(
+                "tooltip.ars_arcane_matrix.arcane_mine.tuning",
+                whitelistCount,
+                blacklistCount
+        ));
     }
 
     private static CompoundTag saveGlobalPos(GlobalPos pos) {
@@ -729,10 +1088,18 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("CompletedLayers", completedLayers);
+        tag.putInt("AmplifierCount", amplifierCount);
+        tag.putInt("WhitelistCount", whitelistCount);
+        tag.putInt("BlacklistCount", blacklistCount);
         tag.putInt("MaterialPoints", materialPoints);
         tag.putInt("CooldownTicks", cooldownTicks);
         tag.putInt("Source", getSource());
+        tag.putBoolean("RedstonePaused", redstonePaused);
+        tag.putString("OperatingState", operatingState.name());
+        tag.putInt("TargetMaterialCost", targetMaterialCost);
+        tag.putInt("TargetSourceCost", targetSourceCost);
         tag.put("PendingOutput", pendingOutput.saveOptional(registries));
+        tag.put("PendingByproduct", pendingByproduct.saveOptional(registries));
         tag.put("TargetOutput", targetOutput.saveOptional(registries));
         if (targetRuleId != null) {
             tag.putString("TargetRule", targetRuleId.toString());
@@ -749,15 +1116,32 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         completedLayers = Math.max(0, tag.getInt("CompletedLayers"));
+        amplifierCount = Math.max(0, Math.min(
+                tag.getInt("AmplifierCount"),
+                MatrixConfig.MINE_AMPLIFIER_POSITIONS
+        ));
+        whitelistCount = Math.max(0, tag.getInt("WhitelistCount"));
+        blacklistCount = Math.max(0, tag.getInt("BlacklistCount"));
         active = completedLayers > 0;
+        redstonePaused = tag.getBoolean("RedstonePaused");
+        try {
+            operatingState = OperatingState.valueOf(tag.getString("OperatingState"));
+        } catch (IllegalArgumentException ignored) {
+            operatingState = active ? OperatingState.ACTIVE : OperatingState.UNFORMED;
+        }
+        targetMaterialCost = Math.max(0, tag.getInt("TargetMaterialCost"));
+        targetSourceCost = Math.max(0, tag.getInt("TargetSourceCost"));
         materialPoints = Math.max(0, Math.min(
-                tag.getInt("MaterialPoints"), MatrixConfig.MINE_MATERIAL_POINT_CAPACITY.get()
+                tag.getInt("MaterialPoints"), getEffectiveMaterialPointCapacity()
         ));
         cooldownTicks = Math.max(0, tag.getInt("CooldownTicks"));
         refreshSourceLimits();
         sourceStorage.setSource(Math.max(0, Math.min(tag.getInt("Source"), getMaxSource())));
         pendingOutput = tag.contains("PendingOutput", Tag.TAG_COMPOUND)
                 ? ItemStack.parseOptional(registries, tag.getCompound("PendingOutput"))
+                : ItemStack.EMPTY;
+        pendingByproduct = tag.contains("PendingByproduct", Tag.TAG_COMPOUND)
+                ? ItemStack.parseOptional(registries, tag.getCompound("PendingByproduct"))
                 : ItemStack.EMPTY;
         targetOutput = tag.contains("TargetOutput", Tag.TAG_COMPOUND)
                 ? ItemStack.parseOptional(registries, tag.getCompound("TargetOutput"))
@@ -788,6 +1172,17 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
+    public enum OperatingState {
+        UNFORMED,
+        REDSTONE_PAUSED,
+        MATERIAL_STARVED,
+        SOURCE_STARVED,
+        COOLDOWN,
+        OUTPUT_BLOCKED,
+        NO_TARGET,
+        ACTIVE
+    }
+
     private final class MaterialInputHandler implements IItemHandler {
         @Override
         public int getSlots() {
@@ -805,7 +1200,7 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             if (slot != 0 || value <= 0 || stack.isEmpty()) {
                 return stack;
             }
-            int capacity = MatrixConfig.MINE_MATERIAL_POINT_CAPACITY.get() - materialPoints;
+            int capacity = getEffectiveMaterialPointCapacity() - materialPoints;
             int accepted = Math.min(stack.getCount(), capacity / value);
             if (accepted <= 0) {
                 return stack;
@@ -838,12 +1233,16 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     private final class MineralOutputHandler implements IItemHandler {
         @Override
         public int getSlots() {
-            return 1;
+            return 2;
         }
 
         @Override
         public ItemStack getStackInSlot(int slot) {
-            return slot == 0 ? pendingOutput : ItemStack.EMPTY;
+            return switch (slot) {
+                case 0 -> pendingOutput;
+                case 1 -> pendingByproduct;
+                default -> ItemStack.EMPTY;
+            };
         }
 
         @Override
@@ -853,16 +1252,19 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            if (slot != 0 || amount <= 0 || pendingOutput.isEmpty()) {
+            ItemStack stored = getStackInSlot(slot);
+            if (amount <= 0 || stored.isEmpty()) {
                 return ItemStack.EMPTY;
             }
-            int extractedCount = Math.min(amount, pendingOutput.getCount());
-            ItemStack extracted = pendingOutput.copy();
+            int extractedCount = Math.min(amount, stored.getCount());
+            ItemStack extracted = stored.copy();
             extracted.setCount(extractedCount);
             if (!simulate) {
-                pendingOutput.shrink(extractedCount);
-                if (pendingOutput.isEmpty()) {
+                stored.shrink(extractedCount);
+                if (slot == 0 && stored.isEmpty()) {
                     pendingOutput = ItemStack.EMPTY;
+                } else if (slot == 1 && stored.isEmpty()) {
+                    pendingByproduct = ItemStack.EMPTY;
                 }
                 setChangedAndSyncClient();
             }

@@ -24,6 +24,7 @@ public final class ModCreativeTabs {
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.MATRIX_CORE.get());
                         output.accept(ModItems.ARCANE_MINE_CORE.get());
+                        output.accept(ModItems.ARCANE_AMPLIFIER.get());
                     })
                     .build());
 

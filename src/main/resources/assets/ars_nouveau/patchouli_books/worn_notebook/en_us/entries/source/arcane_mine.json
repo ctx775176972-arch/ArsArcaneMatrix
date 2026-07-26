@@ -14,6 +14,16 @@
       "recipe": "ars_arcane_matrix:arcane_mine_core"
     },
     {
+      "type": "patchouli:text",
+      "title": "book.ars_arcane_matrix.arcane_mine.cycle.title",
+      "text": "book.ars_arcane_matrix.arcane_mine.cycle.text"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "book.ars_arcane_matrix.arcane_mine.amplifier.title",
+      "text": "book.ars_arcane_matrix.arcane_mine.amplifier.text"
+    },
+    {
       "type": "patchouli:multiblock",
       "multiblock": {
         "mapping": {

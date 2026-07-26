@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "ars_arcane_matrix:matrix_core",
-    "ars_arcane_matrix:arcane_mine_core"
+    "ars_arcane_matrix:arcane_mine_core",
+    "ars_arcane_matrix:arcane_amplifier"
   ]
 }

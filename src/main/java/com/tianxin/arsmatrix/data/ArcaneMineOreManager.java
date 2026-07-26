@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /** Loads data/<namespace>/arcane_mine/*.json and supplies automatic c:ores/* fallbacks. */
 public final class ArcaneMineOreManager extends SimpleJsonResourceReloadListener {
@@ -159,10 +160,20 @@ public final class ArcaneMineOreManager extends SimpleJsonResourceReloadListener
     }
 
     public static Optional<ArcaneMineOreRule> choose(int completedLayers, net.minecraft.util.RandomSource random) {
+        return choose(completedLayers, random, rule -> true);
+    }
+
+    public static Optional<ArcaneMineOreRule> choose(
+            int completedLayers,
+            net.minecraft.util.RandomSource random,
+            Predicate<ArcaneMineOreRule> filter
+    ) {
         List<ArcaneMineOreRule> eligible = new ArrayList<>();
         int totalWeight = 0;
         for (ArcaneMineOreRule rule : allRules()) {
-            if (rule.requiredLayers() <= completedLayers && !rule.createOutput(random).isEmpty()) {
+            if (rule.requiredLayers() <= completedLayers
+                    && filter.test(rule)
+                    && !rule.createOutput(random).isEmpty()) {
                 eligible.add(rule);
                 totalWeight += rule.weight();
             }

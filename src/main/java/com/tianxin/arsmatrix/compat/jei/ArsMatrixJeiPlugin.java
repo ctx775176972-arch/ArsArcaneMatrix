@@ -41,11 +41,21 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
         );
         registration.addIngredientInfo(
                 ModBlocks.MATRIX_CORE.get(),
-                Component.translatable("jei.ars_arcane_matrix.matrix_core.info")
+                Component.translatable("jei.ars_arcane_matrix.matrix_core.info"),
+                Component.translatable("jei.ars_arcane_matrix.matrix_core.amplifier")
         );
         registration.addIngredientInfo(
                 ModBlocks.ARCANE_MINE_CORE.get(),
-                Component.translatable("jei.ars_arcane_matrix.arcane_mine_core.info")
+                Component.translatable("jei.ars_arcane_matrix.arcane_mine_core.info"),
+                Component.translatable("jei.ars_arcane_matrix.arcane_mine_core.tuning"),
+                Component.translatable("jei.ars_arcane_matrix.arcane_mine_core.amplifier")
+        );
+        registration.addIngredientInfo(
+                ModBlocks.ARCANE_AMPLIFIER.get(),
+                Component.translatable("jei.ars_arcane_matrix.arcane_amplifier.info"),
+                Component.translatable("jei.ars_arcane_matrix.arcane_amplifier.matrix_usage"),
+                Component.translatable("jei.ars_arcane_matrix.arcane_amplifier.mine_usage"),
+                Component.translatable("jei.ars_arcane_matrix.arcane_amplifier.recycling")
         );
     }
 
