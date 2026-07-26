@@ -2,7 +2,10 @@
 
 Ars Arcane Matrix is a NeoForge addon for Ars Nouveau that adds the **Arcane Matrix Core**, a configurable endgame Source generator, and the **Arcane Mine**, a Source-powered, data-driven ore producer.
 
-The mod includes English and Simplified Chinese localization, Ars Nouveau documentation integration, exact Source display support for ArsNumericHUD, and standard Ars Nouveau Source capability output.
+The mod includes English and Simplified Chinese localization, Ars Nouveau
+documentation integration, optional JEI and Jade integration, exact Source
+display support for ArsNumericHUD, and standard Ars Nouveau Source capability
+interoperability.
 
 ## Requirements
 
@@ -14,13 +17,17 @@ The mod includes English and Simplified Chinese localization, Ars Nouveau docume
 Optional:
 
 - ArsNumericHUD 1.0.0 or newer for an exact numeric Source display
+- JEI for Arcane Mining recipes, structure requirements, costs, amplifier use,
+  and the amplifier recycling recipe
+- Jade for live structure, resource, cooldown, tuning, link, byproduct-buffer,
+  and stop-reason information
 
 ## Installation
 
 1. Install Minecraft 1.21.1 with NeoForge 21.1.205 or newer.
 2. Install Ars Nouveau 5.12.1 or newer and all dependencies required by that version.
 3. Place the Ars Arcane Matrix JAR in the instance's `mods` directory.
-4. Optionally install ArsNumericHUD for exact Source values.
+4. Optionally install JEI, Jade, or ArsNumericHUD for their integrations.
 5. For multiplayer, install the same Ars Arcane Matrix version and required dependencies on both the server and every connecting client.
 6. Start the game and enter a world. The server configuration will be created in the world's `serverconfig` directory.
 
@@ -52,6 +59,8 @@ Source per second. Each amplifier adds 25% of the unamplified rate.
 Place the Arcane Matrix Core at the center of three mutually perpendicular 5×5 rings. Source Gem Blocks placed in the 42 valid ring positions count as frames.
 
 - At least 16 valid frames are required by default.
+- At least one of the three 5×5 rings must be complete. Sixteen scattered valid
+  blocks do not form the Matrix.
 - Additional valid frames increase Source generation.
 - Up to six Arcane Amplifiers are recognized at the six axial vertices. They do
   not require a facing direction and continue to count as valid frames.
@@ -124,6 +133,11 @@ the center block. All other positions use Sourcestone or Smooth Sourcestone.
 - Layers must be complete and continuous from the core upward.
 - A complete first layer activates the mine automatically; breaking the
   continuous structure stops it automatically.
+- A redstone signal at the core pauses production. With no signal, a complete
+  mine runs automatically, preserving the behavior of existing installations.
+- While redstone-paused, the mine consumes no Source or materials and does not
+  pull from linked material containers. Its existing cooldown continues to
+  count down, and a faint dark-red particle marks the paused core.
 - One layer unlocks common ores, two layers unlock intermediate ores, and four
   layers unlock the precious pool: diamond, emerald, and Ancient Debris by
   default.
@@ -133,7 +147,11 @@ the center block. All other positions use Sourcestone or Smooth Sourcestone.
   production cycle and raises both Source and material costs by 50%.
 - A full four-layer mine has a configurable 1% chance per successful cycle to
   produce exactly one Arcane Amplifier as a separate byproduct. This byproduct
-  is never multiplied by installed amplifiers.
+  is never multiplied by installed amplifiers. Amplifiers that cannot enter the
+  output container are buffered separately up to one stack and do not block
+  ordinary ore production.
+- A surplus Arcane Amplifier can be recycled in an Imbuement Chamber with 2,000
+  Source to produce four Source Gem Blocks.
 
 ### In-world ore tuning
 
@@ -162,6 +180,29 @@ Default material values:
 | Sourcestone | 1 |
 | Source Gem | 32 |
 | Source Gem Block | 128 |
+
+The configured material buffer is a normal prefill limit. If a selected recipe
+costs more than that limit after amplification, the runtime capacity expands to
+that recipe's cost plus enough room for one material unit, so old configurations
+and mixed material values cannot permanently deadlock the Mine. Linked material
+containers are drained in batches up to the current cycle's missing points.
+
+#### Recommended Lapis cycle
+
+The intended mid-to-late-game material loop is:
+
+```text
+Matrix Source
+  -> Arcane Mine produces Lapis Ore
+  -> break the ore with Fortune
+  -> imbue each Lapis for 500 Source into a Source Gem
+  -> return enough Source Gems to replenish the Mine
+```
+
+Only the portion needed to replace spent material points has to be imbued; the
+remaining Lapis can be stored or used elsewhere. This loop is material-positive
+even before Fortune, but it is not free: the Matrix must continuously supply
+Source for both ore production and imbuement.
 
 Horizontal item capability faces accept materials. The bottom item capability
 face exposes completed ore. The core accepts standard Ars Nouveau Source
@@ -249,6 +290,7 @@ amplifierByproductChance = 0.01
 sourcestonePoints = 1
 sourceGemPoints = 32
 sourceGemBlockPoints = 128
+materialPointSourceEquivalent = 15.625
 materialPointCapacity = 4096
 maxMaterialContainers = 4
 cooldownTicksByLayer = [400, 300, 200, 100]
@@ -262,7 +304,11 @@ particleDensity = 1.0
 enableSounds = true
 ```
 
-The physical structure contains at most 42 valid frame positions. If the configured minimum exceeds the configured maximum, the effective minimum is capped to the maximum.
+The physical structure contains at most 42 valid frame positions. At least one
+complete 5×5 ring is always required before the Matrix can form; after that,
+valid blocks in the other two rings increase generation individually. If the
+configured minimum exceeds the configured maximum, the effective minimum is
+capped to the maximum.
 
 ## Compatibility
 
@@ -274,69 +320,55 @@ The physical structure contains at most 42 valid frame positions. If the configu
 ### Optional
 
 - **ArsNumericHUD:** displays the Matrix Core's exact stored Source, frame count, and current generation rate.
+- **JEI:** displays Arcane Mining rules, base costs, structure requirements,
+  amplifier behavior, and the amplifier recycling recipe.
+- **Jade:** displays live Matrix and Mine state, current requirements, stop
+  reasons, links, tuning counts, and buffered amplifier byproducts.
 
 ### Built-in interoperability
 
 - Outputs through the standard Ars Nouveau Source capability.
 - Supports Source Jars and other targets accepted by Ars Nouveau's Source network utilities.
+- Pulls through Ars Nouveau special Source providers, including loaded Beyond
+  Dimensions Source Pathways.
 - Provides Ars Nouveau tooltip information.
 - Adds an entry and multiblock preview to the Worn Notebook.
 - Adds an entry, recipe, structure page, search result, and Ctrl item-page link to the current spell-book documentation system.
 
 No mixins are used. Mods that interact through the standard Ars Nouveau Source interfaces should remain compatible.
 
-## Roadmap
+## Current 0.2.0 status
 
-Development is planned in the following order. Integrations remain optional
-dependencies and must not prevent the mod from loading when they are absent.
+The planned 0.2.0 gameplay set is complete:
 
-### Phase 1: Ore tuning and JEI
+- Conduit-like scalable Arcane Matrix formation, generation, Source output, and
+  six visible amplifier positions
+- Inverted-beacon Arcane Mine progression with data-driven and automatically
+  discovered tagged ores
+- GUI-free whitelist and blacklist tuning through placed ore samples
+- Mine-only redstone pause control; the Matrix remains automatic
+- Four visible Mine amplifier positions, dynamic full-amplifier pacing, and
+  high-cost material-buffer protection
+- Rare amplifier byproducts, a separate non-blocking output buffer, and
+  Imbuement Chamber recycling
+- Loaded cross-dimensional material and output links using Dominion Wand
+  Starbuncle-style connection order
+- Optional JEI and Jade integration with no hard dependency
 
-- Add ore samples or lenses that focus the Arcane Mine on a selected ore rule.
-- Keep structure-layer requirements and apply configurable focused-production
-  Source and material multipliers.
-- Extend ore-rule JSON with tuning controls.
-- Add a JEI Arcane Mine category generated from the active JSON and tag rules,
-  showing output, layer requirement, material points, Source cost, count range,
-  weight, and whether the rule was automatically discovered.
+The next release work is stabilization rather than additional machine blocks:
 
-### Phase 2: Redstone control and Jade
+- Complete fresh-world, dedicated-server, chunk-reload, and long-duration tests
+- Verify optional-mod combinations: JEI only, Jade only, both, and neither
+- Keep English and Simplified Chinese keys synchronized and accept reliable
+  community translations
+- Consider EMI support after the JEI presentation model is stable
+- Consider structure specialization only if in-world ore tuning proves
+  insufficient in real modpacks
 
-- Add configurable redstone modes for the Matrix Core and Arcane Mine.
-- Add comparator output for Source storage, material points, cooldown, or output
-  blockage.
-- Stop safely when the output is blocked instead of consuming resources.
-- Add optional Jade providers for structure state, Source, material points,
-  target ore, cooldown, connection counts, and the current reason production is
-  stopped. Detailed information will be shown while holding Shift.
-- Do not expose exact cross-dimensional container coordinates through Jade.
-
-### Phase 3: Upgrade components
-
-- Add limited upgrade slots for capacity, transfer speed, efficiency, cooldown,
-  and ore weighting.
-- Keep upgrades mutually competitive so a single machine cannot maximize every
-  statistic at once.
-- Make upgrade limits and effects configurable.
-
-### Phase 4: Byproducts
-
-- Add an Arcane Slag or dissipated-crystal byproduct.
-- Reuse byproducts for tuning lenses, upgrade components, structure materials,
-  or limited Sourcestone recovery.
-- Avoid a lossless loop that creates unlimited Source or materials.
-
-### Phase 5: Structure specialization
-
-- Add replaceable structure nodes that specialize the mine toward Overworld,
-  Nether, End, deep-level, or modded ores.
-- Define node effects and compatible ore groups through tags and data-pack JSON.
-- Preserve the existing layer progression while allowing structures to develop
-  distinct roles.
-
-EMI support is a follow-up compatibility target. JEI and EMI displays should
-share one internal presentation model so data-pack rules remain consistent
-across both viewers.
+Matrix redstone control, comparator output, GUI upgrade slots, and additional
+input/output controller blocks are not currently planned. Existing vanilla
+redstone, containers, Dominion Wand links, placed tuning samples, and visible
+Arcane Amplifiers cover those roles without adding GUIs.
 
 ## Building from Source
 

@@ -33,6 +33,7 @@ public final class MatrixConfig {
     public static final ModConfigSpec.IntValue MINE_SOURCESTONE_POINTS;
     public static final ModConfigSpec.IntValue MINE_SOURCE_GEM_POINTS;
     public static final ModConfigSpec.IntValue MINE_SOURCE_GEM_BLOCK_POINTS;
+    public static final ModConfigSpec.DoubleValue MINE_MATERIAL_POINT_SOURCE_EQUIVALENT;
     public static final ModConfigSpec.IntValue MINE_MATERIAL_POINT_CAPACITY;
     public static final ModConfigSpec.IntValue MINE_MAX_MATERIAL_CONTAINERS;
     public static final ModConfigSpec.BooleanValue MINE_ALLOW_CROSS_DIMENSION;
@@ -62,7 +63,10 @@ public final class MatrixConfig {
                 .comment("Configurable Source generation cap per Matrix Core.")
                 .defineInRange("maxGenerationPerSecond", 100_000, 0, Integer.MAX_VALUE);
         MINIMUM_FRAME_BLOCKS = builder
-                .comment("Frames required to form the structure. Runtime value is capped by maximumFrameBlocks.")
+                .comment(
+                        "Frames required to form the structure. At least one complete 5x5 ring is always required.",
+                        "Runtime value is capped by maximumFrameBlocks."
+                )
                 .defineInRange("minimumFrameBlocks", 16, 1, PHYSICAL_FRAME_POSITIONS);
         MAXIMUM_FRAME_BLOCKS = builder
                 .comment("Maximum frames counted for generation. The physical structure has 42 valid positions.")
@@ -115,8 +119,17 @@ public final class MatrixConfig {
         MINE_SOURCE_GEM_BLOCK_POINTS = builder
                 .comment("Material points supplied by one item in the arcane_mine_material_source_gem_block tag.")
                 .defineInRange("sourceGemBlockPoints", 128, 1, 1_000_000);
+        MINE_MATERIAL_POINT_SOURCE_EQUIVALENT = builder
+                .comment(
+                        "Source-equivalent cost per material point used only for full-amplifier pacing.",
+                        "The default is based on 500 Source per Source Gem and 32 points per gem."
+                )
+                .defineInRange("materialPointSourceEquivalent", 15.625D, 0.0D, 1_000_000.0D);
         MINE_MATERIAL_POINT_CAPACITY = builder
-                .comment("Maximum converted material points buffered inside one core.")
+                .comment(
+                        "Normal converted-material buffer capacity.",
+                        "Runtime capacity expands to the selected recipe cost to prevent impossible production."
+                )
                 .defineInRange("materialPointCapacity", 4_096, 32, 1_000_000);
         MINE_MAX_MATERIAL_CONTAINERS = builder
                 .comment("Maximum Dominion Wand material-container links.")
@@ -176,7 +189,12 @@ public final class MatrixConfig {
         return (int) Math.min(Integer.MAX_VALUE, Math.ceil(Math.max(0, baseCost) * multiplier));
     }
 
-    public static int mineOperationCooldown(int completedLayers, int amplifiers, int amplifiedSourceCost) {
+    public static int mineOperationCooldown(
+            int completedLayers,
+            int amplifiers,
+            int amplifiedSourceCost,
+            int amplifiedMaterialCost
+    ) {
         if (amplifiers < MINE_AMPLIFIER_POSITIONS) {
             return mineCooldownForLayer(completedLayers);
         }
@@ -187,9 +205,11 @@ public final class MatrixConfig {
         if (referenceGeneration <= 0) {
             return mineCooldownForLayer(completedLayers);
         }
+        double pacingCost = amplifiedSourceCost
+                + Math.max(0, amplifiedMaterialCost) * MINE_MATERIAL_POINT_SOURCE_EQUIVALENT.get();
         long requiredTicks = Math.max(
                 20L,
-                (long) Math.ceil(amplifiedSourceCost * 20.0D / referenceGeneration)
+                (long) Math.ceil(pacingCost * 20.0D / referenceGeneration)
         );
         long roundedToSecond = ((requiredTicks + 19L) / 20L) * 20L;
         return (int) Math.min(72_000L, roundedToSecond);

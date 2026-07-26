@@ -180,11 +180,7 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
                         continue;
                     }
 
-                    BlockPos framePos = worldPosition.offset(xOffset, yOffset, zOffset);
-                    BlockState state = level.getBlockState(framePos);
-                    if (state.is(MATRIX_FRAME_BLOCKS)
-                            || isAmplifierPosition(xOffset, yOffset, zOffset)
-                            && state.is(ModBlocks.ARCANE_AMPLIFIER.get())) {
+                    if (isValidFrameBlock(xOffset, yOffset, zOffset)) {
                         count++;
                     }
                 }
@@ -192,6 +188,40 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         }
 
         return Math.min(count, getMaximumFrameBlocks());
+    }
+
+    private boolean hasCompleteRing() {
+        return isCompleteRing(0) || isCompleteRing(1) || isCompleteRing(2);
+    }
+
+    /**
+     * Checks one 5x5 perimeter ring: XY (fixed Z), XZ (fixed Y), or YZ (fixed X).
+     */
+    private boolean isCompleteRing(int fixedAxis) {
+        for (int first = -2; first <= 2; first++) {
+            for (int second = -2; second <= 2; second++) {
+                if (Math.abs(first) != 2 && Math.abs(second) != 2) {
+                    continue;
+                }
+                int xOffset = fixedAxis == 2 ? first : fixedAxis == 1 ? first : 0;
+                int yOffset = fixedAxis == 2 ? second : fixedAxis == 0 ? first : 0;
+                int zOffset = fixedAxis == 1 ? second : fixedAxis == 0 ? second : 0;
+                if (!isValidFrameBlock(xOffset, yOffset, zOffset)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean isValidFrameBlock(int xOffset, int yOffset, int zOffset) {
+        if (level == null) {
+            return false;
+        }
+        BlockState state = level.getBlockState(worldPosition.offset(xOffset, yOffset, zOffset));
+        return state.is(MATRIX_FRAME_BLOCKS)
+                || isAmplifierPosition(xOffset, yOffset, zOffset)
+                && state.is(ModBlocks.ARCANE_AMPLIFIER.get());
     }
 
     private static boolean isFramePosition(int xOffset, int yOffset, int zOffset) {
@@ -228,7 +258,8 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
     private void updateStructureState() {
         int newFrameBlockCount = countFrameBlocks();
         int newAmplifierCount = countAmplifiers();
-        boolean structureFormed = newFrameBlockCount >= getMinimumFrameBlocks();
+        boolean structureFormed = newFrameBlockCount >= getMinimumFrameBlocks()
+                && hasCompleteRing();
         if (formed == structureFormed
                 && frameBlockCount == newFrameBlockCount
                 && amplifierCount == newAmplifierCount) {

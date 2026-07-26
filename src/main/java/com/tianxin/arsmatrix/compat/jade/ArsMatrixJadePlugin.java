@@ -59,11 +59,19 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                         core.getAmplifierCount()
                 ));
             } else if (accessor.getBlockEntity() instanceof ArcaneMineCoreBlockEntity mine) {
+                String statusKey = switch (mine.getOperatingState()) {
+                    case UNFORMED -> "message.ars_arcane_matrix.state.unformed";
+                    case REDSTONE_PAUSED -> "message.ars_arcane_matrix.state.redstone_paused";
+                    case MATERIAL_STARVED -> "message.ars_arcane_matrix.state.material_starved";
+                    case SOURCE_STARVED -> "message.ars_arcane_matrix.state.source_starved";
+                    case COOLDOWN -> "message.ars_arcane_matrix.state.cooldown";
+                    case OUTPUT_BLOCKED -> "message.ars_arcane_matrix.state.output_blocked";
+                    case NO_TARGET -> "message.ars_arcane_matrix.state.no_target";
+                    case ACTIVE -> "message.ars_arcane_matrix.state.active";
+                };
                 tooltip.add(Component.translatable(
                         "jade.ars_arcane_matrix.mine.status",
-                        Component.translatable(mine.isActive()
-                                ? "message.ars_arcane_matrix.state.active"
-                                : "message.ars_arcane_matrix.state.inactive")
+                        Component.translatable(statusKey)
                 ));
                 tooltip.add(Component.translatable(
                         "jade.ars_arcane_matrix.mine.source",
@@ -77,6 +85,19 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                         mine.getCooldownTicks(),
                         mine.getAmplifierCount()
                 ));
+                if (mine.getTargetMaterialCost() > 0 || mine.getTargetSourceCost() > 0) {
+                    tooltip.add(Component.translatable(
+                            "jade.ars_arcane_matrix.mine.requirement",
+                            mine.getTargetMaterialCost(),
+                            mine.getTargetSourceCost()
+                    ));
+                }
+                if (mine.getPendingByproductCount() > 0) {
+                    tooltip.add(Component.translatable(
+                            "jade.ars_arcane_matrix.mine.byproduct_buffer",
+                            mine.getPendingByproductCount()
+                    ));
+                }
                 tooltip.add(Component.translatable(
                         "jade.ars_arcane_matrix.mine.links",
                         mine.getMaterialContainerCount(),
