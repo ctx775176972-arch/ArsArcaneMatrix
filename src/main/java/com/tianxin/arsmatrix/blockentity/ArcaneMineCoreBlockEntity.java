@@ -19,6 +19,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -50,8 +51,11 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import org.joml.Vector3f;
 
 /**
  * Source-powered, data-driven ore producer controlled by an inverted-beacon multiblock.
@@ -61,6 +65,14 @@ import java.util.Optional;
 public class ArcaneMineCoreBlockEntity extends BlockEntity
         implements ISourceTile, ITooltipProvider, IWandable {
 
+    private static final DustParticleOptions WHITELIST_PARTICLE = new DustParticleOptions(
+            new Vector3f(0.65F, 0.9F, 1.0F),
+            0.8F
+    );
+    private static final DustParticleOptions BLACKLIST_PARTICLE = new DustParticleOptions(
+            new Vector3f(0.35F, 0.02F, 0.02F),
+            0.8F
+    );
     private static final TagKey<Block> FRAME_BLOCKS = BlockTags.create(
             ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_frame_blocks")
     );
@@ -85,6 +97,8 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     private boolean active;
     private int completedLayers;
     private int amplifierCount;
+    private int whitelistCount;
+    private int blacklistCount;
     private int materialPoints;
     private int cooldownTicks;
     private int inputRoundRobin;
@@ -95,6 +109,10 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     private ItemStack targetOutput = ItemStack.EMPTY;
     private ItemStack pendingOutput = ItemStack.EMPTY;
     private ItemStack pendingByproduct = ItemStack.EMPTY;
+    private Set<ResourceLocation> whitelistedRules = Set.of();
+    private Set<ResourceLocation> blacklistedRules = Set.of();
+    private List<BlockPos> whitelistTuningPositions = List.of();
+    private List<BlockPos> blacklistTuningPositions = List.of();
 
     private final IItemHandler materialInputHandler = new MaterialInputHandler();
     private final IItemHandler mineralOutputHandler = new MineralOutputHandler();
@@ -229,6 +247,7 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         if (targetRuleId != null) {
             Optional<ArcaneMineOreRule> existing = ArcaneMineOreManager.find(targetRuleId);
             if (existing.isPresent() && existing.get().requiredLayers() <= completedLayers
+                    && isRuleAllowed(existing.get())
                     && !targetOutput.isEmpty()) {
                 return existing.get();
             }
@@ -239,7 +258,8 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
         Optional<ArcaneMineOreRule> selected = ArcaneMineOreManager.choose(
                 completedLayers,
-                currentLevel.random
+                currentLevel.random,
+                this::isRuleAllowed
         );
         if (selected.isEmpty()) {
             return null;
@@ -254,6 +274,11 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         targetOutput = output;
         setChangedAndSyncClient();
         return selected.get();
+    }
+
+    private boolean isRuleAllowed(ArcaneMineOreRule rule) {
+        return (whitelistedRules.isEmpty() || whitelistedRules.contains(rule.id()))
+                && !blacklistedRules.contains(rule.id());
     }
 
     private void pullMaterialPoints(int targetPoints) {
@@ -336,9 +361,18 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         int previousAmplifiers = amplifierCount;
         completedLayers = countContinuousLayers();
         amplifierCount = countAmplifiers(completedLayers);
+        TuningScan tuning = scanTuning(completedLayers);
+        boolean tuningChanged = !whitelistedRules.equals(tuning.whitelistedRules())
+                || !blacklistedRules.equals(tuning.blacklistedRules());
+        whitelistedRules = tuning.whitelistedRules();
+        blacklistedRules = tuning.blacklistedRules();
+        whitelistTuningPositions = tuning.whitelistPositions();
+        blacklistTuningPositions = tuning.blacklistPositions();
+        whitelistCount = whitelistedRules.size();
+        blacklistCount = blacklistedRules.size();
         active = completedLayers > 0;
-        if (previous != completedLayers || previousAmplifiers != amplifierCount) {
-            if (previousAmplifiers != amplifierCount) {
+        if (previous != completedLayers || previousAmplifiers != amplifierCount || tuningChanged) {
+            if (previousAmplifiers != amplifierCount || tuningChanged) {
                 targetRuleId = null;
                 targetOutput = ItemStack.EMPTY;
             }
@@ -402,6 +436,83 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         return Math.min(count, MatrixConfig.MINE_AMPLIFIER_POSITIONS);
     }
 
+    private TuningScan scanTuning(int completeLayers) {
+        Level currentLevel = level;
+        if (currentLevel == null || completeLayers <= 0) {
+            return TuningScan.EMPTY;
+        }
+        List<ArcaneMineOreRule> rules = ArcaneMineOreManager.allRules();
+        Set<ResourceLocation> whitelist = new LinkedHashSet<>();
+        Set<ResourceLocation> blacklist = new LinkedHashSet<>();
+        List<BlockPos> whitelistPositions = new ArrayList<>();
+        List<BlockPos> blacklistPositions = new ArrayList<>();
+        List<Integer> layerSizes = MatrixConfig.mineLayerSizes();
+
+        for (int layer = 0; layer < completeLayers; layer++) {
+            int radius = layerSizes.get(layer) / 2;
+            int yOffset = layer;
+            int[][] corners = {
+                    {radius, radius}, {radius, -radius},
+                    {-radius, radius}, {-radius, -radius}
+            };
+            int[][] cardinals = {
+                    {radius, 0}, {-radius, 0},
+                    {0, radius}, {0, -radius}
+            };
+            scanTuningSamples(
+                    currentLevel, corners, yOffset, rules, whitelist, whitelistPositions
+            );
+            scanTuningSamples(
+                    currentLevel, cardinals, yOffset, rules, blacklist, blacklistPositions
+            );
+        }
+
+        return new TuningScan(
+                Set.copyOf(whitelist),
+                Set.copyOf(blacklist),
+                List.copyOf(whitelistPositions),
+                List.copyOf(blacklistPositions)
+        );
+    }
+
+    private void scanTuningSamples(
+            Level currentLevel,
+            int[][] offsets,
+            int yOffset,
+            List<ArcaneMineOreRule> rules,
+            Set<ResourceLocation> matchedRules,
+            List<BlockPos> matchedPositions
+    ) {
+        for (int[] offset : offsets) {
+            BlockPos samplePos = worldPosition.offset(offset[0], yOffset, offset[1]);
+            ItemStack sample = currentLevel.getBlockState(samplePos)
+                    .getBlock()
+                    .asItem()
+                    .getDefaultInstance();
+            boolean matched = false;
+            for (ArcaneMineOreRule rule : rules) {
+                if (rule.matchesTuningSample(sample)) {
+                    matchedRules.add(rule.id());
+                    matched = true;
+                }
+            }
+            if (matched) {
+                matchedPositions.add(samplePos);
+            }
+        }
+    }
+
+    private record TuningScan(
+            Set<ResourceLocation> whitelistedRules,
+            Set<ResourceLocation> blacklistedRules,
+            List<BlockPos> whitelistPositions,
+            List<BlockPos> blacklistPositions
+    ) {
+        private static final TuningScan EMPTY = new TuningScan(
+                Set.of(), Set.of(), List.of(), List.of()
+        );
+    }
+
     private void playActiveParticles() {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
@@ -423,6 +534,41 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                 nodePos.getX() + 0.5D, nodePos.getY() + 0.7D, nodePos.getZ() + 0.5D,
                 Math.max(1, count / 2), 0.15D, 0.15D, 0.15D, 0.015D
         );
+        playTuningBeam(serverLevel);
+    }
+
+    private void playTuningBeam(ServerLevel serverLevel) {
+        int whitelistSize = whitelistTuningPositions.size();
+        int total = whitelistSize + blacklistTuningPositions.size();
+        if (total == 0) {
+            return;
+        }
+        int interval = MatrixConfig.MINE_PARTICLE_INTERVAL.get();
+        int index = (int) ((tickCounter / interval) % total);
+        boolean whitelist = index < whitelistSize;
+        BlockPos samplePos = whitelist
+                ? whitelistTuningPositions.get(index)
+                : blacklistTuningPositions.get(index - whitelistSize);
+        DustParticleOptions particle = whitelist ? WHITELIST_PARTICLE : BLACKLIST_PARTICLE;
+
+        double startX = samplePos.getX() + 0.5D;
+        double startY = samplePos.getY() + 0.5D;
+        double startZ = samplePos.getZ() + 0.5D;
+        double endX = worldPosition.getX() + 0.5D;
+        double endY = worldPosition.getY() + 0.6D;
+        double endZ = worldPosition.getZ() + 0.5D;
+        for (int step = 0; step <= 6; step++) {
+            double progress = step / 6.0D;
+            serverLevel.sendParticles(
+                    particle,
+                    startX + (endX - startX) * progress,
+                    startY + (endY - startY) * progress,
+                    startZ + (endZ - startZ) * progress,
+                    1,
+                    0.0D, 0.0D, 0.0D,
+                    0.0D
+            );
+        }
     }
 
     private void playStructureFormedEffect() {
@@ -677,6 +823,14 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         return amplifierCount;
     }
 
+    public int getWhitelistCount() {
+        return whitelistCount;
+    }
+
+    public int getBlacklistCount() {
+        return blacklistCount;
+    }
+
     public int getMaterialPoints() {
         return materialPoints;
     }
@@ -766,6 +920,11 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                 amplifierCount,
                 MatrixConfig.MINE_AMPLIFIER_POSITIONS
         ));
+        tooltip.add(Component.translatable(
+                "tooltip.ars_arcane_matrix.arcane_mine.tuning",
+                whitelistCount,
+                blacklistCount
+        ));
     }
 
     private static CompoundTag saveGlobalPos(GlobalPos pos) {
@@ -790,6 +949,8 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         super.saveAdditional(tag, registries);
         tag.putInt("CompletedLayers", completedLayers);
         tag.putInt("AmplifierCount", amplifierCount);
+        tag.putInt("WhitelistCount", whitelistCount);
+        tag.putInt("BlacklistCount", blacklistCount);
         tag.putInt("MaterialPoints", materialPoints);
         tag.putInt("CooldownTicks", cooldownTicks);
         tag.putInt("Source", getSource());
@@ -815,6 +976,8 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                 tag.getInt("AmplifierCount"),
                 MatrixConfig.MINE_AMPLIFIER_POSITIONS
         ));
+        whitelistCount = Math.max(0, tag.getInt("WhitelistCount"));
+        blacklistCount = Math.max(0, tag.getInt("BlacklistCount"));
         active = completedLayers > 0;
         materialPoints = Math.max(0, Math.min(
                 tag.getInt("MaterialPoints"), MatrixConfig.MINE_MATERIAL_POINT_CAPACITY.get()

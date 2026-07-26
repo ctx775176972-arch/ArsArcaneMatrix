@@ -3,9 +3,9 @@
   "block.ars_arcane_matrix.arcane_mine_core": "Arcane Mine Core",
   "block.ars_arcane_matrix.arcane_amplifier": "Arcane Amplifier",
   "book.ars_arcane_matrix.matrix_core.overview": "The $(item)Arcane Matrix Core$() is an endgame Source generator crafted with an Enchanting Apparatus. Place it at the center of three mutually perpendicular 5 by 5 rings made from Source Gem Blocks.$(br2)It starts automatically while complete. Up to six Arcane Amplifiers can replace the axial vertices, adding 25% generation each.",
-  "book.ars_arcane_matrix.arcane_mine.overview": "The $(item)Arcane Mine$() converts Sourcestone and Source Gems into tagged ore blocks. Build complete 3, 5, 7, and 9-wide inverted-beacon layers above the core. An Arcane Amplifier may replace the center Source Gem Block of each layer.$(br2)Each amplifier adds one ordinary ore output and raises Source and material costs by 50%. A full four-layer mine has a small chance to produce one amplifier as a separate byproduct.",
+  "book.ars_arcane_matrix.arcane_mine.overview": "The $(item)Arcane Mine$() converts Sourcestone and Source Gems into tagged ore blocks. Build complete 3, 5, 7, and 9-wide inverted-beacon layers above the core. An Arcane Amplifier may replace each layer center.$(br2)Hang ore blocks below completed layer corners for a whitelist, or below cardinal edge centers for a blacklist. Pale and dark-red beams show the active tuning.",
   "documentation.ars_arcane_matrix.matrix_core.overview": "The Arcane Matrix Core is a Conduit-like Source generator. Six Arcane Amplifiers may occupy its axial vertices, adding 25% generation each.",
-  "documentation.ars_arcane_matrix.arcane_mine.overview": "The Arcane Mine is a Source-powered inverted-beacon multiblock. Up to four center-column Arcane Amplifiers increase ordinary ore output while raising Source and material costs.",
+  "documentation.ars_arcane_matrix.arcane_mine.overview": "The Arcane Mine is a Source-powered inverted-beacon multiblock. Center-column amplifiers increase output; ore samples hung below completed layers provide GUI-free whitelist and blacklist tuning.",
   "itemGroup.ars_arcane_matrix": "Ars Arcane Matrix",
   "message.ars_arcane_matrix.arcane_mine.started": "Arcane Mine activated.",
   "message.ars_arcane_matrix.arcane_mine.stopped": "Arcane Mine stopped.",
@@ -29,11 +29,12 @@
   "tooltip.ars_arcane_matrix.arcane_mine.source_percent": "Source: %s%%",
   "tooltip.ars_arcane_matrix.arcane_mine.layers": "Layers: %s / %s | Material: %s points",
   "tooltip.ars_arcane_matrix.arcane_mine.amplifiers": "Amplifiers: %s / %s",
+  "tooltip.ars_arcane_matrix.arcane_mine.tuning": "Tuning whitelist: %s | Blacklist: %s",
   "jei.ars_arcane_matrix.arcane_mining": "Arcane Mining",
   "jei.ars_arcane_matrix.arcane_mining.requirements": "%s layer(s) · %s material points",
   "jei.ars_arcane_matrix.arcane_mining.source": "%s Source",
   "jei.ars_arcane_matrix.matrix_core.info": "Automatically generates Source while its three-ring multiblock structure is complete.",
-  "jei.ars_arcane_matrix.arcane_mine_core.info": "Consumes material points and Source to produce data-driven ore outputs. Larger structures unlock more valuable ores.",
+  "jei.ars_arcane_matrix.arcane_mine_core.info": "Consumes material points and Source to produce data-driven ores. Ore blocks hung below layer corners form a whitelist; ore blocks below the four cardinal edges form a blacklist.",
   "jei.ars_arcane_matrix.arcane_amplifier.info": "A rare byproduct of a full four-layer Arcane Mine. Matrix vertices gain 25% generation each; Mine layer centers add one ordinary ore and increase Source and material costs by 50%. Amplifiers never multiply their own byproduct.",
   "jade.ars_arcane_matrix.matrix.status": "Matrix: %s",
   "jade.ars_arcane_matrix.matrix.source": "Source: %s / %s",
@@ -41,5 +42,6 @@
   "jade.ars_arcane_matrix.mine.status": "Mine: %s",
   "jade.ars_arcane_matrix.mine.source": "Source: %s / %s",
   "jade.ars_arcane_matrix.mine.operation": "Layers: %s · Material: %s · Cooldown: %s ticks · Amplifiers: %s / 4",
-  "jade.ars_arcane_matrix.mine.links": "Material links: %s · Output: %s"
+  "jade.ars_arcane_matrix.mine.links": "Material links: %s · Output: %s",
+  "jade.ars_arcane_matrix.mine.tuning": "Tuning: whitelist %s · blacklist %s"
 }

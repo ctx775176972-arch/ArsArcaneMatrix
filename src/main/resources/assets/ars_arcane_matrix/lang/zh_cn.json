@@ -3,9 +3,9 @@
   "block.ars_arcane_matrix.arcane_mine_core": "奥术矿井核心",
   "block.ars_arcane_matrix.arcane_amplifier": "奥术增幅器",
   "book.ars_arcane_matrix.matrix_core.overview": "$(item)奥术矩阵核心$()是一台使用附魔装置合成的终局魔源发生器。将核心放在三个彼此垂直的 5×5 魔源宝石块环的中心。$(br2)结构完整时自动启动。六个轴向顶点均可用奥术增幅器替换，每个使产量提高 25%。",
-  "book.ars_arcane_matrix.arcane_mine.overview": "$(item)奥术矿井$()消耗魔源石、魔源宝石与魔源生成矿石。在核心上方连续建造 3×3、5×5、7×7 和 9×9 倒置信标层，每层中心可以使用一个奥术增幅器。$(br2)每个增幅器使普通矿石产量增加 1，同时使魔源和材料消耗提高 50%。完整四层矿井有较低概率额外产生一个增幅器。",
+  "book.ars_arcane_matrix.arcane_mine.overview": "$(item)奥术矿井$()消耗魔源石、魔源宝石与魔源生成矿石。在核心上方连续建造 3×3、5×5、7×7 和 9×9 倒置信标层，每层中心可以使用一个奥术增幅器。$(br2)在完整层四角下方悬挂矿石可建立白名单，在正东南西北边缘下方悬挂矿石可建立黑名单；浅色与暗红色粒子束会显示当前调谐。",
   "documentation.ars_arcane_matrix.matrix_core.overview": "奥术矩阵核心是一台类似潮涌核心的魔源发生器。六个轴向顶点可以放置奥术增幅器，每个使产量提高 25%。",
-  "documentation.ars_arcane_matrix.arcane_mine.overview": "奥术矿井是一座消耗魔源的倒置信标结构。核心正上方最多识别四个奥术增幅器，提高普通矿石产量并增加魔源和材料消耗。",
+  "documentation.ars_arcane_matrix.arcane_mine.overview": "奥术矿井是一座消耗魔源的倒置信标结构。中心增幅器提高产量；悬挂在完整层下方的矿石样本提供无需 GUI 的黑白名单调谐。",
   "itemGroup.ars_arcane_matrix": "奥术矩阵",
   "message.ars_arcane_matrix.arcane_mine.started": "奥术矿井已激活。",
   "message.ars_arcane_matrix.arcane_mine.stopped": "奥术矿井已停止。",
@@ -29,11 +29,12 @@
   "tooltip.ars_arcane_matrix.arcane_mine.source_percent": "魔源：%s%%",
   "tooltip.ars_arcane_matrix.arcane_mine.layers": "结构层：%s / %s｜材料：%s 点",
   "tooltip.ars_arcane_matrix.arcane_mine.amplifiers": "增幅器：%s / %s",
+  "tooltip.ars_arcane_matrix.arcane_mine.tuning": "调谐白名单：%s｜黑名单：%s",
   "jei.ars_arcane_matrix.arcane_mining": "奥术矿化",
   "jei.ars_arcane_matrix.arcane_mining.requirements": "%s 层结构 · %s 材料点",
   "jei.ars_arcane_matrix.arcane_mining.source": "%s 魔源",
   "jei.ars_arcane_matrix.matrix_core.info": "三个环形多方块结构完整时自动产生魔源。",
-  "jei.ars_arcane_matrix.arcane_mine_core.info": "消耗材料点与魔源生成数据驱动的矿石；更大的结构可以解锁更珍贵的矿物。",
+  "jei.ars_arcane_matrix.arcane_mine_core.info": "消耗材料点与魔源生成数据驱动的矿石。悬挂在每层四角下方的矿石构成白名单，悬挂在正东南西北边缘下方的矿石构成黑名单。",
   "jei.ars_arcane_matrix.arcane_amplifier.info": "完整四层奥术矿井的稀有副产物。放在矩阵顶点时每个提高 25% 产量；放在矿井层中心时使普通矿石产量增加 1，并使魔源和材料消耗提高 50%。增幅器不会复制自身副产物。",
   "jade.ars_arcane_matrix.matrix.status": "矩阵：%s",
   "jade.ars_arcane_matrix.matrix.source": "魔源：%s / %s",
@@ -41,5 +42,6 @@
   "jade.ars_arcane_matrix.mine.status": "矿井：%s",
   "jade.ars_arcane_matrix.mine.source": "魔源：%s / %s",
   "jade.ars_arcane_matrix.mine.operation": "层数：%s · 材料：%s · 冷却：%s 刻 · 增幅器：%s / 4",
-  "jade.ars_arcane_matrix.mine.links": "材料连接：%s · 输出：%s"
+  "jade.ars_arcane_matrix.mine.links": "材料连接：%s · 输出：%s",
+  "jade.ars_arcane_matrix.mine.tuning": "调谐：白名单 %s · 黑名单 %s"
 }

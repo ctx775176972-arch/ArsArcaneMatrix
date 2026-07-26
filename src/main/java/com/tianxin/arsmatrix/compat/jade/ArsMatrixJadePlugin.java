@@ -84,6 +84,11 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                                 ? "message.ars_arcane_matrix.state.bound"
                                 : "message.ars_arcane_matrix.state.unbound")
                 ));
+                tooltip.add(Component.translatable(
+                        "jade.ars_arcane_matrix.mine.tuning",
+                        mine.getWhitelistCount(),
+                        mine.getBlacklistCount()
+                ));
             }
         }
 

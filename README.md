@@ -135,6 +135,24 @@ the center block. All other positions use Sourcestone or Smooth Sourcestone.
   produce exactly one Arcane Amplifier as a separate byproduct. This byproduct
   is never multiplied by installed amplifiers.
 
+### In-world ore tuning
+
+Ore blocks can be hung directly below completed structure layers without
+replacing any structural block:
+
+- Blocks below the four layer corners form the whitelist.
+- Blocks below the north, south, east, and west edge centers form the blacklist.
+- If at least one valid whitelist entry exists, only matching rules remain
+  eligible. The blacklist is applied afterward and always takes priority.
+- Duplicate samples do not change weights, incomplete layers are ignored, and
+  tuning never bypasses a rule's required layer count.
+- Samples match exact output items or shared item tags such as `c:ores/iron`,
+  allowing compatible modded ores to tune the same rule.
+
+The active mine cycles through recognized samples instead of rendering every
+beam simultaneously. Whitelist samples use pale particles and blacklist
+samples use dark-red particles.
+
 ### Materials and automation
 
 Default material values:

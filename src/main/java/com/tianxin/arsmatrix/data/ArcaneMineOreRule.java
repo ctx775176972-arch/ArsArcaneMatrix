@@ -47,4 +47,14 @@ public record ArcaneMineOreRule(
         }
         return item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item, outputCount);
     }
+
+    public boolean matchesTuningSample(ItemStack sample) {
+        if (sample.isEmpty()) {
+            return false;
+        }
+        if (outputIsTag) {
+            return sample.is(TagKey.create(Registries.ITEM, output));
+        }
+        return BuiltInRegistries.ITEM.getKey(sample.getItem()).equals(output);
+    }
 }
