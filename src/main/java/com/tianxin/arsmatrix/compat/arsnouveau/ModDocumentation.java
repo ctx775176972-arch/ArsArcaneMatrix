@@ -8,9 +8,10 @@ import com.tianxin.arsmatrix.client.documentation.MatrixStructureEntry;
 import com.tianxin.arsmatrix.client.documentation.MineStructureEntry;
 import com.tianxin.arsmatrix.registry.ModItems;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
-/** Registers the Matrix Core in Ars Nouveau's current spell-book documentation system. */
+/** Registers Ars Arcane Matrix entries in Ars Nouveau's current spell-book documentation system. */
 public final class ModDocumentation {
 
     private ModDocumentation() {
@@ -53,5 +54,28 @@ public final class ModDocumentation {
                 .addConnectedSearch(mineCore);
 
         DocumentationRegistry.registerEntry(DocumentationRegistry.SOURCE, mineBuilder.build());
+
+        Item amplifier = ModItems.ARCANE_AMPLIFIER.get();
+        DocEntryBuilder amplifierBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID,
+                DocumentationRegistry.SOURCE,
+                amplifier
+        )
+                .withSortNum(252)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.arcane_amplifier.overview"),
+                        Component.translatable("block.ars_arcane_matrix.arcane_amplifier"),
+                        amplifier.getDefaultInstance()
+                )
+                .withCraftingPages(
+                        ResourceLocation.fromNamespaceAndPath(
+                                ArsArcaneMatrix.MOD_ID,
+                                "arcane_amplifier_recycling"
+                        ),
+                        amplifier
+                )
+                .addConnectedSearch(amplifier);
+
+        DocumentationRegistry.registerEntry(DocumentationRegistry.SOURCE, amplifierBuilder.build());
     }
 }
