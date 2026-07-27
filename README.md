@@ -333,13 +333,15 @@ capped to the maximum.
   Dimensions Source Pathways.
 - Provides Ars Nouveau tooltip information.
 - Adds an entry and multiblock preview to the Worn Notebook.
-- Adds an entry, recipe, structure page, search result, and Ctrl item-page link to the current spell-book documentation system.
+- Adds Matrix, Mine, and Amplifier entries, recipes, structure pages, search
+  results, and Ctrl item-page links to the current spell-book documentation
+  system.
 
 No mixins are used. Mods that interact through the standard Ars Nouveau Source interfaces should remain compatible.
 
-## Current 0.2.0 status
+## Current 0.3.0 status
 
-The planned 0.2.0 gameplay set is complete:
+The 0.3.0 gameplay set includes:
 
 - Conduit-like scalable Arcane Matrix formation, generation, Source output, and
   six visible amplifier positions
@@ -351,19 +353,32 @@ The planned 0.2.0 gameplay set is complete:
   high-cost material-buffer protection
 - Rare amplifier byproducts, a separate non-blocking output buffer, and
   Imbuement Chamber recycling
+- A dedicated Arcane Amplifier spell-book page covering acquisition, Matrix and
+  Mine installation, cost scaling, buffering, and recycling
 - Loaded cross-dimensional material and output links using Dominion Wand
   Starbuncle-style connection order
 - Optional JEI and Jade integration with no hard dependency
 
-The next release work is stabilization rather than additional machine blocks:
+Before publishing the release:
 
 - Complete fresh-world, dedicated-server, chunk-reload, and long-duration tests
 - Verify optional-mod combinations: JEI only, Jade only, both, and neither
 - Keep English and Simplified Chinese keys synchronized and accept reliable
   community translations
-- Consider EMI support after the JEI presentation model is stable
-- Consider structure specialization only if in-world ore tuning proves
-  insufficient in real modpacks
+
+## Planned 0.4.0
+
+The primary 0.4.0 target is an **Arcane Imbuement Core** that strengthens an
+existing Ars Nouveau Imbuement Chamber without adding a conventional machine
+GUI. It is intended to:
+
+- Give all compatible imbuement recipes a modest speed increase
+- Batch-produce Source Gems from Lapis Lazuli or Amethyst
+- Charge the full material and Source cost for every processed item
+- Keep complex pedestal recipes out of batch processing by default
+- Allow data packs to opt safe recipes into a bulk-imbuement allowlist
+- Expose input, output, progress, batch size, and Source demand through
+  in-world interaction, automation, Jade, and JEI
 
 Matrix redstone control, comparator output, GUI upgrade slots, and additional
 input/output controller blocks are not currently planned. Existing vanilla

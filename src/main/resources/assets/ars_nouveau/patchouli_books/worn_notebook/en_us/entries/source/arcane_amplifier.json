@@ -1,0 +1,23 @@
+{
+  "category": "ars_nouveau:source",
+  "icon": "ars_arcane_matrix:arcane_amplifier",
+  "name": "block.ars_arcane_matrix.arcane_amplifier",
+  "sortnum": 22,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "block.ars_arcane_matrix.arcane_amplifier",
+      "text": "book.ars_arcane_matrix.arcane_amplifier.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "block.ars_arcane_matrix.matrix_core",
+      "text": "book.ars_arcane_matrix.arcane_amplifier.matrix"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "block.ars_arcane_matrix.arcane_mine_core",
+      "text": "book.ars_arcane_matrix.arcane_amplifier.mine"
+    }
+  ]
+}
