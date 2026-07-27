@@ -77,7 +77,7 @@ sourceSets.main.resources {
 
 // Ars Nouveau embeds Nuggets with JarJar. Expose its GUI API to javac for the
 // custom spell-book structure page without adding another runtime dependency.
-def arsNouveauJar = file('libs/ars_nouveau-1.21.1-5.12.1.jar')
+def arsNouveauJar = file('libs/ars_nouveau-1.21.1-5.13.0.jar')
 def nuggetsJarName = 'nuggets-neoforge-1.21.1-1.1.0.48.jar'
 def extractedNuggetsJar = layout.buildDirectory.file("extractedDependencies/${nuggetsJarName}")
 

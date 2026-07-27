@@ -18,6 +18,10 @@
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.arcane_mine_core",
       "text": "book.ars_arcane_matrix.arcane_amplifier.mine"
+    },
+    {
+      "type": "ars_nouveau:imbuement_recipe",
+      "recipe": "ars_arcane_matrix:arcane_amplifier_recycling"
     }
   ]
 }

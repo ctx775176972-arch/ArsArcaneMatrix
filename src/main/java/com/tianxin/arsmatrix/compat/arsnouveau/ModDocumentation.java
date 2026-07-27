@@ -8,6 +8,7 @@ import com.tianxin.arsmatrix.client.documentation.MatrixStructureEntry;
 import com.tianxin.arsmatrix.client.documentation.MineStructureEntry;
 import com.tianxin.arsmatrix.registry.ModItems;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 /** Registers Ars Arcane Matrix entries in Ars Nouveau's current spell-book documentation system. */
@@ -65,6 +66,13 @@ public final class ModDocumentation {
                         Component.translatable("documentation.ars_arcane_matrix.arcane_amplifier.overview"),
                         Component.translatable("block.ars_arcane_matrix.arcane_amplifier"),
                         amplifier.getDefaultInstance()
+                )
+                .withCraftingPages(
+                        ResourceLocation.fromNamespaceAndPath(
+                                ArsArcaneMatrix.MOD_ID,
+                                "arcane_amplifier_recycling"
+                        ),
+                        amplifier
                 )
                 .addConnectedSearch(amplifier);
 
