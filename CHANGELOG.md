@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1 - 2026-08-02
+
+- Removed an unreachable Imbuement Core batch-size guard identified by Qodana.
+- Tightened non-null return contracts for the Imbuement Core block entity,
+  update packet, and sided item handler without changing runtime behavior.
+
 ## 0.4.0 - 2026-08-02
 
 - Added the Arcane Imbuement Core below existing Imbuement Chambers.

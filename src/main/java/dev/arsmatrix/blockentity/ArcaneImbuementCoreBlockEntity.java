@@ -300,10 +300,6 @@ public final class ArcaneImbuementCoreBlockEntity extends BlockEntity
             setOperatingState(OperatingState.SOURCE_STARVED);
             return;
         }
-        if (batchSize <= 0) {
-            return;
-        }
-
         input.shrink(batchSize);
         if (input.isEmpty()) {
             input = ItemStack.EMPTY;
@@ -508,7 +504,6 @@ public final class ArcaneImbuementCoreBlockEntity extends BlockEntity
         }
     }
 
-    @Nullable
     public IItemHandler getItemHandler(@Nullable Direction direction) {
         return direction == Direction.DOWN ? outputHandler : inputHandler;
     }
@@ -702,7 +697,6 @@ public final class ArcaneImbuementCoreBlockEntity extends BlockEntity
         return saveWithoutMetadata(registries);
     }
 
-    @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);

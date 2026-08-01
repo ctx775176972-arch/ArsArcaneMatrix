@@ -385,6 +385,12 @@ capped to the maximum.
 
 No mixins are used. Mods that interact through the standard Ars Nouveau Source interfaces should remain compatible.
 
+## 0.4.1 maintenance release
+
+Version 0.4.1 removes redundant Imbuement Core data-flow checks and tightens
+non-null method contracts reported by Qodana. Gameplay and saved-data behavior
+remain unchanged from 0.4.0.
+
 ## 0.4.0 release
 
 The 0.4.0 release includes the complete 0.3.0 gameplay set plus:
@@ -417,10 +423,10 @@ The 0.4.0 release includes the complete 0.3.0 gameplay set plus:
   Amplifier colors, matching item models, and a non-full-cube Imbuement Core
   built from a pedestal, focusing rings, and a floating crystal
 
-Version 0.4.0 is finalized for release. Later gameplay systems remain assigned
+Version 0.4.1 is finalized for release. Later gameplay systems remain assigned
 to the roadmap below rather than expanding the 0.4.0 release scope.
 
-## Roadmap after 0.4.0
+## Roadmap after 0.4.x
 
 The visual overhaul previously planned for 0.5.0 is now part of 0.4.0.
 Version 0.5.0 is instead planned around the Arcane Ore Processing Array and a

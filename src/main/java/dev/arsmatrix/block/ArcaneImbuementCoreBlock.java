@@ -57,7 +57,6 @@ public final class ArcaneImbuementCoreBlock extends BaseEntityBlock {
         return SHAPE;
     }
 
-    @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ArcaneImbuementCoreBlockEntity(pos, state);
