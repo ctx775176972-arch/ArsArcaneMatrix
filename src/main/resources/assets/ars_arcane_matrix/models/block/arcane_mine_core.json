@@ -1,9 +1,8 @@
 {
   "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "side": "ars_arcane_matrix:block/matrix_core",
-    "top": "ars_nouveau:block/source_gem_block",
-    "bottom": "ars_nouveau:block/sourcestone"
-  },
-  "render_type": "translucent"
+    "side": "ars_arcane_matrix:block/arcane_mine_core",
+    "top": "ars_arcane_matrix:block/arcane_mine_core_top",
+    "bottom": "ars_arcane_matrix:block/arcane_mine_core_bottom"
+  }
 }

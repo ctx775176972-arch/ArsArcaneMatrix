@@ -1,6 +1,8 @@
 # Ars Arcane Matrix
 
 Ars Arcane Matrix is a NeoForge addon for Ars Nouveau that adds the **Arcane Matrix Core**, a configurable endgame Source generator, and the **Arcane Mine**, a Source-powered, data-driven ore producer.
+It also adds the **Arcane Imbuement Core**, a GUI-free bulk controller for an
+existing Ars Nouveau Imbuement Chamber.
 
 The mod includes English and Simplified Chinese localization, Ars Nouveau
 documentation integration, optional JEI and Jade integration, exact Source
@@ -254,6 +256,41 @@ the matching automatic output. Ancient Debris is enabled in the four-layer
 precious pool by default at weight 1, costing 512 material points and 51,200
 Source per block.
 
+Items in `ars_arcane_matrix:arcane_mine_output_blacklist` are removed from both
+explicit and tag-based Mine outputs, tuning samples, and JEI output previews.
+The default blacklist contains Nether Gold Ore because its normal loot is Gold
+Nuggets rather than Raw Gold or a gem-like product, which would interrupt the
+planned ore-processing and smelting line. Data packs may append other
+incompatible ore variants to this item tag.
+
+## Arcane Imbuement Core
+
+Place the Core two to six blocks directly below an Ars Nouveau Imbuement
+Chamber in the same X/Z column. Intermediate positions may contain ordinary
+blocks, pipes, or Source transport blocks. If several Cores target the same
+Chamber, only the nearest Core operates.
+
+- The Core stores up to 1,000,000 Source and pulls up to 100,000 Source per
+  second from providers near either the Core or its connected Chamber.
+- It rapidly supplies Source to ordinary recipes in the connected Chamber.
+- Source Gems placed in the Chamber for elemental-essence and other ordinary
+  recipes remain in the Chamber; the Core never treats them as bulk output.
+- Horizontal and top item capabilities accept Lapis or Amethyst Blocks; the
+  bottom capability exports completed products.
+- One default five-second cycle processes up to four compressed inputs.
+- Each Lapis Block consumes 4,500 Source and produces nine Source Gems.
+- Each Amethyst Block consumes 2,000 Source and produces one Source Gem Block.
+- Empty-hand use toggles loose and compact output modes. Compact mode converts
+  every four buffered Source Gems into one Source Gem Block and preserves zero
+  to three loose remainder Gems; Jade displays the current mode.
+- A redstone signal pauses Source pulling, transfer, and bulk processing.
+- Inputs and paid batch state persist across chunk unloads.
+
+The Core is made with an Enchanting Apparatus using an Arcane Core reagent and
+eight pedestal items: an Imbuement Chamber, Arcane Amplifier, Source Jar, three
+Source Gem Blocks, Lapis Block, and Amethyst Block. The recipe costs 25,000
+Source.
+
 ## Configuration
 
 The server configuration is generated at:
@@ -302,6 +339,15 @@ enableParticles = true
 particleIntervalTicks = 10
 particleDensity = 1.0
 enableSounds = true
+
+[arcane_imbuement_core]
+sourceCapacity = 1000000
+sourceInputRange = 5
+maxSourceInputPerSecond = 100000
+minimumChamberDistance = 2
+maximumChamberDistance = 6
+maxCompressedInputsPerCycle = 4
+cycleTicks = 100
 ```
 
 The physical structure contains at most 42 valid frame positions. At least one
@@ -334,14 +380,20 @@ capped to the maximum.
 - Provides Ars Nouveau tooltip information.
 - Adds an entry and multiblock preview to the Worn Notebook.
 - Adds Matrix, Mine, and Amplifier entries, recipes, structure pages, search
-  results, and Ctrl item-page links to the current spell-book documentation
-  system.
+  results, and Ctrl item-page links to a dedicated Ars Arcane Matrix category
+  in the current spell-book documentation system.
 
 No mixins are used. Mods that interact through the standard Ars Nouveau Source interfaces should remain compatible.
 
-## Current 0.3.0 status
+## 0.4.1 maintenance release
 
-The 0.3.0 gameplay set includes:
+Version 0.4.1 removes redundant Imbuement Core data-flow checks and tightens
+non-null method contracts reported by Qodana. Gameplay and saved-data behavior
+remain unchanged from 0.4.0.
+
+## 0.4.0 release
+
+The 0.4.0 release includes the complete 0.3.0 gameplay set plus:
 
 - Conduit-like scalable Arcane Matrix formation, generation, Source output, and
   six visible amplifier positions
@@ -351,6 +403,9 @@ The 0.3.0 gameplay set includes:
 - Mine-only redstone pause control; the Matrix remains automatic
 - Four visible Mine amplifier positions, dynamic full-amplifier pacing, and
   high-cost material-buffer protection
+- A configurable 32-block Source input range for complete four-layer Mines,
+  including direct extraction from loaded Matrix Cores without loading new
+  chunks
 - Rare amplifier byproducts, a separate non-blocking output buffer, and
   Imbuement Chamber recycling
 - A dedicated Arcane Amplifier spell-book page covering acquisition, Matrix and
@@ -358,27 +413,64 @@ The 0.3.0 gameplay set includes:
 - Loaded cross-dimensional material and output links using Dominion Wand
   Starbuncle-style connection order
 - Optional JEI and Jade integration with no hard dependency
+- A GUI-free Arcane Imbuement Core linked two to six blocks below a Chamber
+- High-rate Source pulling and supply for the connected Chamber
+- Five-second multi-block Lapis and Amethyst bulk cycles
+- Sided automation, redstone pause, persistent paid batches, and Jade/JEI help
+- A completed Ars Nouveau-inspired visual pass for the Matrix Core, Arcane Mine
+  Core, Arcane Amplifier, and Arcane Imbuement Core
+- Conduit-like Matrix animation, dedicated Mine faces, Source Gem-aligned
+  Amplifier colors, matching item models, and a non-full-cube Imbuement Core
+  built from a pedestal, focusing rings, and a floating crystal
 
-Before publishing the release:
+Version 0.4.1 is finalized for release. Later gameplay systems remain assigned
+to the roadmap below rather than expanding the 0.4.0 release scope.
 
-- Complete fresh-world, dedicated-server, chunk-reload, and long-duration tests
-- Verify optional-mod combinations: JEI only, Jade only, both, and neither
-- Keep English and Simplified Chinese keys synchronized and accept reliable
-  community translations
+## Roadmap after 0.4.x
 
-## Planned 0.4.0
+The visual overhaul previously planned for 0.5.0 is now part of 0.4.0.
+Version 0.5.0 is instead planned around the Arcane Ore Processing Array and a
+shared multiblock teaching-preview system. The Array will process ore loot
+internally so automated production does not create dropped-item or XP-orb
+entities. It will begin with one processing lane and accept up to four Arcane
+Amplifiers for five parallel operations, preserve ore XP through proportional
+Experience Gem output, and use Dominion Wand links for input and separate
+outputs. Four Arcane Pedestals will form its upper processing layer, and the
+core will project an upward beacon beam while active. A server configuration,
+disabled by default, may allow each upper Pedestal to be replaced by a vanilla
+Beacon for one additional Fortune level; base Fortune will remain separately
+configurable. Empty-hand interaction with multiblock controller cores will
+toggle a client-side translucent preview, while wand interactions remain
+dedicated to logistics.
 
-The primary 0.4.0 target is an **Arcane Imbuement Core** that strengthens an
-existing Ars Nouveau Imbuement Chamber without adding a conventional machine
-GUI. It is intended to:
+Version 0.6.0 is planned around the Arcane Stabilization Core: a Source-powered
+device that keeps configured chunks loaded only while it can pay an ongoing
+Source cost. Loading range, Source consumption, ownership, restart behavior,
+dimension handling, chunk-ticket cleanup, and server limits will be finalized
+during implementation. It should clearly report active, starved, paused, and
+ticket-failure states. A separate skyblock-only resource acquisition mode
+remains out of scope.
 
-- Give all compatible imbuement recipes a modest speed increase
-- Batch-produce Source Gems from Lapis Lazuli or Amethyst
-- Charge the full material and Source cost for every processed item
-- Keep complex pedestal recipes out of batch processing by default
-- Allow data packs to opt safe recipes into a bulk-imbuement allowlist
-- Expose input, output, progress, batch size, and Source demand through
-  in-world interaction, automation, Jade, and JEI
+Version 0.7.0 is planned around the Arcane Smelting Matrix, an intentionally
+very expensive endgame multiblock that consumes substantial Source to smelt
+eligible raw ores and double their normal material output. It will resolve
+compatible furnace-style recipes internally while rejecting arbitrary inputs,
+so the doubling rule cannot become a general item-duplication system.
+The same release is planned to add an Arcane Source Reservoir and Reinforced
+Source Relay for players who do not use Beyond Dimensions. The Reservoir will
+default to a configurable 50,000,000 Source capacity, and the Relay will default
+to a configurable 100,000 Source-per-second directional transfer rate using
+Dominion Wand links. Both remain local, same-dimension infrastructure: they do
+not load chunks, and an unloaded endpoint suspends transfer. Relay routing must
+also reject cyclic movement so Source cannot be bounced repeatedly in one tick.
+The intended sustained energy budget for one complete endgame line -- Arcane
+Mine, Source Gem production, ore processing, and Arcane Smelting Matrix -- is
+the output of two to three fully amplified Arcane Matrix Cores. Under current
+defaults, that means approximately 37,500 to 56,250 Source per second across
+the whole line rather than for any one machine.
+Construction cost, Source consumption, processing speed, automation,
+buffering, and possible amplifier interaction will be balanced during
+implementation.
 
 Matrix redstone control, comparator output, GUI upgrade slots, and additional
 input/output controller blocks are not currently planned. Existing vanilla

@@ -21,6 +21,11 @@ repositories {
     }
 
     maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+    }
+
+    maven {
         name = 'CurseMaven'
         url = 'https://cursemaven.com'
     }
@@ -104,6 +109,7 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     compileOnly files(arsNouveauJar)
     compileOnly files(extractedNuggetsJar)
+    compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     localRuntime files(arsNouveauJar)
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
@@ -135,6 +141,73 @@ tasks.withType(ProcessResources).configureEach {
 tasks.withType(JavaCompile).configureEach {
     dependsOn tasks.named('extractArsNouveauNuggets')
     options.encoding = 'UTF-8'
+}
+
+def privacyVerification = tasks.register('verifyPrivacy') {
+    group = 'verification'
+    description = 'Fails when private identity markers appear in sources, metadata, or the built mod JAR.'
+    dependsOn tasks.named('jar')
+
+    doLast {
+        def forbiddenMarkers = [
+                ('tian' + 'xin').toLowerCase(java.util.Locale.ROOT),
+                ('ctx775176972' + '@yahoo.co.jp').toLowerCase(java.util.Locale.ROOT)
+        ]
+        def violations = new LinkedHashSet<String>()
+        def inspectFile = { File candidate, String label ->
+            if (!candidate.isFile()) {
+                return
+            }
+            def contents = new String(
+                    candidate.bytes,
+                    java.nio.charset.StandardCharsets.ISO_8859_1
+            ).toLowerCase(java.util.Locale.ROOT)
+            forbiddenMarkers.each { marker ->
+                if (contents.contains(marker)) {
+                    violations.add("${label} contains a forbidden identity marker")
+                }
+            }
+        }
+
+        fileTree('src').files.each { candidate ->
+            inspectFile(candidate, project.relativePath(candidate))
+        }
+        [
+                file('build.gradle'),
+                file('settings.gradle'),
+                file('gradle.properties'),
+                file('README.md'),
+                file('CHANGELOG.md'),
+                file('LICENSE')
+        ].each { candidate ->
+            inspectFile(candidate, project.relativePath(candidate))
+        }
+
+        File modJar = tasks.named('jar').get().archiveFile.get().asFile
+        zipTree(modJar).visit { details ->
+            if (details.directory) {
+                return
+            }
+            String entryName = details.relativePath.pathString
+            String normalizedName = entryName.toLowerCase(java.util.Locale.ROOT)
+            forbiddenMarkers.each { marker ->
+                if (normalizedName.contains(marker)) {
+                    violations.add("JAR entry ${entryName} contains a forbidden identity marker")
+                }
+            }
+            inspectFile(details.file, "JAR entry ${entryName}")
+        }
+
+        if (!violations.isEmpty()) {
+            throw new GradleException(
+                    "Privacy verification failed:\n - " + violations.join('\n - ')
+            )
+        }
+    }
+}
+
+tasks.named('check').configure {
+    dependsOn privacyVerification
 }
 
 idea {

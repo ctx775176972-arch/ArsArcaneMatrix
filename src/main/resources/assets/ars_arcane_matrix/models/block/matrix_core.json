@@ -1,6 +1,120 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "textures": {
-    "all": "ars_arcane_matrix:block/matrix_core"
-  }
+    "particle": "ars_nouveau:block/source_gem_lamp_on",
+    "rune": "ars_nouveau:block/source_gem_lamp_on",
+    "core": "ars_nouveau:block/source_gem_block"
+  },
+  "elements": [
+    {
+      "from": [6, 6, 6],
+      "to": [10, 10, 10],
+      "shade": false,
+      "faces": {
+        "north": { "texture": "#core" },
+        "south": { "texture": "#core" },
+        "east": { "texture": "#core" },
+        "west": { "texture": "#core" },
+        "up": { "texture": "#core" },
+        "down": { "texture": "#core" }
+      }
+    },
+    {
+      "from": [2, 13, 7], "to": [14, 14, 9], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [2, 2, 7], "to": [14, 3, 9], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [2, 3, 7], "to": [3, 13, 9], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [13, 3, 7], "to": [14, 13, 9], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [2, 7, 13], "to": [14, 9, 14], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [2, 7, 2], "to": [14, 9, 3], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [2, 7, 3], "to": [3, 9, 13], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [13, 7, 3], "to": [14, 9, 13], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [7, 13, 2], "to": [9, 14, 14], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [7, 2, 2], "to": [9, 3, 14], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [7, 3, 2], "to": [9, 13, 3], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    },
+    {
+      "from": [7, 3, 13], "to": [9, 13, 14], "shade": false,
+      "faces": {
+        "north": { "texture": "#rune" }, "south": { "texture": "#rune" },
+        "east": { "texture": "#rune" }, "west": { "texture": "#rune" },
+        "up": { "texture": "#rune" }, "down": { "texture": "#rune" }
+      }
+    }
+  ]
 }
