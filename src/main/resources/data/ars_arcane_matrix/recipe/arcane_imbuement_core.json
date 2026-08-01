@@ -1,0 +1,38 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    {
+      "item": "ars_nouveau:imbuement_chamber"
+    },
+    {
+      "item": "ars_arcane_matrix:arcane_amplifier"
+    },
+    {
+      "item": "ars_nouveau:source_jar"
+    },
+    {
+      "item": "ars_nouveau:sourcestone"
+    },
+    {
+      "item": "ars_nouveau:sourcestone"
+    },
+    {
+      "item": "ars_nouveau:sourcestone"
+    },
+    {
+      "item": "minecraft:lapis_block"
+    },
+    {
+      "item": "minecraft:amethyst_block"
+    }
+  ],
+  "reagent": {
+    "item": "ars_nouveau:arcane_core"
+  },
+  "result": {
+    "count": 1,
+    "id": "ars_arcane_matrix:arcane_imbuement_core"
+  },
+  "sourceCost": 25000
+}

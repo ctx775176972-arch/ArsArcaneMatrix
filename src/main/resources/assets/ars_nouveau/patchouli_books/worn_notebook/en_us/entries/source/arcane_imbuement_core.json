@@ -1,0 +1,22 @@
+{
+  "category": "ars_nouveau:source",
+  "icon": "ars_arcane_matrix:arcane_imbuement_core",
+  "name": "block.ars_arcane_matrix.arcane_imbuement_core",
+  "sortnum": 23,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "block.ars_arcane_matrix.arcane_imbuement_core",
+      "text": "book.ars_arcane_matrix.arcane_imbuement_core.overview"
+    },
+    {
+      "type": "ars_nouveau:apparatus_recipe",
+      "recipe": "ars_arcane_matrix:arcane_imbuement_core"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "block.ars_arcane_matrix.arcane_imbuement_core",
+      "text": "book.ars_arcane_matrix.arcane_imbuement_core.bulk"
+    }
+  ]
+}

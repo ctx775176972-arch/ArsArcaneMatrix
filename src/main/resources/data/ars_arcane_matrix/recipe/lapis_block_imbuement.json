@@ -1,0 +1,12 @@
+{
+  "type": "ars_nouveau:imbuement",
+  "input": {
+    "item": "minecraft:lapis_block"
+  },
+  "output": {
+    "count": 9,
+    "id": "ars_nouveau:source_gem"
+  },
+  "pedestalItems": [],
+  "source": 4500
+}
