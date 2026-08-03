@@ -23,7 +23,7 @@ public final class ModDocumentation {
         DocCategory category = new DocCategory(
                 ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, ArsArcaneMatrix.MOD_ID),
                 matrixCore.getDefaultInstance(),
-                350
+                1100
         );
         DocumentationRegistry.registerMainCategory(category);
 

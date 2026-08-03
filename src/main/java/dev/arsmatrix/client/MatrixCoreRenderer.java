@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.AABB;
 
 /** Renders the matrix core as a hovering arcane astrolabe instead of a solid cube. */
 public final class MatrixCoreRenderer implements BlockEntityRenderer<MatrixCoreBlockEntity> {
@@ -88,6 +89,17 @@ public final class MatrixCoreRenderer implements BlockEntityRenderer<MatrixCoreB
         renderRings(poseStack, runeBuffer, LightTexture.FULL_BRIGHT, radius, angle, active);
 
         poseStack.popPose();
+        StructurePreviewRenderer.renderMatrix(core.getBlockPos(), poseStack, bufferSource);
+    }
+
+    @Override
+    public boolean shouldRenderOffScreen(MatrixCoreBlockEntity core) {
+        return StructurePreviewRenderer.isMatrixPreviewActive(core.getBlockPos());
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(MatrixCoreBlockEntity core) {
+        return new AABB(core.getBlockPos()).inflate(2.0D);
     }
 
     private void renderCenter(

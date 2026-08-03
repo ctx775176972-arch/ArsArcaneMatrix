@@ -2,6 +2,7 @@ package dev.arsmatrix.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.arsmatrix.blockentity.ArcaneMineCoreBlockEntity;
+import dev.arsmatrix.config.MatrixConfig;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -27,6 +28,8 @@ public final class ArcaneMineCoreRenderer implements BlockEntityRenderer<ArcaneM
             int packedLight,
             int packedOverlay
     ) {
+        StructurePreviewRenderer.renderMine(core.getBlockPos(), poseStack, bufferSource);
+
         int completedLayers = core.getCompletedLayers();
         if (!core.isActive() || completedLayers <= 0 || core.getLevel() == null) {
             return;
@@ -80,6 +83,15 @@ public final class ArcaneMineCoreRenderer implements BlockEntityRenderer<ArcaneM
 
     @Override
     public AABB getRenderBoundingBox(ArcaneMineCoreBlockEntity core) {
+        if (StructurePreviewRenderer.isMinePreviewActive(core.getBlockPos())) {
+            int radius = MatrixConfig.mineLayerSizes().stream()
+                    .mapToInt(Integer::intValue)
+                    .max()
+                    .orElse(9) / 2;
+            int height = MatrixConfig.mineLayerSizes().size() + 1;
+            return new AABB(core.getBlockPos()).inflate(radius, 0.0D, radius)
+                    .expandTowards(0.0D, height, 0.0D);
+        }
         int depth = Math.max(1, core.getCompletedLayers()) + 1;
         return new AABB(core.getBlockPos()).expandTowards(0.0D, -depth, 0.0D);
     }

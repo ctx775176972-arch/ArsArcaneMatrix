@@ -2,6 +2,7 @@ package dev.arsmatrix;
 
 import com.mojang.logging.LogUtils;
 import dev.arsmatrix.client.ClientModEvents;
+import dev.arsmatrix.client.StructurePreviewRenderer;
 import dev.arsmatrix.compat.arsnouveau.ModDocumentation;
 import dev.arsmatrix.config.MatrixConfig;
 import dev.arsmatrix.data.ArcaneMineOreManager;
@@ -36,6 +37,7 @@ public class ArsArcaneMatrix {
             modBus.addListener(ClientModEvents::registerLayerDefinitions);
             modBus.addListener(ClientModEvents::registerRenderers);
             NeoForge.EVENT_BUS.addListener(ModDocumentation::addEntries);
+            NeoForge.EVENT_BUS.addListener(StructurePreviewRenderer::onRightClickBlock);
         }
         modContainer.registerConfig(ModConfig.Type.SERVER, MatrixConfig.SPEC, "ars_arcane_matrix-server.toml");
 
