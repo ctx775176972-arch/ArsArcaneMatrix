@@ -17,15 +17,9 @@
     {
       "item": "ars_nouveau:volcanic_sourcelink"
     },
-    {
-      "item": "minecraft:nether_star"
-    },
-    {
-      "item": "ars_nouveau:wilden_tribute"
-    },
-    {
-      "item": "minecraft:conduit"
-    }
+    { "item": "ars_nouveau:source_jar" },
+    { "item": "ars_nouveau:source_jar" },
+    { "item": "ars_nouveau:source_gem_block" }
   ],
   "reagent": {
     "item": "ars_nouveau:arcane_core"

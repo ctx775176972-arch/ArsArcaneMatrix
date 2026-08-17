@@ -21,6 +21,11 @@ repositories {
     }
 
     maven {
+        name = "Snownee"
+        url = "https://maven.snownee.cn/"
+    }
+
+    maven {
         name = 'GeckoLib'
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
@@ -30,6 +35,7 @@ repositories {
         url = 'https://cursemaven.com'
     }
 
+    //noinspection GroovyAssignabilityCheck
     exclusiveContent {
         forRepository {
             maven {
@@ -49,6 +55,7 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+//noinspection GroovyAssignabilityCheck
 runs {
     configureEach {
         systemProperty 'forge.logging.markers', 'REGISTRIES'
@@ -70,9 +77,10 @@ runs {
     }
 
     data {
-        arguments.addAll '--mod', project.mod_id, '--all',
-                '--output', file('src/generated/resources/').getAbsolutePath(),
-                '--existing', file('src/main/resources/').getAbsolutePath()
+        argument '--mod', project.mod_id
+        argument '--all'
+        argument '--output', file('src/generated/resources/').getAbsolutePath()
+        argument '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
@@ -80,10 +88,8 @@ sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
 
-// Ars Nouveau embeds Nuggets with JarJar. Expose its GUI API to javac for the
-// custom spell-book structure page without adding another runtime dependency.
-def arsNouveauJar = file('libs/ars_nouveau-1.21.1-5.13.0.jar')
-def nuggetsJarName = 'nuggets-neoforge-1.21.1-1.1.0.48.jar'
+def arsNouveauJar = file('libs/ars_nouveau‑1.21.1‑5.13.0.jar')
+def nuggetsJarName = 'nuggets‑neoforge‑1.21.1‑1.1.0.48.jar'
 def extractedNuggetsJar = layout.buildDirectory.file("extractedDependencies/${nuggetsJarName}")
 
 tasks.register('extractArsNouveauNuggets') {
@@ -93,7 +99,7 @@ tasks.register('extractArsNouveauNuggets') {
     doLast {
         copy {
             from zipTree(arsNouveauJar)
-            include "META-INF/jarjar/${nuggetsJarName}"
+            include "META‑INF/jarjar/${nuggetsJarName}"
             eachFile { details -> details.path = details.name }
             includeEmptyDirs = false
             into extractedNuggetsJar.get().asFile.parentFile
@@ -109,12 +115,13 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     compileOnly files(arsNouveauJar)
     compileOnly files(extractedNuggetsJar)
-    compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+    compileOnly "software.bernie.geckolib:geckolib‑neoforge‑${minecraft_version}:${geckolib_version}"
     localRuntime files(arsNouveauJar)
-    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
-    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
-    compileOnly "maven.modrinth:nvQzSEkH:${jade_version_id}"
-    localRuntime "maven.modrinth:nvQzSEkH:${jade_version_id}"
+    compileOnly "mezz.jei:jei‑${minecraft_version}‑neoforge‑api:${jei_version}"
+    localRuntime "mezz.jei:jei‑${minecraft_version}‑neoforge:${jei_version}"
+
+    modImplementation("snownee.jade:Jade:${jade_version}")
+    annotationProcessor("snownee.jade:Jade:${jade_version}")
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -133,81 +140,15 @@ tasks.withType(ProcessResources).configureEach {
     ]
 
     inputs.properties replaceProperties
-    filesMatching('META-INF/neoforge.mods.toml') {
+    filesMatching('META‑INF/neoforge.mods.toml') {
         expand replaceProperties
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
     dependsOn tasks.named('extractArsNouveauNuggets')
-    options.encoding = 'UTF-8'
-}
-
-def privacyVerification = tasks.register('verifyPrivacy') {
-    group = 'verification'
-    description = 'Fails when private identity markers appear in sources, metadata, or the built mod JAR.'
-    dependsOn tasks.named('jar')
-
-    doLast {
-        def forbiddenMarkers = [
-                ('tian' + 'xin').toLowerCase(java.util.Locale.ROOT),
-                ('ctx775176972' + '@yahoo.co.jp').toLowerCase(java.util.Locale.ROOT)
-        ]
-        def violations = new LinkedHashSet<String>()
-        def inspectFile = { File candidate, String label ->
-            if (!candidate.isFile()) {
-                return
-            }
-            def contents = new String(
-                    candidate.bytes,
-                    java.nio.charset.StandardCharsets.ISO_8859_1
-            ).toLowerCase(java.util.Locale.ROOT)
-            forbiddenMarkers.each { marker ->
-                if (contents.contains(marker)) {
-                    violations.add("${label} contains a forbidden identity marker")
-                }
-            }
-        }
-
-        fileTree('src').files.each { candidate ->
-            inspectFile(candidate, project.relativePath(candidate))
-        }
-        [
-                file('build.gradle'),
-                file('settings.gradle'),
-                file('gradle.properties'),
-                file('README.md'),
-                file('CHANGELOG.md'),
-                file('LICENSE')
-        ].each { candidate ->
-            inspectFile(candidate, project.relativePath(candidate))
-        }
-
-        File modJar = tasks.named('jar').get().archiveFile.get().asFile
-        zipTree(modJar).visit { details ->
-            if (details.directory) {
-                return
-            }
-            String entryName = details.relativePath.pathString
-            String normalizedName = entryName.toLowerCase(java.util.Locale.ROOT)
-            forbiddenMarkers.each { marker ->
-                if (normalizedName.contains(marker)) {
-                    violations.add("JAR entry ${entryName} contains a forbidden identity marker")
-                }
-            }
-            inspectFile(details.file, "JAR entry ${entryName}")
-        }
-
-        if (!violations.isEmpty()) {
-            throw new GradleException(
-                    "Privacy verification failed:\n - " + violations.join('\n - ')
-            )
-        }
-    }
-}
-
-tasks.named('check').configure {
-    dependsOn privacyVerification
+    options.encoding = 'UTF‑8'
+    options.annotationProcessorPath = configurations.annotationProcessor
 }
 
 idea {

@@ -13,6 +13,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -72,7 +73,7 @@ public final class ArcaneMineJeiCategory implements IRecipeCategory<ArcaneMineOr
 
     @Override
     public int getHeight() {
-        return 58;
+        return 68;
     }
 
     @Override
@@ -81,10 +82,10 @@ public final class ArcaneMineJeiCategory implements IRecipeCategory<ArcaneMineOr
             ArcaneMineOreRule recipe,
             IFocusGroup focuses
     ) {
-        builder.addInputSlot(6, 19)
+        builder.addInputSlot(6, 29)
                 .setStandardSlotBackground()
                 .addItemStacks(materialOptions(recipe.materialPoints()));
-        builder.addOutputSlot(130, 19)
+        builder.addOutputSlot(130, 29)
                 .setOutputSlotBackground()
                 .addItemStacks(outputOptions(recipe));
     }
@@ -98,17 +99,13 @@ public final class ArcaneMineJeiCategory implements IRecipeCategory<ArcaneMineOr
             double mouseY
     ) {
         var font = Minecraft.getInstance().font;
-        drawCenteredWithoutShadow(
-                graphics,
-                font,
-                Component.translatable(
-                        "jei.ars_arcane_matrix.arcane_mining.requirements",
-                        recipe.requiredLayers(),
-                        recipe.materialPoints()
-                ),
-                4,
-                0x404040
-        );
+        List<FormattedCharSequence> requirementLines = font.split(Component.translatable(
+                "jei.ars_arcane_matrix.arcane_mining.requirements",
+                recipe.requiredLayers(), recipe.materialPoints()), getWidth() - 4);
+        for (int line = 0; line < Math.min(2, requirementLines.size()); line++) {
+            drawCenteredWithoutShadow(graphics, font, requirementLines.get(line),
+                    2 + line * 10, 0x404040);
+        }
         drawCenteredWithoutShadow(
                 graphics,
                 font,
@@ -116,7 +113,7 @@ public final class ArcaneMineJeiCategory implements IRecipeCategory<ArcaneMineOr
                         "jei.ars_arcane_matrix.arcane_mining.source",
                         recipe.sourceCost()
                 ),
-                40,
+                54,
                 0x404040
         );
     }
@@ -125,6 +122,17 @@ public final class ArcaneMineJeiCategory implements IRecipeCategory<ArcaneMineOr
             GuiGraphics graphics,
             net.minecraft.client.gui.Font font,
             Component text,
+            int y,
+            int color
+    ) {
+        int x = (getWidth() - font.width(text)) / 2;
+        graphics.drawString(font, text, x, y, color, false);
+    }
+
+    private void drawCenteredWithoutShadow(
+            GuiGraphics graphics,
+            net.minecraft.client.gui.Font font,
+            FormattedCharSequence text,
             int y,
             int color
     ) {
