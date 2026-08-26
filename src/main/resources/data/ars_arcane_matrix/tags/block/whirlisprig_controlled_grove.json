@@ -1,0 +1,41 @@
+{
+  "replace": false,
+  "values": [
+    "#ars_nouveau:blazing_logs",
+    "#ars_nouveau:flourishing_logs",
+    "#ars_nouveau:cascading_logs",
+    "#ars_nouveau:vexing_logs",
+    "ars_nouveau:red_archwood_leaves",
+    "ars_nouveau:green_archwood_leaves",
+    "ars_nouveau:blue_archwood_leaves",
+    "ars_nouveau:purple_archwood_leaves",
+    "ars_nouveau:red_archwood_sapling",
+    "ars_nouveau:green_archwood_sapling",
+    "ars_nouveau:blue_archwood_sapling",
+    "ars_nouveau:purple_archwood_sapling",
+    "ars_nouveau:bombegranate_pod",
+    "ars_nouveau:mendosteen_pod",
+    "ars_nouveau:frostaya_pod",
+    "ars_nouveau:bastion_pod",
+    "minecraft:torchflower",
+    "minecraft:torchflower_crop",
+    "minecraft:pitcher_plant",
+    "minecraft:pitcher_crop",
+    {
+      "id": "#ars_elemental:logs/flashing_archwood",
+      "required": false
+    },
+    {
+      "id": "ars_elemental:yellow_archwood_leaves",
+      "required": false
+    },
+    {
+      "id": "ars_elemental:yellow_archwood_sapling",
+      "required": false
+    },
+    {
+      "id": "ars_elemental:flashpine_pod",
+      "required": false
+    }
+  ]
+}

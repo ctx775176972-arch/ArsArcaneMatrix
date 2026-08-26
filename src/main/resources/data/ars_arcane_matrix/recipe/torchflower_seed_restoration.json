@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:torchflower" },
+    { "item": "ars_nouveau:earth_essence" }
+  ],
+  "result": {
+    "id": "minecraft:torchflower_seeds",
+    "count": 2
+  }
+}

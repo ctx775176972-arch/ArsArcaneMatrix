@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    { "item": "minecraft:breeze_rod" },
+    { "item": "minecraft:breeze_rod" },
+    { "item": "minecraft:diamond_block" },
+    { "item": "ars_arcane_matrix:casting_crystal" },
+    { "item": "ars_arcane_matrix:enriched_mineral_crystal" },
+    { "item": "ars_nouveau:source_gem_block" },
+    { "item": "ars_nouveau:manipulation_essence" },
+    { "item": "ars_nouveau:conjuration_essence" }
+  ],
+  "reagent": { "item": "minecraft:tripwire_hook" },
+  "result": { "count": 1, "id": "minecraft:trial_key" },
+  "sourceCost": 10000
+}

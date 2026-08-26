@@ -1,0 +1,10 @@
+{
+  "ingredients": [
+    {"item": "minecraft:rotten_flesh", "count": 8},
+    {"item": "ars_nouveau:experience_gem", "count": 4}
+  ],
+  "input_fluid": {"id": "minecraft:water", "amount": 250},
+  "output": {"item": "minecraft:leather", "amount": 2},
+  "source_cost": 200,
+  "processing_ticks": 100
+}

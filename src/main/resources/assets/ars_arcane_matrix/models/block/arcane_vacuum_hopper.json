@@ -1,0 +1,28 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "ars_nouveau:block/smooth_sourcestone_mosaic",
+    "gilded": "ars_nouveau:block/gilded_sourcestone_mosaic",
+    "crystal": "ars_nouveau:block/source_gem_block",
+    "dark": "minecraft:block/polished_blackstone",
+    "particle": "ars_nouveau:block/smooth_sourcestone_mosaic"
+  },
+  "elements": [
+    {"from":[1,12,1],"to":[15,16,15],"faces":{"down":{"texture":"#stone"},"up":{"texture":"#dark"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},
+    {"from":[2,10,2],"to":[14,12,14],"faces":{"down":{"texture":"#stone"},"up":{"texture":"#dark"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},
+    {"from":[4,6,4],"to":[12,10,12],"faces":{"down":{"texture":"#stone"},"up":{"texture":"#dark"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},
+    {"from":[6,3,6],"to":[10,6,10],"faces":{"down":{"texture":"#gilded"},"up":{"texture":"#dark"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},
+    {"from":[5,0,5],"to":[11,3,11],"faces":{"down":{"texture":"#gilded"},"up":{"texture":"#stone"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},
+    {"from":[0,14,0],"to":[16,16,2],"faces":{"down":{"texture":"#gilded"},"up":{"texture":"#gilded"},"north":{"texture":"#gilded"},"south":{"texture":"#gilded"},"west":{"texture":"#gilded"},"east":{"texture":"#gilded"}}},
+    {"from":[0,14,14],"to":[16,16,16],"faces":{"down":{"texture":"#gilded"},"up":{"texture":"#gilded"},"north":{"texture":"#gilded"},"south":{"texture":"#gilded"},"west":{"texture":"#gilded"},"east":{"texture":"#gilded"}}},
+    {"from":[0,14,2],"to":[2,16,14],"faces":{"down":{"texture":"#gilded"},"up":{"texture":"#gilded"},"north":{"texture":"#gilded"},"south":{"texture":"#gilded"},"west":{"texture":"#gilded"},"east":{"texture":"#gilded"}}},
+    {"from":[14,14,2],"to":[16,16,14],"faces":{"down":{"texture":"#gilded"},"up":{"texture":"#gilded"},"north":{"texture":"#gilded"},"south":{"texture":"#gilded"},"west":{"texture":"#gilded"},"east":{"texture":"#gilded"}}},
+    {"from":[5,7,3.8],"to":[8,9,4.1],"shade":false,"faces":{"north":{"texture":"#crystal"}}},
+    {"from":[8,7,3.8],"to":[11,9,4.1],"shade":false,"faces":{"north":{"texture":"#gilded"}}}
+  ],
+  "display": {
+    "gui":{"rotation":[30,225,0],"scale":[0.72,0.72,0.72]},
+    "ground":{"translation":[0,3,0],"scale":[0.25,0.25,0.25]},
+    "fixed":{"scale":[0.5,0.5,0.5]}
+  }
+}

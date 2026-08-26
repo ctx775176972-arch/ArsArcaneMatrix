@@ -10,6 +10,9 @@ logoFile="ars_arcane_matrix.png"
 authors="${mod_authors}"
 description='''${mod_description}'''
 
+[[mixins]]
+config="ars_arcane_matrix.mixins.json"
+
 [[dependencies.${mod_id}]]
 modId="neoforge"
 type="required"

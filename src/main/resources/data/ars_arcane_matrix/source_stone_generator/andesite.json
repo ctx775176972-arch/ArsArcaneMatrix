@@ -1,0 +1,10 @@
+{
+  "pedestal_items": [
+    { "item": "minecraft:andesite" }
+  ],
+  "result": {
+    "id": "minecraft:andesite",
+    "count": 64
+  },
+  "processing_cost": 200
+}

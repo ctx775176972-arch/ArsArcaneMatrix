@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "ars_arcane_matrix:arcane_fluid_tank" }
+  ],
+  "result": { "id": "ars_arcane_matrix:arcane_fluid_tank", "count": 1 }
+}

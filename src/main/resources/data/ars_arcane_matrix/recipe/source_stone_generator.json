@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "WGL",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "ars_nouveau:sourcestone"
+    },
+    "W": {
+      "item": "minecraft:water_bucket"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "L": {
+      "item": "minecraft:lava_bucket"
+    }
+  },
+  "result": {
+    "id": "ars_arcane_matrix:source_stone_generator",
+    "count": 1
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:brick" },
+    { "item": "minecraft:blaze_powder" },
+    { "item": "ars_nouveau:earth_essence" }
+  ],
+  "result": {
+    "id": "minecraft:burn_pottery_sherd",
+    "count": 1
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["LLL", "LCL", "LLL"],
+  "key": {
+    "L": { "tag": "c:logs/archwood" },
+    "C": { "item": "ars_arcane_matrix:enchanted_crystal" }
+  },
+  "result": { "id": "ars_arcane_matrix:enchanted_archwood_charcoal", "count": 1 }
+}

@@ -1,0 +1,13 @@
+{
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "icon": "ars_arcane_matrix:arcane_mine_core",
+  "name": "block.ars_arcane_matrix.arcane_mine_core",
+  "sortnum": 21,
+  "pages": [
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_mine_core","text":"book.ars_arcane_matrix.arcane_mine.overview"},
+    {"type":"ars_nouveau:apparatus_recipe","recipe":"ars_arcane_matrix:arcane_mine_core"},
+    {"type":"patchouli:text","title":"book.ars_arcane_matrix.arcane_mine.cycle.title","text":"book.ars_arcane_matrix.arcane_mine.cycle.text"},
+    {"type":"patchouli:text","title":"book.ars_arcane_matrix.arcane_mine.amplifier.title","text":"book.ars_arcane_matrix.arcane_mine.amplifier.text"},
+    {"type":"patchouli:text","title":"documentation.ars_arcane_matrix.construction_wand.title","text":"documentation.ars_arcane_matrix.multiblock.building"}
+  ]
+}

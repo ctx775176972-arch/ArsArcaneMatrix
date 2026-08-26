@@ -1,0 +1,5 @@
+{
+  "type":"minecraft:crafting_shaped","category":"misc","pattern":[" M ","MAM"," M "],
+  "key":{"M":{"item":"ars_nouveau:manipulation_essence"},"A":{"item":"ars_arcane_matrix:arcane_amplifier"}},
+  "result":{"id":"ars_arcane_matrix:fluid_speed_upgrade","count":1}
+}

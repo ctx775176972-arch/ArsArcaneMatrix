@@ -4,7 +4,7 @@
   "gui_light": "front",
   "textures": {
     "stone": "ars_nouveau:block/sourcestone",
-    "trim": "ars_arcane_matrix:block/arcane_imbuement_core",
+    "trim": "ars_arcane_matrix:block/arcane_structural_frame_solid_hd",
     "crystal": "ars_nouveau:block/source_gem_block",
     "socket": "ars_nouveau:block/sourcestone",
     "particle": "ars_nouveau:block/sourcestone"

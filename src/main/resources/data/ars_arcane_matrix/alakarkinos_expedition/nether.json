@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    { "item": "minecraft:netherrack", "count": 64 }
+  ],
+  "work_ticks": 160,
+  "source_cost": 10000,
+  "loot_table": "ars_arcane_matrix:chests/expedition_nether",
+  "display_outputs": [
+    { "item": "minecraft:ancient_debris" },
+    { "item": "minecraft:netherite_scrap" },
+    { "item": "minecraft:netherite_upgrade_smithing_template" },
+    { "item": "minecraft:snout_armor_trim_smithing_template" }
+  ]
+}

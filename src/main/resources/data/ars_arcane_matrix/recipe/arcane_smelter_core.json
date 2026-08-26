@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    { "item": "ars_arcane_matrix:enchanted_crystal" },
+    { "item": "ars_arcane_matrix:enchanted_crystal" },
+    { "item": "minecraft:blast_furnace" },
+    { "item": "ars_arcane_matrix:enchanted_archwood_charcoal" },
+    { "item": "ars_nouveau:sourcestone" },
+    { "item": "ars_nouveau:sourcestone" },
+    { "item": "ars_nouveau:sourcestone" },
+    { "item": "ars_nouveau:sourcestone" }
+  ],
+  "reagent": { "item": "ars_arcane_matrix:arcane_processor_core" },
+  "result": { "count": 1, "id": "ars_arcane_matrix:arcane_smelter_core" },
+  "sourceCost": 7500
+}

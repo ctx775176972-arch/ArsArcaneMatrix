@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    { "item": "minecraft:cobblestone", "count": 64 }
+  ],
+  "work_ticks": 100,
+  "source_cost": 1000,
+  "loot_table": "ars_arcane_matrix:chests/expedition_overworld_ruins",
+  "display_outputs": [
+    { "item": "minecraft:name_tag" },
+    { "item": "minecraft:enchanted_book" },
+    { "item": "minecraft:diamond" },
+    { "item": "minecraft:golden_apple" }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "ars_arcane_matrix:formless_essence" },
+    { "item": "ars_nouveau:earth_essence" }
+  ],
+  "result": { "id": "ars_nouveau:earth_essence", "count": 2 }
+}

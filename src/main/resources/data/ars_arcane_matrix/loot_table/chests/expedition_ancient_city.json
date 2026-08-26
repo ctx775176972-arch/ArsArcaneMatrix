@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:chest",
+  "pools": [{
+    "rolls": 1,
+    "entries": [
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/ancient_city", "weight": 4 },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/ancient_city_ice_box" }
+    ]
+  }],
+  "random_sequence": "ars_arcane_matrix:chests/expedition_ancient_city"
+}

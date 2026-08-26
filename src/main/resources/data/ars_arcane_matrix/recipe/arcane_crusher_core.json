@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    { "item": "minecraft:diamond_block" },
+    { "item": "minecraft:emerald_block" },
+    { "item": "minecraft:gold_block" },
+    { "item": "minecraft:lapis_block" },
+    { "item": "ars_arcane_matrix:casting_crystal" },
+    { "item": "ars_arcane_matrix:casting_crystal" },
+    { "item": "ars_arcane_matrix:enchanted_archwood_charcoal" },
+    { "item": "minecraft:blaze_rod" }
+  ],
+  "reagent": { "item": "ars_arcane_matrix:arcane_smelter_core" },
+  "result": { "count": 1, "id": "ars_arcane_matrix:arcane_crusher_core" },
+  "sourceCost": 10000
+}

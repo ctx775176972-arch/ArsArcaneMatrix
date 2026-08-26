@@ -1,0 +1,10 @@
+{
+  "pedestal_items": [
+    { "item": "minecraft:granite" }
+  ],
+  "result": {
+    "id": "minecraft:granite",
+    "count": 64
+  },
+  "processing_cost": 400
+}

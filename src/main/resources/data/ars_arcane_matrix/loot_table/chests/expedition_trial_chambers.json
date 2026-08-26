@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:chest",
+  "pools": [{
+    "rolls": 1,
+    "entries": [
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/trial_chambers/corridor" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/trial_chambers/entrance" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/trial_chambers/intersection" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/trial_chambers/intersection_barrel" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/trial_chambers/supply" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/trial_chambers/reward", "weight": 2 }
+    ]
+  }],
+  "random_sequence": "ars_arcane_matrix:chests/expedition_trial_chambers"
+}

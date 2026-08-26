@@ -1,0 +1,5 @@
+{
+  "pedestal_items": [{ "item": "minecraft:sculk_catalyst" }],
+  "result": { "id": "minecraft:sculk", "count": 64 },
+  "processing_cost": 1000
+}

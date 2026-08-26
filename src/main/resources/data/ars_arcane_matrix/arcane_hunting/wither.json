@@ -1,0 +1,5 @@
+{
+  "entity": "minecraft:wither",
+  "point_cost": 1500,
+  "results": [{ "item": "minecraft:nether_star", "count": 1 }]
+}

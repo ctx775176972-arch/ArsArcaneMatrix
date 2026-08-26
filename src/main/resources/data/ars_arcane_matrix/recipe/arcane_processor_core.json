@@ -1,0 +1,13 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    { "item": "ars_nouveau:sourcestone" },
+    { "item": "ars_nouveau:sourcestone" },
+    { "item": "minecraft:diamond_pickaxe" },
+    { "tag": "ars_nouveau:magic_food" }
+  ],
+  "reagent": { "item": "ars_arcane_matrix:arcane_amplifier" },
+  "result": { "count": 1, "id": "ars_arcane_matrix:arcane_processor_core" },
+  "sourceCost": 5000
+}

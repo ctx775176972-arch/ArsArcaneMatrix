@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "ars_arcane_matrix:block/arcane_processor_core" },
+    "facing=east":  { "model": "ars_arcane_matrix:block/arcane_processor_core", "y": 90 },
+    "facing=south": { "model": "ars_arcane_matrix:block/arcane_processor_core", "y": 180 },
+    "facing=west":  { "model": "ars_arcane_matrix:block/arcane_processor_core", "y": 270 }
+  }
+}

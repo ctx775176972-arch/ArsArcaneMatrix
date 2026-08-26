@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:wither",
+    "minecraft:ender_dragon",
+    "ars_nouveau:wilden_boss",
+    {
+      "id": "#c:bosses",
+      "required": false
+    }
+  ]
+}

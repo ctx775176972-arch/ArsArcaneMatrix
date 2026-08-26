@@ -1,0 +1,15 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    { "item": "ars_nouveau:manipulation_essence" },
+    { "item": "ars_nouveau:manipulation_essence" },
+    { "item": "ars_nouveau:source_gem_block" },
+    { "item": "ars_arcane_matrix:enriched_mineral_crystal" },
+    { "item": "ars_arcane_matrix:sourcebound_copper_alloy" },
+    { "item": "ars_arcane_matrix:sourcebound_copper_alloy" }
+  ],
+  "reagent": { "item": "ars_nouveau:item_detector" },
+  "result": { "id": "ars_arcane_matrix:automatic_stock_requester", "count": 1 },
+  "sourceCost": 5000
+}

@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#c:dusts/iron",
+    "#c:dusts/copper",
+    "#c:dusts/gold",
+    "#c:dusts/netherite_scrap",
+    "#c:dusts/sourcebound_copper_alloy"
+  ]
+}

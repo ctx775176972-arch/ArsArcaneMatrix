@@ -1,0 +1,5 @@
+{
+  "entity": "ars_nouveau:wilden_boss",
+  "point_cost": 2000,
+  "results": [{ "item": "ars_nouveau:wilden_tribute", "count": 1 }]
+}

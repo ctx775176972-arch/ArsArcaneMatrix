@@ -1,0 +1,14 @@
+{
+  "type": "ars_nouveau:glyph",
+  "exp": 160,
+  "inputs": [
+    { "item": "ars_nouveau:ritual_containment" },
+    { "item": "ars_nouveau:conjuration_essence" },
+    { "item": "ars_nouveau:manipulation_essence" },
+    { "item": "ars_nouveau:mob_jar" }
+  ],
+  "output": {
+    "count": 1,
+    "id": "ars_arcane_matrix:glyph_capture"
+  }
+}
