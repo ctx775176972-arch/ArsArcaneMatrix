@@ -1,0 +1,21 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    { "item": "minecraft:gold_block" },
+    { "item": "ars_nouveau:manipulation_essence" },
+    { "item": "ars_arcane_matrix:enchanted_crystal" },
+    { "item": "ars_arcane_matrix:sourcebound_copper_alloy" }
+  ],
+  "reagent": {
+    "type": "neoforge:components",
+    "items": "ars_arcane_matrix:starbuncle_logistics_hub",
+    "components": { "ars_arcane_matrix:logistics_hub_tier": 0 }
+  },
+  "result": {
+    "id": "ars_arcane_matrix:starbuncle_logistics_hub",
+    "count": 1,
+    "components": { "ars_arcane_matrix:logistics_hub_tier": 1 }
+  },
+  "sourceCost": 5000
+}

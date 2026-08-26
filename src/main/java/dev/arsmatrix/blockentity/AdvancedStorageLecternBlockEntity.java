@@ -152,7 +152,7 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
         if (targetLevel == null || !(targetLevel.getBlockEntity(target.pos())
                 instanceof ArcaneFluidReservoirBlockEntity reservoir)
-                || !reservoir.canWirelessReach()) {
+                || !reservoir.canWirelessReach(GlobalPos.of(level.dimension(), worldPosition))) {
             player.displayClientMessage(Component.translatable(
                     "message.ars_arcane_matrix.advanced_lectern.fluid_out_of_range"), true);
             return IWandable.Result.FAIL;
@@ -171,7 +171,7 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         if (targetLevel == null || !targetLevel.hasChunkAt(linkedFluidReservoir.pos())) return null;
         return targetLevel.getBlockEntity(linkedFluidReservoir.pos())
                 instanceof ArcaneFluidReservoirBlockEntity reservoir
-                && reservoir.canWirelessReach() ? reservoir : null;
+                && reservoir.canWirelessReach(GlobalPos.of(level.dimension(), worldPosition)) ? reservoir : null;
     }
 
     public List<ItemStack> getVirtualFluidContainers() {
@@ -248,7 +248,8 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         for (GlobalPos jarPos : SourceNetworkSavedData.get(serverLevel.getServer()).jarsForGateway(gateway)) {
             ServerLevel jarLevel = serverLevel.getServer().getLevel(jarPos.dimension());
             if (jarLevel == null || !jarLevel.hasChunkAt(jarPos.pos())) continue;
-            if (jarLevel.getBlockEntity(jarPos.pos()) instanceof SuperSourceJarCoreBlockEntity jar) {
+            if (jarLevel.getBlockEntity(jarPos.pos()) instanceof SuperSourceJarCoreBlockEntity jar
+                    && jar.isStructureFormed()) {
                 stored += jar.getSource();
                 capacity += jar.getMaxSource();
             }

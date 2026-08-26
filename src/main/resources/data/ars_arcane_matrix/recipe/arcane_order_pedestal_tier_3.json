@@ -1,0 +1,24 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    { "item": "minecraft:netherite_block" },
+    { "item": "ars_nouveau:manipulation_essence" },
+    { "item": "ars_arcane_matrix:enriched_mineral_crystal" },
+    { "item": "ars_arcane_matrix:sourcebound_copper_alloy" },
+    { "item": "ars_arcane_matrix:sourcebound_copper_alloy" },
+    { "item": "ars_arcane_matrix:sourcebound_copper_alloy" },
+    { "item": "ars_arcane_matrix:sourcebound_copper_alloy" }
+  ],
+  "reagent": {
+    "type": "neoforge:components",
+    "items": "ars_arcane_matrix:arcane_order_pedestal",
+    "components": { "ars_arcane_matrix:order_pedestal_tier": 2 }
+  },
+  "result": {
+    "id": "ars_arcane_matrix:arcane_order_pedestal",
+    "count": 1,
+    "components": { "ars_arcane_matrix:order_pedestal_tier": 3 }
+  },
+  "sourceCost": 20000
+}

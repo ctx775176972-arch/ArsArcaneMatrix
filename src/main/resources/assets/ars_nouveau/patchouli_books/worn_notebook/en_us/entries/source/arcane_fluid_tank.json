@@ -1,0 +1,10 @@
+{
+  "name": "Arcane Fluid Reservoir",
+  "icon": "ars_arcane_matrix:arcane_fluid_tank",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "pages": [
+    {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_fluid_tank"},
+    {"type":"patchouli:text","text":"A placeable single-fluid container holding 64,000 mB. Fluid containers and pipes may access it from any side. Breaking preserves its contents; crafting the reservoir by itself clears it."},
+    {"type":"patchouli:text","text":"An empty Arcane Fluid Reservoir may instead be installed in a controller's dedicated reservoir slot, increasing the number of fluid types it can manage."}
+  ]
+}

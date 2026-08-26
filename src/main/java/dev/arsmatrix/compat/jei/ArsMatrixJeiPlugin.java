@@ -7,6 +7,7 @@ import dev.arsmatrix.data.SourceStoneGeneratorRecipeManager;
 import dev.arsmatrix.data.CrusherRecipeResolver;
 import dev.arsmatrix.data.ArcaneHuntingRuleManager;
 import dev.arsmatrix.data.AlakarkinosExpeditionManager;
+import dev.arsmatrix.data.ArcaneReactionManager;
 import dev.arsmatrix.registry.ModBlocks;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -22,9 +23,16 @@ import dev.arsmatrix.client.WixieOrderTerminalScreen;
 import dev.arsmatrix.registry.ModItems;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import com.hollingsworth.arsnouveau.client.jei.JEIArsNouveauPlugin;
+import com.hollingsworth.arsnouveau.common.crafting.recipes.EnchantingApparatusRecipe;
+import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
+import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @JeiPlugin
@@ -34,6 +42,7 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
             ArsArcaneMatrix.MOD_ID,
             "jei"
     );
+    private static List<RecipeHolder<EnchantingApparatusRecipe>> machineUpgradeRecipes = List.of();
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -57,10 +66,16 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
         }
         registration.addRecipeCategories(new AlakarkinosExpeditionJeiCategory(
                 registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ArcaneMachineUpgradeJeiCategory(
+                registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new ArcaneReactionJeiCategory(
+                registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+        machineUpgradeRecipes = findMachineUpgradeRecipes();
+        registration.addRecipes(ArcaneMachineUpgradeJeiCategory.TYPE, machineUpgradeRecipes);
         registration.addRecipes(
                 ArcaneMineJeiCategory.TYPE,
                 ArcaneMineOreManager.allRules().stream()
@@ -77,6 +92,7 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
         }
         registration.addRecipes(AlakarkinosExpeditionJeiCategory.TYPE,
                 AlakarkinosExpeditionManager.allRules());
+        registration.addRecipes(ArcaneReactionJeiCategory.TYPE, ArcaneReactionManager.allRecipes());
         registration.addIngredientInfo(
                 ModBlocks.MATRIX_CORE.get(),
                 Component.translatable("jei.ars_arcane_matrix.matrix_core.info"),
@@ -202,6 +218,8 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        registration.addRecipeCatalyst(BlockRegistry.ENCHANTING_APP_BLOCK.get(),
+                ArcaneMachineUpgradeJeiCategory.TYPE);
         registration.addRecipeCatalyst(ModItems.CRAFTING_GUIDE.get(), RecipeTypes.CRAFTING);
         registration.addRecipeCatalyst(ModBlocks.ARCANE_SMELTER_CORE.get(), RecipeTypes.SMELTING);
         registration.addRecipeCatalyst(ModBlocks.SOURCE_STONE_FURNACE.get(), RecipeTypes.SMELTING);
@@ -223,6 +241,7 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
         }
         registration.addRecipeCatalyst(ItemsRegistry.ALAKARKINOS_CHARM.get(),
                 AlakarkinosExpeditionJeiCategory.TYPE);
+        registration.addRecipeCatalyst(ModBlocks.ARCANE_REACTION_VESSEL.get(), ArcaneReactionJeiCategory.TYPE);
         registration.addRecipeCatalyst(
                 net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
                         ResourceLocation.fromNamespaceAndPath("ars_nouveau", "water_essence")),
@@ -231,6 +250,32 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
                 net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
                         ResourceLocation.fromNamespaceAndPath("ars_nouveau", "air_essence")),
                 ArcaneCrusherJeiCategory.TYPE);
+    }
+
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+        // These recipes still use Ars Nouveau's apparatus at runtime, but JEI should
+        // present them only in the dedicated upgrade category.
+        jeiRuntime.getRecipeManager().hideRecipes(
+                JEIArsNouveauPlugin.ENCHANTING_APP_RECIPE_TYPE.get(), machineUpgradeRecipes);
+    }
+
+    private static List<RecipeHolder<EnchantingApparatusRecipe>> findMachineUpgradeRecipes() {
+        if (Minecraft.getInstance().level == null) return List.of();
+        List<RecipeHolder<EnchantingApparatusRecipe>> result = new ArrayList<>();
+        for (RecipeHolder<?> holder : Minecraft.getInstance().level.getRecipeManager().getRecipes()) {
+            if (holder.value() instanceof EnchantingApparatusRecipe recipe
+                    && isMachineUpgradeId(holder.id())) {
+                result.add(new RecipeHolder<>(holder.id(), recipe));
+            }
+        }
+        return List.copyOf(result);
+    }
+
+    private static boolean isMachineUpgradeId(ResourceLocation id) {
+        if (!id.getNamespace().equals(ArsArcaneMatrix.MOD_ID)) return false;
+        String path = id.getPath();
+        return path.matches("(?:arcane_order_pedestal|wixie_pattern_provider|starbuncle_logistics_hub|automatic_stock_requester)_tier_[1-9][0-9]*");
     }
 
     @Override

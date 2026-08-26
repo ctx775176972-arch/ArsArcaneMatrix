@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    { "item": "minecraft:dirt", "count": 64 }
+  ],
+  "work_ticks": 100,
+  "source_cost": 1000,
+  "loot_table": "ars_arcane_matrix:chests/expedition_village",
+  "display_outputs": [
+    { "item": "minecraft:emerald" },
+    { "item": "minecraft:iron_ingot" },
+    { "item": "minecraft:bread" },
+    { "item": "minecraft:diamond" }
+  ]
+}

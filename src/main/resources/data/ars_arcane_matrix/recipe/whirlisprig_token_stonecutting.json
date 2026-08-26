@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {"item": "ars_arcane_matrix:enchanted_crystal"},
+  "result": {"id": "ars_nouveau:whirlisprig_shards", "count": 1}
+}

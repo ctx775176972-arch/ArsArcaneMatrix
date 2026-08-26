@@ -1,0 +1,10 @@
+{
+  "name": "维度锚",
+  "icon": "ars_arcane_matrix:dimension_anchor",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "pages": [
+    { "type": "patchouli:text", "text": "维度锚消耗土之精华，使自身所在的一个区块保持完整运转。每个土之精华可维持30分钟；可空手右击检查剩余时间，也可使用漏斗或管道自动补充。" },
+    { "type": "patchouli:text", "text": "红石信号会立即暂停维度锚、停止燃料消耗并释放区块。燃料耗尽或方块被破坏时也会安全释放。跨维度魔源与存储网络需要在每个远程节点所在区块分别放置维度锚。" },
+    { "type": "patchouli:crafting", "recipe": "ars_arcane_matrix:dimension_anchor" }
+  ]
+}

@@ -20,6 +20,10 @@ logs/
 
 # Runtime
 run/
+runs/
+
+# Local inspection and extracted dependency files
+tmp/
 
 # Generated
 bin/

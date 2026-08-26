@@ -1,0 +1,6 @@
+{
+  "parent": "ars_arcane_matrix:block/arcane_machine_core_base",
+  "textures": {
+    "symbol": "ars_arcane_matrix:block/arcane_smelter_front"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name":"Arcane Vacuum Hopper","icon":"ars_arcane_matrix:arcane_vacuum_hopper","category":"ars_nouveau:ars_arcane_matrix",
+  "pages":[
+    {"type":"patchouli:text","text":"The Arcane Vacuum Hopper directly collects dropped items and vanilla experience orbs within 12 blocks through walls and obstacles. It deliberately ignores point entities from other mods. A redstone signal pauses collection, conversion, and output. Use an empty hand to open the menu; sneak-use with an empty hand to deposit all player experience."},
+    {"type":"patchouli:text","text":"Stored experience converts into Experience Gems: normal gems cost 3 XP and Greater Experience Gems cost 12 XP. Items and gems have separate buffers, output modes, and Dominion Wand targets. The Binding Channel button selects which output the next wand binding controls. An unbound output can fall back to a container below."},
+    {"type":"patchouli:text","text":"Nine filter templates support disabled, whitelist, and blacklist modes, matching items and components exactly. Void Matches is off by default. When enabled, drops matching any template are attracted and permanently destroyed before the collection filter is evaluated. The model uses a stepped Sourcestone funnel."},
+    {"type":"ars_nouveau:apparatus_recipe","recipe":"ars_arcane_matrix:arcane_vacuum_hopper"}
+  ]
+}

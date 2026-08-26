@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "ars_nouveau:purple_archwood_log" },
+    { "item": "ars_nouveau:conjuration_essence" },
+    { "item": "ars_nouveau:conjuration_essence" },
+    { "item": "ars_arcane_matrix:casting_crystal" },
+    { "item": "ars_arcane_matrix:enriched_mineral_crystal" }
+  ],
+  "result": {
+    "id": "ars_arcane_matrix:rare_creature_summoning_tablet",
+    "count": 1
+  }
+}

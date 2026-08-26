@@ -59,14 +59,15 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.STORAGE_GRID_DIRECTORY.get());
                         output.accept(ModItems.GRID_EXPANSION_WAREHOUSE.get());
                         output.accept(ModItems.SUPER_SOURCE_JAR_CORE.get());
+                        output.accept(ModItems.ARCANE_SOURCE_JAR.get());
                         output.accept(ModItems.INTEGRATED_SOURCE_RELAY.get());
                         output.accept(ModItems.DIMENSION_ANCHOR.get());
                         output.accept(ModItems.ARCANE_FLUID_RESERVOIR.get());
+                        output.accept(ModItems.ARCANE_REACTION_VESSEL.get());
                         output.accept(ModItems.FLUID_CAPACITY_UPGRADE.get());
                         output.accept(ModItems.FLUID_RANGE_UPGRADE.get());
                         output.accept(ModItems.FLUID_SPEED_UPGRADE.get());
-                        output.accept(ModItems.VOLCANIC_CONDENSATION_UPGRADE.get());
-                        output.accept(ModItems.ADDITIONAL_FLUID_TANK_MODULE.get());
+                        output.accept(ModItems.ARCANE_FLUID_TANK.get());
                         output.accept(ModItems.ARCANE_VACUUM_HOPPER.get());
                         output.accept(ModItems.SOURCE_STONE_FURNACE.get());
                         if (FeatureFlags.ARCANE_ARENA) {

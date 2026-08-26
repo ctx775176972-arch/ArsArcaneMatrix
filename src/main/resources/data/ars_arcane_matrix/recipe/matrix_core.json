@@ -17,9 +17,9 @@
     {
       "item": "ars_nouveau:volcanic_sourcelink"
     },
-    { "item": "ars_nouveau:source_jar" },
-    { "item": "ars_nouveau:source_jar" },
-    { "item": "ars_nouveau:source_gem_block" }
+    { "item": "ars_arcane_matrix:enchanted_crystal" },
+    { "item": "ars_arcane_matrix:casting_crystal" },
+    { "item": "ars_arcane_matrix:enriched_mineral_crystal" }
   ],
   "reagent": {
     "item": "ars_nouveau:arcane_core"
@@ -28,5 +28,5 @@
     "count": 1,
     "id": "ars_arcane_matrix:matrix_core"
   },
-  "sourceCost": 10000
+  "sourceCost": 50000
 }

@@ -1,0 +1,131 @@
+{
+  "credit": "Based on the Ars Nouveau Drygmy Henge silhouette",
+  "ambientocclusion": true,
+  "render_type": "cutout",
+  "textures": {
+    "stone": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/polished_blackstone"
+  },
+  "elements": [
+    {
+      "name": "north_left",
+      "from": [4, 0, 0.5],
+      "to": [7, 5, 2.5],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "north_right",
+      "from": [9, 0, 0.5],
+      "to": [12, 5, 2.5],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "north_lintel",
+      "from": [3.5, 5, 0],
+      "to": [12.5, 7, 3],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "east_north",
+      "from": [13.5, 0, 4],
+      "to": [15.5, 6, 7],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "east_south",
+      "from": [13.5, 0, 9],
+      "to": [15.5, 6, 12],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "east_lintel",
+      "from": [13, 6, 3.5],
+      "to": [16, 8, 12.5],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "south_left",
+      "from": [4, 0, 13.5],
+      "to": [7, 7, 15.5],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "south_right",
+      "from": [9, 0, 13.5],
+      "to": [12, 7, 15.5],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "south_lintel",
+      "from": [3.5, 7, 13],
+      "to": [12.5, 9, 16],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "west_north",
+      "from": [0.5, 0, 4],
+      "to": [2.5, 8, 7],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "west_south",
+      "from": [0.5, 0, 9],
+      "to": [2.5, 8, 12],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
+      "name": "west_lintel",
+      "from": [0, 8, 3.5],
+      "to": [3, 10, 12.5],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    }
+  ]
+}

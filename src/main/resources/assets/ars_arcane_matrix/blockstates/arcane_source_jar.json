@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "ars_arcane_matrix:block/arcane_source_jar" }
+  }
+}

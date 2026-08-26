@@ -33,6 +33,8 @@ public final class ClientModEvents {
         event.registerBlockEntityRenderer(ModBlockEntities.ARCANE_CRUSHER_CORE.get(), ArcaneCrusherCoreRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ARCANE_FLUID_RESERVOIR.get(),
                 ArcaneFluidReservoirRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.SUPER_SOURCE_JAR_CORE.get(),
+                SuperSourceJarCoreRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.DRYGMY_ARENA.get(), DrygmyArenaRenderer::new);
         event.registerBlockEntityRenderer(
                 ModBlockEntities.ARCANE_IMBUEMENT_CORE.get(),
@@ -95,6 +97,8 @@ public final class ClientModEvents {
                 StorageGridDirectoryScreen::new);
         event.register(dev.arsmatrix.registry.ModMenus.ARCANE_FLUID_RESERVOIR.get(),
                 ArcaneFluidReservoirScreen::new);
+        event.register(dev.arsmatrix.registry.ModMenus.ARCANE_REACTION_VESSEL.get(),
+                ArcaneReactionVesselScreen::new);
         event.register(dev.arsmatrix.registry.ModMenus.ARCANE_VACUUM_HOPPER.get(),
                 ArcaneVacuumHopperScreen::new);
         event.register(dev.arsmatrix.registry.ModMenus.SOURCE_STONE_FURNACE.get(),

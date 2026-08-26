@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:block",
+  "pools": [{ "rolls": 1, "entries": [{ "type": "minecraft:item", "name": "ars_arcane_matrix:arcane_fluid_reservoir" }],
+    "conditions": [{ "condition": "minecraft:survives_explosion" }] }]
+}

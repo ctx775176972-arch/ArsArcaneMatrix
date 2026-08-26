@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "ars_arcane_matrix:block/advanced_storage_lectern" },
+    "facing=east":  { "model": "ars_arcane_matrix:block/advanced_storage_lectern", "y": 90 },
+    "facing=south": { "model": "ars_arcane_matrix:block/advanced_storage_lectern", "y": 180 },
+    "facing=west":  { "model": "ars_arcane_matrix:block/advanced_storage_lectern", "y": 270 }
+  }
+}

@@ -55,10 +55,10 @@ public final class ModDocumentation {
 
         DocEntryBuilder builder = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID,
-                source,
+                minerals,
                 matrixCore
         )
-                .withSortNum(30)
+                .withSortNum(50)
                 .withIntroPageNoIncrement(
                         Component.translatable("documentation.ars_arcane_matrix.matrix_core.overview"),
                         Component.translatable("block.ars_arcane_matrix.matrix_core"),
@@ -68,7 +68,7 @@ public final class ModDocumentation {
                 .withTextPage(Component.translatable("documentation.ars_arcane_matrix.multiblock.building"))
                 .addConnectedSearch(matrixCore);
 
-        DocumentationRegistry.registerEntry(source, builder.build());
+        DocumentationRegistry.registerEntry(minerals, builder.build());
 
         Item mineCore = ModItems.ARCANE_MINE_CORE.get();
         DocEntryBuilder mineBuilder = new DocEntryBuilder(
@@ -178,6 +178,22 @@ public final class ModDocumentation {
 
         DocumentationRegistry.registerEntry(source, generatorBuilder.build());
 
+        Item reactionVessel = ModItems.ARCANE_REACTION_VESSEL.get();
+        DocEntryBuilder reactionBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, source, reactionVessel)
+                .withSortNum(25)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.arcane_reaction_vessel"),
+                        Component.translatable("block.ars_arcane_matrix.arcane_reaction_vessel"),
+                        reactionVessel.getDefaultInstance())
+                .withTextPage(Component.translatable(
+                        "documentation.ars_arcane_matrix.arcane_reaction_vessel.operation"))
+                .withCraftingPages()
+                .addConnectedSearch(reactionVessel)
+                .addConnectedSearch(ModItems.ARCANE_FLUID_RESERVOIR.get())
+                .addConnectedSearch(ModItems.ARCANE_FLUID_TANK.get());
+        DocumentationRegistry.registerEntry(source, reactionBuilder.build());
+
         Item smelter = ModItems.ARCANE_SMELTER_CORE.get();
         DocEntryBuilder smelterBuilder = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID, minerals, smelter
@@ -285,6 +301,22 @@ public final class ModDocumentation {
                 .addConnectedSearch(ModItems.WIXIE_PATTERN_PROVIDER.get());
         DocumentationRegistry.registerEntry(crafting, providerBuilder.build());
 
+        Item sourceStoneFurnace = ModItems.SOURCE_STONE_FURNACE.get();
+        DocEntryBuilder sourceStoneFurnaceBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, crafting, sourceStoneFurnace)
+                .withSortNum(60)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.source_stone_furnace.summary"),
+                        Component.translatable("block.ars_arcane_matrix.source_stone_furnace"),
+                        sourceStoneFurnace.getDefaultInstance())
+                .withTextPage(Component.translatable(
+                        "documentation.ars_arcane_matrix.source_stone_furnace.operation"))
+                .withCraftingPages()
+                .addConnectedSearch(sourceStoneFurnace)
+                .addConnectedSearch(ModItems.WIXIE_ORDER_TERMINAL.get())
+                .addConnectedSearch(ModItems.WIXIE_PATTERN_PROVIDER.get());
+        DocumentationRegistry.registerEntry(crafting, sourceStoneFurnaceBuilder.build());
+
         Item amethystGolemCharm = ItemsRegistry.AMETHYST_GOLEM_CHARM.get();
         DocEntryBuilder amethystGolemBuilder = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID,
@@ -366,6 +398,7 @@ public final class ModDocumentation {
                         Component.translatable("block.ars_arcane_matrix.automatic_stock_requester"),
                         ModItems.AUTOMATIC_STOCK_REQUESTER.get().getDefaultInstance())
                 .withTextPage(Component.translatable("documentation.ars_arcane_matrix.stock_requester.setup"))
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.stock_requester.upgrades"))
                 .withCraftingPages()
                 .addConnectedSearch(ModItems.AUTOMATIC_STOCK_REQUESTER.get());
         DocumentationRegistry.registerEntry(crafting, requesterBuilder.build());
@@ -427,6 +460,53 @@ public final class ModDocumentation {
                 .addConnectedSearch(ModItems.STARBUNCLE_LOGISTICS_HUB.get());
         DocumentationRegistry.registerEntry(storage, logisticsBuilder.build());
 
+        Item fluidController = ModItems.ARCANE_FLUID_RESERVOIR.get();
+        DocEntryBuilder fluidControllerBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, storage, fluidController)
+                .withSortNum(50)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.arcane_fluid_controller.summary"),
+                        Component.translatable("block.ars_arcane_matrix.arcane_fluid_reservoir"),
+                        fluidController.getDefaultInstance())
+                .withTextPage(Component.translatable(
+                        "documentation.ars_arcane_matrix.arcane_fluid_controller.operation"))
+                .withCraftingPages()
+                .addConnectedSearch(fluidController)
+                .addConnectedSearch(ModItems.ARCANE_FLUID_TANK.get())
+                .addConnectedSearch(ModItems.ARCANE_REACTION_VESSEL.get());
+        DocumentationRegistry.registerEntry(storage, fluidControllerBuilder.build());
+
+        Item fluidTank = ModItems.ARCANE_FLUID_TANK.get();
+        DocEntryBuilder fluidTankBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, storage, fluidTank)
+                .withSortNum(55)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.arcane_fluid_tank.summary"),
+                        Component.translatable("block.ars_arcane_matrix.arcane_fluid_tank"),
+                        fluidTank.getDefaultInstance())
+                .withTextPage(Component.translatable(
+                        "documentation.ars_arcane_matrix.arcane_fluid_tank.operation"))
+                .withCraftingPages(
+                        ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_fluid_tank"),
+                        fluidTank)
+                .addConnectedSearch(fluidTank)
+                .addConnectedSearch(fluidController);
+        DocumentationRegistry.registerEntry(storage, fluidTankBuilder.build());
+
+        Item vacuumHopper = ModItems.ARCANE_VACUUM_HOPPER.get();
+        DocEntryBuilder vacuumBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, storage, vacuumHopper)
+                .withSortNum(60)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.arcane_vacuum_hopper.summary"),
+                        Component.translatable("block.ars_arcane_matrix.arcane_vacuum_hopper"),
+                        vacuumHopper.getDefaultInstance())
+                .withTextPage(Component.translatable(
+                        "documentation.ars_arcane_matrix.arcane_vacuum_hopper.operation"))
+                .withCraftingPages()
+                .addConnectedSearch(vacuumHopper);
+        DocumentationRegistry.registerEntry(storage, vacuumBuilder.build());
+
         DocEntryBuilder sourceNetworkBuilder = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID, source, ModItems.SUPER_SOURCE_JAR_CORE.get())
                 .withSortNum(60)
@@ -442,6 +522,20 @@ public final class ModDocumentation {
                 .addConnectedSearch(ModItems.INTEGRATED_SOURCE_RELAY.get())
                 .addConnectedSearch(ModItems.DIMENSION_ANCHOR.get());
         DocumentationRegistry.registerEntry(source, sourceNetworkBuilder.build());
+
+        Item arcaneSourceJar = ModItems.ARCANE_SOURCE_JAR.get();
+        DocEntryBuilder arcaneSourceJarBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, source, arcaneSourceJar)
+                .withSortNum(55)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.arcane_source_jar.summary"),
+                        Component.translatable("block.ars_arcane_matrix.arcane_source_jar"),
+                        arcaneSourceJar.getDefaultInstance())
+                .withTextPage(Component.translatable(
+                        "documentation.ars_arcane_matrix.arcane_source_jar.operation"))
+                .withCraftingPages()
+                .addConnectedSearch(arcaneSourceJar);
+        DocumentationRegistry.registerEntry(source, arcaneSourceJarBuilder.build());
 
         DocEntryBuilder relayBuilder = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID, source, ModItems.INTEGRATED_SOURCE_RELAY.get())

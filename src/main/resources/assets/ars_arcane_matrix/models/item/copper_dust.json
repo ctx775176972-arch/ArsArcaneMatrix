@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": { "layer0": "ars_arcane_matrix:item/copper_dust" }
+}

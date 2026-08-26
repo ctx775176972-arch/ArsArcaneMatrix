@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:chest",
+  "pools": [{
+    "rolls": 1,
+    "entries": [
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/abandoned_mineshaft" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/desert_pyramid" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/igloo_chest" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/jungle_temple" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/pillager_outpost" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/ruined_portal" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/simple_dungeon" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/spawn_bonus_chest" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/stronghold_corridor" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/stronghold_crossing" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/stronghold_library" },
+      { "type": "minecraft:loot_table", "value": "minecraft:chests/woodland_mansion" }
+    ]
+  }],
+  "random_sequence": "ars_arcane_matrix:chests/expedition_overworld_ruins"
+}

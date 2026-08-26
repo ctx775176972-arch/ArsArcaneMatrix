@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    { "item": "minecraft:ominous_bottle" },
+    { "item": "minecraft:netherite_block" },
+    { "item": "ars_arcane_matrix:condensed_summoning_catalyst" },
+    { "item": "ars_arcane_matrix:casting_crystal" },
+    { "item": "ars_arcane_matrix:enriched_mineral_crystal" },
+    { "item": "ars_arcane_matrix:enriched_mineral_crystal" },
+    { "item": "ars_nouveau:abjuration_essence" },
+    { "item": "ars_nouveau:conjuration_essence" }
+  ],
+  "reagent": { "item": "minecraft:trial_key" },
+  "result": { "count": 1, "id": "minecraft:ominous_trial_key" },
+  "sourceCost": 20000
+}

@@ -1,0 +1,5 @@
+{
+  "entity": "minecraft:ender_dragon",
+  "point_cost": 3000,
+  "results": [{ "item": "minecraft:dragon_egg", "count": 1 }]
+}

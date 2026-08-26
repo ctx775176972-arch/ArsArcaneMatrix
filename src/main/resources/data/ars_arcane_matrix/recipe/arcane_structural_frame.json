@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": ["AAA", "ASA", "AAA"],
+  "key": {
+    "A": { "item": "ars_arcane_matrix:sourcebound_copper_alloy" },
+    "S": { "item": "ars_nouveau:source_gem_block" }
+  },
+  "result": { "id": "ars_arcane_matrix:arcane_structural_frame", "count": 4 }
+}

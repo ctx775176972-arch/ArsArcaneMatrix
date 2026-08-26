@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    { "item": "minecraft:end_stone", "count": 64 }
+  ],
+  "work_ticks": 200,
+  "source_cost": 10000,
+  "loot_table": "minecraft:chests/end_city_treasure",
+  "display_outputs": [
+    { "item": "minecraft:diamond" },
+    { "item": "minecraft:diamond_chestplate" },
+    { "item": "minecraft:diamond_pickaxe" },
+    { "item": "minecraft:gold_ingot" }
+  ]
+}

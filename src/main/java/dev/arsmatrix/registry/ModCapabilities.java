@@ -74,19 +74,29 @@ public final class ModCapabilities {
                 (blockEntity, direction) -> blockEntity.getStorage()
         );
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                ModBlockEntities.DIMENSION_ANCHOR.get(),
-                (blockEntity, direction) -> blockEntity.getFuelHandler()
-        );
-        event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 ModBlockEntities.ARCANE_FLUID_RESERVOIR.get(),
                 (blockEntity, direction) -> blockEntity.getFluidHandler(direction)
         );
         event.registerBlockEntity(
+                Capabilities.FluidHandler.BLOCK,
+                ModBlockEntities.ARCANE_FLUID_TANK.get(),
+                (blockEntity, direction) -> blockEntity.fluidHandler()
+        );
+        event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 ModBlockEntities.ARCANE_FLUID_RESERVOIR.get(),
                 (blockEntity, direction) -> blockEntity.getUpgrades()
+        );
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                ModBlockEntities.ARCANE_REACTION_VESSEL.get(),
+                (blockEntity, direction) -> blockEntity.itemHandler(direction)
+        );
+        event.registerBlockEntity(
+                Capabilities.FluidHandler.BLOCK,
+                ModBlockEntities.ARCANE_REACTION_VESSEL.get(),
+                (blockEntity, direction) -> blockEntity.fluidHandler(direction)
         );
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,

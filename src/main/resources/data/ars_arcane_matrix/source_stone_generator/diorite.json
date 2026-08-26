@@ -1,0 +1,10 @@
+{
+  "pedestal_items": [
+    { "item": "minecraft:diorite" }
+  ],
+  "result": {
+    "id": "minecraft:diorite",
+    "count": 64
+  },
+  "processing_cost": 400
+}

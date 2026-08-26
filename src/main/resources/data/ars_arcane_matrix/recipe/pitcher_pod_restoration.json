@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:pitcher_plant" },
+    { "item": "ars_nouveau:earth_essence" }
+  ],
+  "result": {
+    "id": "minecraft:pitcher_pod",
+    "count": 2
+  }
+}

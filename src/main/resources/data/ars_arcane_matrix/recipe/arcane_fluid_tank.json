@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["SBS", "GCG", "SBS"],
+  "key": {
+    "S": {"item": "ars_nouveau:sourcestone"},
+    "B": {"item": "minecraft:bucket"},
+    "G": {"item": "ars_nouveau:source_gem_block"},
+    "C": {"item": "ars_arcane_matrix:enriched_mineral_crystal"}
+  },
+  "result": {"id": "ars_arcane_matrix:arcane_fluid_tank", "count": 1}
+}

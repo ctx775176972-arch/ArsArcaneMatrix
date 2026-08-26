@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    { "item": "minecraft:sculk", "count": 64 }
+  ],
+  "work_ticks": 200,
+  "source_cost": 10000,
+  "loot_table": "ars_arcane_matrix:chests/expedition_ancient_city",
+  "display_outputs": [
+    { "item": "minecraft:echo_shard" },
+    { "item": "minecraft:recovery_compass" },
+    { "item": "minecraft:disc_fragment_5" },
+    { "item": "minecraft:enchanted_golden_apple" }
+  ]
+}

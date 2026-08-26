@@ -27,6 +27,10 @@ import dev.arsmatrix.blockentity.ArcaneSmelterCoreBlockEntity;
 import dev.arsmatrix.block.ArcaneCrusherCoreBlock;
 import dev.arsmatrix.blockentity.ArcaneCrusherCoreBlockEntity;
 import dev.arsmatrix.blockentity.DrygmyArenaBlockEntity;
+import dev.arsmatrix.block.SuperSourceJarCoreBlock;
+import dev.arsmatrix.blockentity.SuperSourceJarCoreBlockEntity;
+import net.minecraft.world.level.block.Blocks;
+import dev.arsmatrix.util.MultiblockClearance;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.List;
@@ -73,6 +77,8 @@ public final class StructurePreviewRenderer {
             type = PreviewType.CRUSHER;
         } else if (block == ModBlocks.DRYGMY_ARENA.get()) {
             type = PreviewType.HUNTING_GROUNDS;
+        } else if (block == ModBlocks.SUPER_SOURCE_JAR_CORE.get()) {
+            type = PreviewType.MATRIX_SOURCE_RESERVOIR;
         } else {
             return;
         }
@@ -97,6 +103,39 @@ public final class StructurePreviewRenderer {
 
     public static boolean isMatrixPreviewActive(BlockPos pos) {
         return previewType == PreviewType.MATRIX && pos.equals(previewPos);
+    }
+
+    public static void renderMatrixSourceReservoir(BlockPos pos, PoseStack poseStack,
+                                                   MultiBufferSource bufferSource) {
+        if (previewType != PreviewType.MATRIX_SOURCE_RESERVOIR || !pos.equals(previewPos)) return;
+        Level level = Minecraft.getInstance().level;
+        if (level == null) return;
+        BlockState coreState = level.getBlockState(pos);
+        // A block entity may receive one final render call after its block was broken or
+        // its chunk changed. Never read FACING from the replacement state (often air).
+        if (!coreState.is(ModBlocks.SUPER_SOURCE_JAR_CORE.get())
+                || !coreState.hasProperty(SuperSourceJarCoreBlock.FACING)) {
+            previewPos = null;
+            previewType = null;
+            return;
+        }
+        net.minecraft.core.Direction facing = coreState.getValue(SuperSourceJarCoreBlock.FACING);
+        MultiBufferSource previewBuffers = translucentBuffers(bufferSource);
+        boolean missing = false;
+        for (SuperSourceJarCoreBlockEntity.StructurePart part
+                : SuperSourceJarCoreBlockEntity.structureParts(pos, facing)) {
+            BlockState expected = part.kind() == SuperSourceJarCoreBlockEntity.PartKind.FRAME
+                    ? ModBlocks.ARCANE_STRUCTURAL_FRAME.get().defaultBlockState()
+                    : Blocks.TINTED_GLASS.defaultBlockState();
+            if (!level.getBlockState(part.pos()).is(expected.getBlock())) {
+                renderBlock(poseStack, previewBuffers, expected,
+                        part.pos().getX() - pos.getX(),
+                        part.pos().getY() - pos.getY(),
+                        part.pos().getZ() - pos.getZ());
+                missing = true;
+            }
+        }
+        if (!missing) closeCompletedPreview(pos, PreviewType.MATRIX_SOURCE_RESERVOIR);
     }
 
     public static boolean isMinePreviewActive(BlockPos pos) {
@@ -131,7 +170,7 @@ public final class StructurePreviewRenderer {
             renderBlock(poseStack, previewBuffers, ARCANE_PEDESTAL, 0, 2, 0);
             missing = true;
         }
-        if (!missing && level.getBlockState(pos.above()).isAir()) {
+        if (!missing && MultiblockClearance.isOpen(level, pos.above())) {
             closeCompletedPreview(pos, PreviewType.SMELTER);
         }
     }
@@ -180,7 +219,7 @@ public final class StructurePreviewRenderer {
             renderBlock(poseStack, previewBuffers, ARCANE_PEDESTAL, 0, 2, 0);
             missing = true;
         }
-        if (!missing && level.getBlockState(pos.above()).isAir()) {
+        if (!missing && MultiblockClearance.isOpen(level, pos.above())) {
             closeCompletedPreview(pos, PreviewType.CRUSHER);
         }
     }
@@ -206,9 +245,9 @@ public final class StructurePreviewRenderer {
                 missing = true;
             }
         }
-        if (!missing && level.getBlockState(pos.above(2)).isAir()
-                && level.getBlockState(pos.relative(facing)).isAir()
-                && level.getBlockState(pos.relative(facing.getOpposite())).isAir()) {
+        if (!missing && MultiblockClearance.isOpen(level, pos.above(2))
+                && MultiblockClearance.isOpen(level, pos.relative(facing))
+                && MultiblockClearance.isOpen(level, pos.relative(facing.getOpposite()))) {
             closeCompletedPreview(pos, PreviewType.PROCESSOR);
         }
     }
@@ -324,6 +363,10 @@ public final class StructurePreviewRenderer {
     }
 
     private static boolean isStructureComplete(Level level, BlockPos pos, PreviewType type) {
+        if (type == PreviewType.MATRIX_SOURCE_RESERVOIR) {
+            return SuperSourceJarCoreBlockEntity.isStructureFormed(level, pos,
+                    level.getBlockState(pos).getValue(SuperSourceJarCoreBlock.FACING));
+        }
         if (type == PreviewType.HUNTING_GROUNDS) {
             return DrygmyArenaBlockEntity.isStructureFormed(level, pos);
         }
@@ -483,6 +526,7 @@ public final class StructurePreviewRenderer {
         PROCESSOR,
         SMELTER,
         CRUSHER,
-        HUNTING_GROUNDS
+        HUNTING_GROUNDS,
+        MATRIX_SOURCE_RESERVOIR
     }
 }

@@ -18,11 +18,14 @@ import dev.arsmatrix.block.AutomaticStockRequesterBlock;
 import dev.arsmatrix.block.StarbuncleLogisticsHubBlock;
 import dev.arsmatrix.block.StorageGridDirectoryBlock;
 import dev.arsmatrix.block.SuperSourceJarCoreBlock;
+import dev.arsmatrix.block.ArcaneFluidTankBlock;
 import dev.arsmatrix.block.IntegratedSourceRelayBlock;
 import dev.arsmatrix.block.DimensionAnchorBlock;
 import dev.arsmatrix.block.ArcaneFluidReservoirBlock;
+import dev.arsmatrix.block.ArcaneReactionVesselBlock;
 import dev.arsmatrix.block.ArcaneVacuumHopperBlock;
 import dev.arsmatrix.block.SourceStoneFurnaceBlock;
+import dev.arsmatrix.block.ArcaneSourceJarBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -218,14 +221,22 @@ public final class ModBlocks {
                     .sound(SoundType.AMETHYST))
     );
 
-    /** Massive receive-only Source storage for the late-game Source network. */
+    /** Core for the hollow 7x7x7 Matrix Source Reservoir. */
     public static final DeferredBlock<Block> SUPER_SOURCE_JAR_CORE = BLOCKS.register(
             "super_source_jar_core",
             () -> new SuperSourceJarCoreBlock(BlockBehaviour.Properties.of()
                     .strength(8.0F, 1200.0F)
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
-                    .lightLevel(state -> 8)
+                    .sound(SoundType.AMETHYST)));
+
+    /** Pre-Matrix one-million Source buffer with active nearby producer collection. */
+    public static final DeferredBlock<Block> ARCANE_SOURCE_JAR = BLOCKS.register(
+            "arcane_source_jar",
+            () -> new ArcaneSourceJarBlock(BlockBehaviour.Properties.of()
+                    .strength(5.0F, 10.0F)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
                     .sound(SoundType.AMETHYST)));
 
     /** Local network outlet that exposes remote Source to nearby Ars machines. */
@@ -251,6 +262,24 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> ARCANE_FLUID_RESERVOIR = BLOCKS.register(
             "arcane_fluid_reservoir",
             () -> new ArcaneFluidReservoirBlock(BlockBehaviour.Properties.of()
+                    .strength(6.0F, 20.0F)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .sound(SoundType.AMETHYST)));
+
+    /** Placeable single-fluid storage that also serves as a controller tank module. */
+    public static final DeferredBlock<Block> ARCANE_FLUID_TANK = BLOCKS.register(
+            "arcane_fluid_tank",
+            () -> new ArcaneFluidTankBlock(BlockBehaviour.Properties.of()
+                    .strength(4.0F, 8.0F)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .sound(SoundType.AMETHYST)));
+
+    /** Source-powered item/fluid processor with data-driven reactions. */
+    public static final DeferredBlock<Block> ARCANE_REACTION_VESSEL = BLOCKS.register(
+            "arcane_reaction_vessel",
+            () -> new ArcaneReactionVesselBlock(BlockBehaviour.Properties.of()
                     .strength(6.0F, 20.0F)
                     .requiresCorrectToolForDrops()
                     .noOcclusion()

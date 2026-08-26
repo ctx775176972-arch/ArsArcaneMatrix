@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "ars_arcane_matrix:block/storage_grid_directory" }
+  }
+}

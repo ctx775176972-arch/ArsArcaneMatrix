@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    { "item": "minecraft:copper_block", "count": 16 }
+  ],
+  "proof": "minecraft:ominous_trial_key",
+  "work_ticks": 300,
+  "source_cost": 10000,
+  "loot_table": "minecraft:chests/trial_chambers/reward_ominous",
+  "display_outputs": [
+    { "item": "minecraft:heavy_core" },
+    { "item": "minecraft:ominous_bottle" },
+    { "item": "minecraft:diamond_block" },
+    { "item": "minecraft:enchanted_golden_apple" }
+  ]
+}

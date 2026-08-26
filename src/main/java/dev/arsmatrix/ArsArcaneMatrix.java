@@ -12,6 +12,7 @@ import dev.arsmatrix.data.ArcaneMineOreManager;
 import dev.arsmatrix.data.SourceStoneGeneratorRecipeManager;
 import dev.arsmatrix.data.ArcaneHuntingRuleManager;
 import dev.arsmatrix.data.AlakarkinosExpeditionManager;
+import dev.arsmatrix.data.ArcaneReactionManager;
 import dev.arsmatrix.ritual.ModRituals;
 import dev.arsmatrix.event.StarbuncleLogisticsProtectionEvents;
 import dev.arsmatrix.registry.ModBlockEntities;
@@ -21,6 +22,7 @@ import dev.arsmatrix.registry.ModCreativeTabs;
 import dev.arsmatrix.registry.ModDataComponents;
 import dev.arsmatrix.registry.ModItems;
 import dev.arsmatrix.registry.ModMenus;
+import dev.arsmatrix.spell.ModGlyphs;
 import dev.arsmatrix.world.ModChunkLoading;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -38,6 +40,7 @@ public class ArsArcaneMatrix {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public ArsArcaneMatrix(IEventBus modBus, ModContainer modContainer) {
+        ModGlyphs.register();
         // 🟢 核心修复：在此处注册数据同步附件，让 NeoForge 在启动时强制绑定槽位，彻底消除 Unbound 崩溃
         ModDataComponents.register(modBus);
         ModBlocks.register(modBus);
@@ -52,6 +55,7 @@ public class ArsArcaneMatrix {
         NeoForge.EVENT_BUS.addListener(SourceStoneGeneratorRecipeManager::registerReloadListener);
         NeoForge.EVENT_BUS.addListener(ArcaneHuntingRuleManager::registerReloadListener);
         NeoForge.EVENT_BUS.addListener(AlakarkinosExpeditionManager::registerReloadListener);
+        NeoForge.EVENT_BUS.addListener(ArcaneReactionManager::registerReloadListener);
         NeoForge.EVENT_BUS.addListener(AmethystGolemEnhancements::onEntityTick);
         NeoForge.EVENT_BUS.addListener(AlakarkinosExpeditions::onEntityTick);
         NeoForge.EVENT_BUS.addListener(StarbuncleLogisticsProtectionEvents::onIncomingDamage);

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "ars_arcane_matrix:copper_dust" },
+    { "item": "ars_arcane_matrix:copper_dust" },
+    { "item": "ars_arcane_matrix:copper_dust" },
+    { "item": "ars_arcane_matrix:gold_dust" },
+    { "item": "ars_arcane_matrix:enchanted_crystal" },
+    { "item": "ars_arcane_matrix:casting_crystal" },
+    { "item": "ars_arcane_matrix:enriched_mineral_crystal" }
+  ],
+  "result": { "id": "ars_arcane_matrix:sourcebound_copper_alloy_dust", "count": 8 }
+}

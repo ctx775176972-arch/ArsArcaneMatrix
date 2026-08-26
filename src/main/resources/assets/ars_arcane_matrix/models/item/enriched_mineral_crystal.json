@@ -1,0 +1,1 @@
+{ "parent": "minecraft:item/generated", "textures": { "layer0": "ars_arcane_matrix:item/enriched_mineral_crystal" } }

@@ -21,11 +21,6 @@ repositories {
     }
 
     maven {
-        name = "Snownee"
-        url = "https://maven.snownee.cn/"
-    }
-
-    maven {
         name = 'GeckoLib'
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
@@ -57,30 +52,25 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 //noinspection GroovyAssignabilityCheck
 runs {
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all',
+                '--output', file('src/generated/resources/').getAbsolutePath(),
+                '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+
     configureEach {
         systemProperty 'forge.logging.markers', 'REGISTRIES'
         systemProperty 'forge.logging.console.level', 'debug'
         modSource project.sourceSets.main
-    }
-
-    client {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        argument '--nogui'
-    }
-
-    gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    data {
-        argument '--mod', project.mod_id
-        argument '--all'
-        argument '--output', file('src/generated/resources/').getAbsolutePath()
-        argument '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
@@ -88,8 +78,8 @@ sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
 
-def arsNouveauJar = file('libs/ars_nouveau‑1.21.1‑5.13.0.jar')
-def nuggetsJarName = 'nuggets‑neoforge‑1.21.1‑1.1.0.48.jar'
+def arsNouveauJar = file('libs/ars_nouveau-1.21.1-5.13.0.jar')
+def nuggetsJarName = 'nuggets-neoforge-1.21.1-1.1.0.48.jar'
 def extractedNuggetsJar = layout.buildDirectory.file("extractedDependencies/${nuggetsJarName}")
 
 tasks.register('extractArsNouveauNuggets') {
@@ -99,7 +89,7 @@ tasks.register('extractArsNouveauNuggets') {
     doLast {
         copy {
             from zipTree(arsNouveauJar)
-            include "META‑INF/jarjar/${nuggetsJarName}"
+            include "META-INF/jarjar/${nuggetsJarName}"
             eachFile { details -> details.path = details.name }
             includeEmptyDirs = false
             into extractedNuggetsJar.get().asFile.parentFile
@@ -115,13 +105,14 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     compileOnly files(arsNouveauJar)
     compileOnly files(extractedNuggetsJar)
-    compileOnly "software.bernie.geckolib:geckolib‑neoforge‑${minecraft_version}:${geckolib_version}"
+    compileOnly "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     localRuntime files(arsNouveauJar)
-    compileOnly "mezz.jei:jei‑${minecraft_version}‑neoforge‑api:${jei_version}"
-    localRuntime "mezz.jei:jei‑${minecraft_version}‑neoforge:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
-    modImplementation("snownee.jade:Jade:${jade_version}")
-    annotationProcessor("snownee.jade:Jade:${jade_version}")
+    compileOnly "maven.modrinth:jade:${jade_version_id}"
+    localRuntime "maven.modrinth:jade:${jade_version_id}"
+    annotationProcessor "maven.modrinth:jade:${jade_version_id}"
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -140,14 +131,14 @@ tasks.withType(ProcessResources).configureEach {
     ]
 
     inputs.properties replaceProperties
-    filesMatching('META‑INF/neoforge.mods.toml') {
+    filesMatching('META-INF/neoforge.mods.toml') {
         expand replaceProperties
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
     dependsOn tasks.named('extractArsNouveauNuggets')
-    options.encoding = 'UTF‑8'
+    options.encoding = 'UTF-8'
     options.annotationProcessorPath = configurations.annotationProcessor
 }
 

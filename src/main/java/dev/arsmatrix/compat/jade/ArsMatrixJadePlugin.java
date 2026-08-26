@@ -7,12 +7,15 @@ import com.hollingsworth.arsnouveau.common.block.tile.WhirlisprigTile;
 import dev.arsmatrix.block.AdvancedStorageLecternBlock;
 import dev.arsmatrix.block.ArcaneCrusherCoreBlock;
 import dev.arsmatrix.block.ArcaneFluidReservoirBlock;
+import dev.arsmatrix.block.ArcaneFluidTankBlock;
+import dev.arsmatrix.block.ArcaneReactionVesselBlock;
 import dev.arsmatrix.block.ArcaneImbuementCoreBlock;
 import dev.arsmatrix.block.ArcaneMineCoreBlock;
 import dev.arsmatrix.block.ArcaneOrderPedestalBlock;
 import dev.arsmatrix.block.ArcaneProcessorCoreBlock;
 import dev.arsmatrix.block.ArcaneSmelterCoreBlock;
 import dev.arsmatrix.block.ArcaneVacuumHopperBlock;
+import dev.arsmatrix.block.ArcaneSourceJarBlock;
 import dev.arsmatrix.block.AutomaticStockRequesterBlock;
 import dev.arsmatrix.block.DimensionAnchorBlock;
 import dev.arsmatrix.block.DrygmyArenaBlock;
@@ -25,12 +28,15 @@ import dev.arsmatrix.block.WixiePatternProviderBlock;
 import dev.arsmatrix.blockentity.AdvancedStorageLecternBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneCrusherCoreBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneFluidReservoirBlockEntity;
+import dev.arsmatrix.blockentity.ArcaneFluidTankBlockEntity;
+import dev.arsmatrix.blockentity.ArcaneReactionVesselBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneImbuementCoreBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneMineCoreBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneOrderPedestalBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneProcessorCoreBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneSmelterCoreBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneVacuumHopperBlockEntity;
+import dev.arsmatrix.blockentity.ArcaneSourceJarBlockEntity;
 import dev.arsmatrix.blockentity.AutomaticStockRequesterBlockEntity;
 import dev.arsmatrix.blockentity.DimensionAnchorBlockEntity;
 import dev.arsmatrix.blockentity.DrygmyArenaBlockEntity;
@@ -75,9 +81,12 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(CORE_COMPONENTS, AdvancedStorageLecternBlock.class);
         registration.registerBlockComponent(CORE_COMPONENTS, AutomaticStockRequesterBlock.class);
         registration.registerBlockComponent(CORE_COMPONENTS, SuperSourceJarCoreBlock.class);
+        registration.registerBlockComponent(CORE_COMPONENTS, ArcaneSourceJarBlock.class);
         registration.registerBlockComponent(CORE_COMPONENTS, IntegratedSourceRelayBlock.class);
         registration.registerBlockComponent(CORE_COMPONENTS, DimensionAnchorBlock.class);
         registration.registerBlockComponent(CORE_COMPONENTS, ArcaneFluidReservoirBlock.class);
+        registration.registerBlockComponent(CORE_COMPONENTS, ArcaneFluidTankBlock.class);
+        registration.registerBlockComponent(CORE_COMPONENTS, ArcaneReactionVesselBlock.class);
         registration.registerBlockComponent(CORE_COMPONENTS, ArcaneVacuumHopperBlock.class);
         registration.registerBlockComponent(CORE_COMPONENTS, WhirlisprigFlower.class);
         registration.registerBlockComponent(CORE_COMPONENTS, DrygmyArenaBlock.class);
@@ -95,10 +104,14 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                 Object[] arr = new Object[1];
                 arr[0] = Component.translatable("message.ars_arcane_matrix.whirlisprig.mode." + whirlMode.name().toLowerCase(Locale.ROOT));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.whirlisprig.mode", arr));
-                tooltip.add(Component.translatable("jade.ars_arcane_matrix.whirlisprig.effective",
-                        WhirlisprigEnhancements.effectiveMood(whirlisprig, whirlisprig.moodScore),
-                        WhirlisprigEnhancements.effectiveDiversity(whirlisprig, whirlisprig.diversityScore),
-                        WhirlisprigEnhancements.ancientSpecies(whirlisprig)));
+                tooltip.add(Component.translatable("jade.ars_arcane_matrix.whirlisprig.production",
+                        Component.translatable("jade.ars_arcane_matrix.whirlisprig.production."
+                                + whirlMode.name().toLowerCase(Locale.ROOT))));
+                if (whirlMode != WhirlisprigEnhancements.Mode.NONE) {
+                    tooltip.add(Component.translatable("jade.ars_arcane_matrix.whirlisprig.diversity",
+                            WhirlisprigEnhancements.diversityLevel(whirlisprig),
+                            WhirlisprigEnhancements.workTimePercent(whirlisprig)));
+                }
             } else if (be instanceof AutomaticStockRequesterBlockEntity requester) {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.stock_requester.status", Component.translatable(requester.getState().translationKey())));
                 Component targetName = requester.getTarget().isEmpty()
@@ -108,16 +121,26 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.stock_requester.links",
                         Component.translatable(requester.hasTargetContainer() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound"),
                         Component.translatable(requester.hasOrderTerminal() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound")));
+            } else if (be instanceof ArcaneSourceJarBlockEntity jar) {
+                tooltip.add(Component.translatable("jade.ars_arcane_matrix.source_network.storage",
+                        jar.getSource(), jar.getMaxSource()));
+                tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_source_jar.pull",
+                        jar.getLastPulled(), ArcaneSourceJarBlockEntity.PULL_RANGE));
             } else if (be instanceof SuperSourceJarCoreBlockEntity jar) {
+                tooltip.add(Component.translatable(jar.isStructureFormed()
+                        ? "tooltip.ars_arcane_matrix.matrix_source_reservoir.formed"
+                        : "tooltip.ars_arcane_matrix.matrix_source_reservoir.incomplete"));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.source_network.storage", jar.getSource(), jar.getMaxSource()));
                 tooltip.add(Component.translatable(jar.isLinked() ? "tooltip.ars_arcane_matrix.source_network.linked" : "tooltip.ars_arcane_matrix.source_network.unlinked"));
-                tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.super_source_jar.receive_only"));
+                tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.matrix_source_reservoir.pull",
+                        jar.getLastPulled(), SuperSourceJarCoreBlockEntity.PULL_RANGE));
             } else if (be instanceof IntegratedSourceRelayBlockEntity relay) {
                 tooltip.add(Component.translatable(relay.isLinked() ? "tooltip.ars_arcane_matrix.source_network.linked" : "tooltip.ars_arcane_matrix.source_network.unlinked"));
                 tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.integrated_source_relay.on_demand"));
             } else if (be instanceof DimensionAnchorBlockEntity anchor) {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.dimension_anchor.status", Component.translatable(anchor.getState().translationKey())));
-                tooltip.add(Component.translatable("jade.ars_arcane_matrix.dimension_anchor.fuel", anchor.getRemainingFuelSeconds(), anchor.getFuelHandler().getStackInSlot(0).getCount()));
+                tooltip.add(Component.translatable("jade.ars_arcane_matrix.dimension_anchor.source_cost",
+                        DimensionAnchorBlockEntity.SOURCE_COST_PER_SECOND));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.dimension_anchor.range"));
             } else if (be instanceof ArcaneFluidReservoirBlockEntity reservoir) {
                 Object[] arr = new Object[1];
@@ -126,14 +149,31 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                 tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.tanks", reservoir.unlockedTankCount(), reservoir.capacity()));
                 tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.wireless", Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless_tier." + reservoir.wirelessTier())));
                 tooltip.add(Component.translatable("state.ars_arcane_matrix.arcane_fluid_reservoir." + reservoir.operatingState().name().toLowerCase(Locale.ROOT)));
+            } else if (be instanceof ArcaneFluidTankBlockEntity tank) {
+                var fluid = tank.fluid();
+                tooltip.add(fluid.isEmpty()
+                        ? Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_tank.empty",
+                                ArcaneFluidTankBlockEntity.CAPACITY)
+                        : Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_tank.stored",
+                                fluid.getHoverName(), fluid.getAmount(), ArcaneFluidTankBlockEntity.CAPACITY));
+            } else if (be instanceof ArcaneReactionVesselBlockEntity vessel) {
+                tooltip.add(Component.translatable("state.ars_arcane_matrix.arcane_reaction_vessel."
+                        + vessel.state().name().toLowerCase(Locale.ROOT)));
+                tooltip.add(Component.translatable("screen.ars_arcane_matrix.arcane_reaction_vessel.fluids",
+                        vessel.inputTank().getFluidAmount(), vessel.outputTank().getFluidAmount()));
             } else if (be instanceof ArcaneVacuumHopperBlockEntity hopper) {
-                tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_vacuum_hopper.range", 12));
+                tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_vacuum_hopper.range",
+                        Component.translatable(hopper.rangeMode().translationKey()),
+                        hopper.rangeMode().scanIntervalTicks() / 20.0D));
                 tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_vacuum_hopper.experience", hopper.experience(), 10000000));
                 Object[] arr = new Object[1];
                 arr[0] = Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.mode." + hopper.gemMode().name().toLowerCase(Locale.ROOT));
                 tooltip.add(Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.gems", arr));
                 tooltip.add(Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.destroy",
                         Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper." + (hopper.destroysMatches() ? "on" : "off"))));
+                tooltip.add(Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt",
+                        Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt."
+                                + (hopper.strictComponents() ? "strict" : "ignore"))));
             } else if (be instanceof WixiePatternProviderBlockEntity) {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.wixie_range.provider", 8, 8));
             } else if (be instanceof AdvancedStorageLecternBlockEntity lectern) {

@@ -10,6 +10,7 @@ import dev.arsmatrix.item.WixiePatternProviderItem;
 import dev.arsmatrix.item.HubFilterScrollItem;
 import dev.arsmatrix.item.StarbuncleLogisticsHubItem;
 import dev.arsmatrix.item.ArcaneOrderPedestalItem;
+import dev.arsmatrix.item.AutomaticStockRequesterItem;
 import dev.arsmatrix.ritual.ModRituals;
 import com.hollingsworth.arsnouveau.common.items.RitualTablet;
 import net.minecraft.world.item.BlockItem;
@@ -141,9 +142,10 @@ public final class ModItems {
             ITEMS.registerSimpleBlockItem("wixie_order_terminal", ModBlocks.WIXIE_ORDER_TERMINAL,
                     new Item.Properties());
 
-    public static final DeferredItem<BlockItem> AUTOMATIC_STOCK_REQUESTER =
-            ITEMS.registerSimpleBlockItem("automatic_stock_requester",
-                    ModBlocks.AUTOMATIC_STOCK_REQUESTER, new Item.Properties());
+    public static final DeferredItem<AutomaticStockRequesterItem> AUTOMATIC_STOCK_REQUESTER = ITEMS.register(
+            "automatic_stock_requester",
+            () -> new AutomaticStockRequesterItem(ModBlocks.AUTOMATIC_STOCK_REQUESTER.get(),
+                    new Item.Properties().component(ModDataComponents.STOCK_REQUESTER_TIER.get(), 0)));
 
     public static final DeferredItem<StarbuncleLogisticsHubItem> STARBUNCLE_LOGISTICS_HUB = ITEMS.register(
             "starbuncle_logistics_hub",
@@ -169,6 +171,10 @@ public final class ModItems {
             ITEMS.registerSimpleBlockItem("super_source_jar_core", ModBlocks.SUPER_SOURCE_JAR_CORE,
                     new Item.Properties());
 
+    public static final DeferredItem<BlockItem> ARCANE_SOURCE_JAR =
+            ITEMS.registerSimpleBlockItem("arcane_source_jar", ModBlocks.ARCANE_SOURCE_JAR,
+                    new Item.Properties());
+
     public static final DeferredItem<BlockItem> INTEGRATED_SOURCE_RELAY =
             ITEMS.registerSimpleBlockItem("integrated_source_relay", ModBlocks.INTEGRATED_SOURCE_RELAY,
                     new Item.Properties());
@@ -179,16 +185,17 @@ public final class ModItems {
 
     public static final DeferredItem<BlockItem> ARCANE_FLUID_RESERVOIR = ITEMS.registerSimpleBlockItem(
             "arcane_fluid_reservoir", ModBlocks.ARCANE_FLUID_RESERVOIR, new Item.Properties());
+    public static final DeferredItem<BlockItem> ARCANE_REACTION_VESSEL = ITEMS.registerSimpleBlockItem(
+            "arcane_reaction_vessel", ModBlocks.ARCANE_REACTION_VESSEL, new Item.Properties());
     public static final DeferredItem<Item> FLUID_CAPACITY_UPGRADE = ITEMS.registerSimpleItem(
             "fluid_capacity_upgrade", new Item.Properties().stacksTo(4));
     public static final DeferredItem<Item> FLUID_RANGE_UPGRADE = ITEMS.registerSimpleItem(
             "fluid_range_upgrade", new Item.Properties().stacksTo(3));
     public static final DeferredItem<Item> FLUID_SPEED_UPGRADE = ITEMS.registerSimpleItem(
             "fluid_speed_upgrade", new Item.Properties().stacksTo(3));
-    public static final DeferredItem<Item> VOLCANIC_CONDENSATION_UPGRADE = ITEMS.registerSimpleItem(
-            "volcanic_condensation_upgrade", new Item.Properties().stacksTo(1));
-    public static final DeferredItem<Item> ADDITIONAL_FLUID_TANK_MODULE = ITEMS.registerSimpleItem(
-            "additional_fluid_tank_module", new Item.Properties().stacksTo(2));
+    /** A placeable reservoir that may also be installed inside an Arcane Fluid Controller. */
+    public static final DeferredItem<BlockItem> ARCANE_FLUID_TANK = ITEMS.registerSimpleBlockItem(
+            "arcane_fluid_tank", ModBlocks.ARCANE_FLUID_TANK, new Item.Properties().stacksTo(2));
     public static final DeferredItem<BlockItem> ARCANE_VACUUM_HOPPER = ITEMS.registerSimpleBlockItem(
             "arcane_vacuum_hopper", ModBlocks.ARCANE_VACUUM_HOPPER, new Item.Properties());
     public static final DeferredItem<BlockItem> SOURCE_STONE_FURNACE = ITEMS.registerSimpleBlockItem(

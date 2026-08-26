@@ -1,0 +1,10 @@
+{
+  "pedestal_items": [
+    { "item": "minecraft:cobbled_deepslate" }
+  ],
+  "result": {
+    "id": "minecraft:cobbled_deepslate",
+    "count": 64
+  },
+  "processing_cost": 200
+}

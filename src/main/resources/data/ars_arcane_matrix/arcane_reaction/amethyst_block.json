@@ -1,0 +1,10 @@
+{
+  "ingredients": [
+    {"item": "ars_nouveau:sourceberry_bush", "count": 4},
+    {"item": "minecraft:quartz", "count": 4}
+  ],
+  "input_fluid": {"id": "minecraft:water", "amount": 1000},
+  "output": {"item": "minecraft:amethyst_block", "amount": 1},
+  "source_cost": 400,
+  "processing_ticks": 100
+}

@@ -20,8 +20,11 @@ import dev.arsmatrix.blockentity.SuperSourceJarCoreBlockEntity;
 import dev.arsmatrix.blockentity.IntegratedSourceRelayBlockEntity;
 import dev.arsmatrix.blockentity.DimensionAnchorBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneFluidReservoirBlockEntity;
+import dev.arsmatrix.blockentity.ArcaneFluidTankBlockEntity;
+import dev.arsmatrix.blockentity.ArcaneReactionVesselBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneVacuumHopperBlockEntity;
 import dev.arsmatrix.blockentity.SourceStoneFurnaceBlockEntity;
+import dev.arsmatrix.blockentity.ArcaneSourceJarBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -172,6 +175,13 @@ public final class ModBlockEntities {
                             SuperSourceJarCoreBlockEntity::new,
                             ModBlocks.SUPER_SOURCE_JAR_CORE.get())));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ArcaneSourceJarBlockEntity>>
+            ARCANE_SOURCE_JAR = BLOCK_ENTITY_TYPES.register(
+                    "arcane_source_jar",
+                    () -> buildWithoutDataFixer(BlockEntityType.Builder.of(
+                            ArcaneSourceJarBlockEntity::new,
+                            ModBlocks.ARCANE_SOURCE_JAR.get())));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IntegratedSourceRelayBlockEntity>>
             INTEGRATED_SOURCE_RELAY = BLOCK_ENTITY_TYPES.register(
                     "integrated_source_relay",
@@ -192,6 +202,20 @@ public final class ModBlockEntities {
                     () -> buildWithoutDataFixer(BlockEntityType.Builder.of(
                             ArcaneFluidReservoirBlockEntity::new,
                             ModBlocks.ARCANE_FLUID_RESERVOIR.get())));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ArcaneFluidTankBlockEntity>>
+            ARCANE_FLUID_TANK = BLOCK_ENTITY_TYPES.register(
+                    "arcane_fluid_tank",
+                    () -> buildWithoutDataFixer(BlockEntityType.Builder.of(
+                            ArcaneFluidTankBlockEntity::new,
+                            ModBlocks.ARCANE_FLUID_TANK.get())));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ArcaneReactionVesselBlockEntity>>
+            ARCANE_REACTION_VESSEL = BLOCK_ENTITY_TYPES.register(
+                    "arcane_reaction_vessel",
+                    () -> buildWithoutDataFixer(BlockEntityType.Builder.of(
+                            ArcaneReactionVesselBlockEntity::new,
+                            ModBlocks.ARCANE_REACTION_VESSEL.get())));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ArcaneVacuumHopperBlockEntity>>
             ARCANE_VACUUM_HOPPER = BLOCK_ENTITY_TYPES.register(
