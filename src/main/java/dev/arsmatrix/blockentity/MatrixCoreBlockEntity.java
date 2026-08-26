@@ -2,10 +2,8 @@ package dev.arsmatrix.blockentity;
 
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.api.client.ITooltipProvider;
-import com.hollingsworth.arsnouveau.api.item.IWandable;
 import com.hollingsworth.arsnouveau.api.source.ISourceTile;
 import com.hollingsworth.arsnouveau.api.source.ISpecialSourceProvider;
-import com.hollingsworth.arsnouveau.api.source.SourceManager;
 import com.hollingsworth.arsnouveau.api.util.SourceUtil;
 import com.hollingsworth.arsnouveau.common.capability.SourceStorage;
 import dev.arsmatrix.ArsArcaneMatrix;
@@ -13,8 +11,6 @@ import dev.arsmatrix.config.MatrixConfig;
 import dev.arsmatrix.registry.ModBlockEntities;
 import dev.arsmatrix.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -29,15 +25,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import dev.arsmatrix.source.SourceNetworkLinking;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 @SuppressWarnings("removal")
-public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, ITooltipProvider, IWandable {
+public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, ITooltipProvider {
 
     private static final int STRUCTURE_CHECK_INTERVAL = 20;
     private static final TagKey<Block> MATRIX_FRAME_BLOCKS = BlockTags.create(
@@ -99,21 +92,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         int remainingTransfer = Math.min(getSource(), getSourceTransferPerSecond());
         int transferredSource = 0;
 
-        // SourceUtil uses a strict distance comparison. Walk the already indexed providers
-        // directly for our super jars so the configured boundary is inclusive without scanning
-        // every block in the (potentially large) matrix output cube.
-        int range = getSourceOutputRange();
-        double rangeSquared = (double) range * range;
-        for (ISpecialSourceProvider provider : SourceManager.INSTANCE.getCopySetForLevel(level)) {
-            if (remainingTransfer <= 0) break;
-            if (!provider.isValid() || worldPosition.distSqr(provider.getCurrentPos()) > rangeSquared) continue;
-            if (provider.getSource() instanceof SuperSourceJarCoreBlockEntity jar) {
-                int accepted = transferSourceTo(jar, remainingTransfer);
-                remainingTransfer -= accepted;
-                transferredSource += accepted;
-            }
-        }
-
         for (ISpecialSourceProvider provider
                 : SourceUtil.canGiveSource(worldPosition, level, getSourceOutputRange())) {
             if (remainingTransfer <= 0) {
@@ -125,12 +103,8 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
                 continue;
             }
 
-            // Already handled through the deterministic direct path above.
-            if (target instanceof SuperSourceJarCoreBlockEntity) {
-                continue;
-            }
-
-            int acceptedSource = transferSourceTo(target, remainingTransfer);
+            int acceptedSource = target.addSource(remainingTransfer, false);
+            acceptedSource = Math.max(0, Math.min(acceptedSource, remainingTransfer));
             remainingTransfer -= acceptedSource;
             transferredSource += acceptedSource;
         }
@@ -138,22 +112,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         if (transferredSource > 0) {
             sourceStorage.extractSource(transferredSource, false);
         }
-    }
-
-    /**
-     * Ars Nouveau's legacy one-argument addSource method returns the resulting stored
-     * amount on several implementations, not the amount accepted. Measure the delta so
-     * matrix accounting remains correct for vanilla jars and third-party Source tiles.
-     */
-    private int transferSourceTo(ISourceTile target, int requested) {
-        if (requested <= 0 || target == this || !target.canAcceptSource()) return 0;
-        int before = Math.max(0, target.getSource());
-        int room = Math.max(0, target.getMaxSource() - before);
-        int offered = Math.min(requested, room);
-        if (offered <= 0) return 0;
-        target.addSource(offered);
-        int after = Math.max(0, target.getSource());
-        return Math.max(0, Math.min(offered, after - before));
     }
 
     private SourceStorage createSourceStorage() {
@@ -392,8 +350,7 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
     }
 
     public int getSourceOutputRange() {
-        // Existing worlds may retain the old default of 5 in their generated config.
-        return Math.max(16, MatrixConfig.OUTPUT_RANGE.get());
+        return MatrixConfig.OUTPUT_RANGE.get();
     }
 
     public int getMinimumFrameBlocks() {
@@ -464,20 +421,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
         return sourceStorage.extractSource(amount, simulate);
     }
 
-    /**
-     * Network-facing extraction used by the Integrated Source Relay. Unlike
-     * ordinary Ars Nouveau transfer, a relay represents the complete linked
-     * network and must be able to pay one machine operation atomically.
-     */
-    public int extractForNetwork(int amount, boolean simulate) {
-        if (amount <= 0 || !canProvideSource()) return 0;
-        int extracted = Math.min(amount, getSource());
-        if (!simulate && extracted > 0) {
-            setSource(getSource() - extracted);
-        }
-        return extracted;
-    }
-
     @Override
     public void getTooltip(List<Component> tooltip) {
         if (ArsNouveauAPI.ENABLE_DEBUG_NUMBERS) {
@@ -540,17 +483,6 @@ public class MatrixCoreBlockEntity extends BlockEntity implements ISourceTile, I
 
         setSource(getSource() - (int) amount);
         return true;
-    }
-
-    @Override
-    public Result onLastConnection(GlobalPos target, @Nullable Direction face,
-                                   @Nullable LivingEntity entity, Player player) {
-        return SourceNetworkLinking.connect(this, target, player);
-    }
-
-    @Override
-    public Result onClearConnections(Player player) {
-        return SourceNetworkLinking.clear(this, player);
     }
 
     /*========================*/

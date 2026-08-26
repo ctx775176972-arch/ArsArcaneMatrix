@@ -14,9 +14,50 @@
       "recipe": "ars_arcane_matrix:matrix_core"
     },
     {
-      "type": "patchouli:text",
-      "title": "documentation.ars_arcane_matrix.construction_wand.title",
-      "text": "documentation.ars_arcane_matrix.multiblock.building"
+      "type": "patchouli:multiblock",
+      "multiblock": {
+        "mapping": {
+          "0": "ars_arcane_matrix:matrix_core",
+          "F": "ars_nouveau:source_gem_block"
+        },
+        "pattern": [
+          [
+            "  F  ",
+            "  F  ",
+            "FFFFF",
+            "  F  ",
+            "  F  "
+          ],
+          [
+            "  F  ",
+            "     ",
+            "F   F",
+            "     ",
+            "  F  "
+          ],
+          [
+            "FFFFF",
+            "F   F",
+            "F 0 F",
+            "F   F",
+            "FFFFF"
+          ],
+          [
+            "  F  ",
+            "     ",
+            "F   F",
+            "     ",
+            "  F  "
+          ],
+          [
+            "  F  ",
+            "  F  ",
+            "FFFFF",
+            "  F  ",
+            "  F  "
+          ]
+        ]
+      }
     }
   ]
 }

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "ars_arcane_matrix:arcane_structural_frame"
+    "ars_nouveau:sourcestone",
+    "ars_nouveau:smooth_sourcestone"
   ]
 }

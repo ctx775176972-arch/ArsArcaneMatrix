@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "ars_arcane_matrix:block/arcane_reaction_vessel" },
-    "facing=east":  { "model": "ars_arcane_matrix:block/arcane_reaction_vessel", "y": 90 },
-    "facing=south": { "model": "ars_arcane_matrix:block/arcane_reaction_vessel", "y": 180 },
-    "facing=west":  { "model": "ars_arcane_matrix:block/arcane_reaction_vessel", "y": 270 }
-  }
-}

@@ -30,7 +30,6 @@ repositories {
         url = 'https://cursemaven.com'
     }
 
-    //noinspection GroovyAssignabilityCheck
     exclusiveContent {
         forRepository {
             maven {
@@ -50,27 +49,30 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-//noinspection GroovyAssignabilityCheck
 runs {
-    client {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    server {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
-    }
-
-    data {
-        programArguments.addAll '--mod', project.mod_id, '--all',
-                '--output', file('src/generated/resources/').getAbsolutePath(),
-                '--existing', file('src/main/resources/').getAbsolutePath()
-    }
-
     configureEach {
         systemProperty 'forge.logging.markers', 'REGISTRIES'
         systemProperty 'forge.logging.console.level', 'debug'
         modSource project.sourceSets.main
+    }
+
+    client {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        argument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        arguments.addAll '--mod', project.mod_id, '--all',
+                '--output', file('src/generated/resources/').getAbsolutePath(),
+                '--existing', file('src/main/resources/').getAbsolutePath()
     }
 }
 
@@ -78,6 +80,8 @@ sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
 
+// Ars Nouveau embeds Nuggets with JarJar. Expose its GUI API to javac for the
+// custom spell-book structure page without adding another runtime dependency.
 def arsNouveauJar = file('libs/ars_nouveau-1.21.1-5.13.0.jar')
 def nuggetsJarName = 'nuggets-neoforge-1.21.1-1.1.0.48.jar'
 def extractedNuggetsJar = layout.buildDirectory.file("extractedDependencies/${nuggetsJarName}")
@@ -109,10 +113,8 @@ dependencies {
     localRuntime files(arsNouveauJar)
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
-
-    compileOnly "maven.modrinth:jade:${jade_version_id}"
-    localRuntime "maven.modrinth:jade:${jade_version_id}"
-    annotationProcessor "maven.modrinth:jade:${jade_version_id}"
+    compileOnly "maven.modrinth:nvQzSEkH:${jade_version_id}"
+    localRuntime "maven.modrinth:nvQzSEkH:${jade_version_id}"
 }
 
 tasks.withType(ProcessResources).configureEach {
@@ -139,7 +141,73 @@ tasks.withType(ProcessResources).configureEach {
 tasks.withType(JavaCompile).configureEach {
     dependsOn tasks.named('extractArsNouveauNuggets')
     options.encoding = 'UTF-8'
-    options.annotationProcessorPath = configurations.annotationProcessor
+}
+
+def privacyVerification = tasks.register('verifyPrivacy') {
+    group = 'verification'
+    description = 'Fails when private identity markers appear in sources, metadata, or the built mod JAR.'
+    dependsOn tasks.named('jar')
+
+    doLast {
+        def forbiddenMarkers = [
+                ('tian' + 'xin').toLowerCase(java.util.Locale.ROOT),
+                ('ctx775176972' + '@yahoo.co.jp').toLowerCase(java.util.Locale.ROOT)
+        ]
+        def violations = new LinkedHashSet<String>()
+        def inspectFile = { File candidate, String label ->
+            if (!candidate.isFile()) {
+                return
+            }
+            def contents = new String(
+                    candidate.bytes,
+                    java.nio.charset.StandardCharsets.ISO_8859_1
+            ).toLowerCase(java.util.Locale.ROOT)
+            forbiddenMarkers.each { marker ->
+                if (contents.contains(marker)) {
+                    violations.add("${label} contains a forbidden identity marker")
+                }
+            }
+        }
+
+        fileTree('src').files.each { candidate ->
+            inspectFile(candidate, project.relativePath(candidate))
+        }
+        [
+                file('build.gradle'),
+                file('settings.gradle'),
+                file('gradle.properties'),
+                file('README.md'),
+                file('CHANGELOG.md'),
+                file('LICENSE')
+        ].each { candidate ->
+            inspectFile(candidate, project.relativePath(candidate))
+        }
+
+        File modJar = tasks.named('jar').get().archiveFile.get().asFile
+        zipTree(modJar).visit { details ->
+            if (details.directory) {
+                return
+            }
+            String entryName = details.relativePath.pathString
+            String normalizedName = entryName.toLowerCase(java.util.Locale.ROOT)
+            forbiddenMarkers.each { marker ->
+                if (normalizedName.contains(marker)) {
+                    violations.add("JAR entry ${entryName} contains a forbidden identity marker")
+                }
+            }
+            inspectFile(details.file, "JAR entry ${entryName}")
+        }
+
+        if (!violations.isEmpty()) {
+            throw new GradleException(
+                    "Privacy verification failed:\n - " + violations.join('\n - ')
+            )
+        }
+    }
+}
+
+tasks.named('check').configure {
+    dependsOn privacyVerification
 }
 
 idea {

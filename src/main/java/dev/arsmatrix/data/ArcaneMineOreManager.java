@@ -6,17 +6,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.arsmatrix.ArsArcaneMatrix;
 import dev.arsmatrix.config.MatrixConfig;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 
 import java.util.ArrayList;
@@ -129,71 +124,39 @@ public final class ArcaneMineOreManager extends SimpleJsonResourceReloadListener
 
     private static ArcaneMineOreRule automaticRule(ResourceLocation ruleId, ResourceLocation tagId) {
         String material = tagId.getPath().substring("ores/".length());
-        int layers = requiredLayersForOreTag(tagId);
+        int layers;
         int points;
         int weight;
         switch (material) {
             case "coal", "copper", "iron" -> {
+                layers = 1;
                 points = 8;
                 weight = 20;
             }
             case "gold", "redstone", "lapis", "quartz" -> {
+                layers = 2;
                 points = 24;
                 weight = 12;
             }
             case "diamond", "emerald" -> {
+                layers = 4;
                 points = 128;
                 weight = 2;
             }
             case "netherite_scrap" -> {
+                layers = 4;
                 points = 512;
                 weight = 1;
             }
             default -> {
-                points = switch (layers) {
-                    case 1 -> 8;
-                    case 2 -> 24;
-                    case 3 -> 64;
-                    default -> 128;
-                };
-                weight = switch (layers) {
-                    case 1 -> 20;
-                    case 2 -> 12;
-                    case 3 -> 6;
-                    default -> 2;
-                };
+                layers = 2;
+                points = 24;
+                weight = 10;
             }
         }
         return new ArcaneMineOreRule(
                 ruleId, tagId, true, 1, layers, points, points * 100, weight, true
         );
-    }
-
-    /**
-     * Maps the highest vanilla mining requirement in an ore item tag to Mine
-     * layers: wood/no tag, stone, iron, then diamond. Taking the highest tier
-     * prevents a mixed variant tag from occasionally producing an ore that is
-     * stronger than the completed structure should allow.
-     */
-    private static int requiredLayersForOreTag(ResourceLocation tagId) {
-        TagKey<Item> itemTag = TagKey.create(Registries.ITEM, tagId);
-        return BuiltInRegistries.ITEM.getTag(itemTag).stream()
-                .flatMap(named -> named.stream())
-                .map(holder -> Block.byItem(holder.value()).defaultBlockState())
-                .mapToInt(state -> {
-                    if (state.is(BlockTags.NEEDS_DIAMOND_TOOL)) {
-                        return 4;
-                    }
-                    if (state.is(BlockTags.NEEDS_IRON_TOOL)) {
-                        return 3;
-                    }
-                    if (state.is(BlockTags.NEEDS_STONE_TOOL)) {
-                        return 2;
-                    }
-                    return 1;
-                })
-                .max()
-                .orElse(1);
     }
 
     public static Optional<ArcaneMineOreRule> choose(int completedLayers, net.minecraft.util.RandomSource random) {

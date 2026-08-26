@@ -1,5 +1,6 @@
 package dev.arsmatrix.blockentity;
 
+import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.api.client.ITooltipProvider;
 import com.hollingsworth.arsnouveau.api.item.IWandable;
 import com.hollingsworth.arsnouveau.api.source.ISpecialSourceProvider;
@@ -80,9 +81,6 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     private static final TagKey<Block> FRAME_BLOCKS = BlockTags.create(
             ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_frame_blocks")
     );
-    private static final TagKey<Block> BASIC_FRAME_BLOCKS = BlockTags.create(
-            ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_basic_frame_blocks")
-    );
     private static final TagKey<Block> NODE_BLOCKS = BlockTags.create(
             ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_mine_node_blocks")
     );
@@ -112,7 +110,6 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     private int cooldownTicks;
     private int targetMaterialCost;
     private int targetSourceCost;
-    private int amplifierPityMaterialPoints;
     private int inputRoundRobin;
     private long tickCounter;
 
@@ -171,6 +168,7 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             return;
         }
 
+        pullNearbySource();
         flushPendingOutput();
         if (!pendingOutput.isEmpty()) {
             setOperatingState(OperatingState.OUTPUT_BLOCKED);
@@ -191,6 +189,10 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             setOperatingState(OperatingState.MATERIAL_STARVED);
             return;
         }
+        if (getSource() < sourceCost) {
+            setOperatingState(OperatingState.SOURCE_STARVED);
+            return;
+        }
         if (cooldownTicks > 0) {
             setOperatingState(OperatingState.COOLDOWN);
             return;
@@ -205,36 +207,17 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             }
         }
 
-        if (!hasOperationSource(sourceCost)) {
-            setOperatingState(OperatingState.SOURCE_STARVED);
-            return;
-        }
-
-        boolean amplifierEligible = completedLayers >= MatrixConfig.mineLayerSizes().size()
-                && level != null;
-        int nextAmplifierPity = (int) Math.min(Integer.MAX_VALUE,
-                (long) amplifierPityMaterialPoints + materialCost);
-        double baseChance = MatrixConfig.MINE_AMPLIFIER_DROP_CHANCE.get();
-        double materialScaledChance = 1.0D - Math.pow(
-                1.0D - baseChance, materialCost / 128.0D);
-        boolean produceAmplifier = amplifierEligible
-                && (nextAmplifierPity >= MatrixConfig.MINE_AMPLIFIER_PITY_MATERIAL_POINTS.get()
-                || level.random.nextDouble() < materialScaledChance);
+        boolean produceAmplifier = completedLayers >= MatrixConfig.mineLayerSizes().size()
+                && level != null
+                && level.random.nextDouble() < MatrixConfig.MINE_AMPLIFIER_DROP_CHANCE.get();
         if (produceAmplifier && !canBufferAmplifierByproduct()) {
             setOperatingState(OperatingState.OUTPUT_BLOCKED);
             return;
         }
 
-        if (!consumeOperationSource(sourceCost)) {
-            setOperatingState(OperatingState.SOURCE_STARVED);
-            return;
-        }
-
         materialPoints -= materialCost;
+        setSource(getSource() - sourceCost);
         pendingOutput = targetOutput.copy();
-        if (amplifierEligible) {
-            amplifierPityMaterialPoints = produceAmplifier ? 0 : nextAmplifierPity;
-        }
         if (produceAmplifier) {
             if (pendingByproduct.isEmpty()) {
                 pendingByproduct = new ItemStack(ModItems.ARCANE_AMPLIFIER.get());
@@ -255,51 +238,42 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         playCompletionEffects();
     }
 
-    private boolean hasOperationSource(int cost) {
-        return availableOperationSource(cost) >= Math.max(0, cost);
-    }
-
-    /** Atomically pays one operation from nearby providers without storing Source in the mine. */
-    private boolean consumeOperationSource(int cost) {
-        if (cost <= 0) return true;
-        List<ISourceTile> sources = operationSourceProviders();
-        if (availableOperationSource(cost, sources) < cost) return false;
-        int remaining = cost;
-        for (ISourceTile source : sources) {
-            if (remaining <= 0) break;
-            int extracted = Math.max(0, Math.min(
-                    remaining, source.removeSource(remaining, false)));
-            remaining -= extracted;
+    /**
+     * Pulls Source from Ars Nouveau special providers. Source jars, relays and
+     * Beyond Dimensions' Source Pathway expose themselves through this network
+     * and wait for consuming machines to initiate the transfer.
+     */
+    private void pullNearbySource() {
+        if (level == null || getSource() >= getMaxSource()) {
+            return;
         }
-        return remaining == 0;
-    }
 
-    private int availableOperationSource(int cost) {
-        return availableOperationSource(cost, operationSourceProviders());
-    }
-
-    private static int availableOperationSource(int cost, List<ISourceTile> sources) {
-        int available = 0;
-        for (ISourceTile source : sources) {
-            int wanted = cost - Math.min(cost, available);
-            if (wanted <= 0) break;
-            available += Math.max(0, Math.min(wanted, source.removeSource(wanted, true)));
-        }
-        return available;
-    }
-
-    private List<ISourceTile> operationSourceProviders() {
-        if (level == null) return List.of();
         int inputRange = getSourceInputRange();
-        LinkedHashSet<ISourceTile> result = new LinkedHashSet<>();
-        if (hasCompleteStructure()) addNearbyMatrixCores(result, inputRange);
-        addNearbyIntegratedRelays(result, inputRange);
-        for (ISpecialSourceProvider provider : SourceUtil.canTakeSource(
-                worldPosition, level, inputRange)) {
-            ISourceTile source = provider.getSource();
-            if (source != null && source != this && source.canProvideSource()) result.add(source);
+        int remainingTransfer = Math.min(
+                getMaxSource() - getSource(),
+                MatrixConfig.MINE_MAX_SOURCE_INPUT_PER_SECOND.get()
+        );
+
+        if (hasCompleteStructure()) {
+            remainingTransfer = pullFromNearbyMatrixCores(remainingTransfer, inputRange);
         }
-        return List.copyOf(result);
+
+        for (ISpecialSourceProvider provider : SourceUtil.canTakeSource(
+                worldPosition,
+                level,
+                inputRange
+        )) {
+            if (remainingTransfer <= 0) {
+                break;
+            }
+
+            ISourceTile source = provider.getSource();
+            if (source == null || source == this || !source.canProvideSource()) {
+                continue;
+            }
+
+            remainingTransfer = pullFromSource(source, remainingTransfer);
+        }
     }
 
     private boolean hasCompleteStructure() {
@@ -319,8 +293,10 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
      * Nouveau special providers. Scan block entities from already-loaded
      * chunks so a complete mine can consume them without creating chunk loads.
      */
-    private void addNearbyMatrixCores(Set<ISourceTile> result, int inputRange) {
-        if (!(level instanceof ServerLevel serverLevel)) return;
+    private int pullFromNearbyMatrixCores(int remainingTransfer, int inputRange) {
+        if (!(level instanceof ServerLevel serverLevel) || remainingTransfer <= 0) {
+            return remainingTransfer;
+        }
 
         int minChunkX = (worldPosition.getX() - inputRange) >> 4;
         int maxChunkX = (worldPosition.getX() + inputRange) >> 4;
@@ -328,8 +304,8 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         int maxChunkZ = (worldPosition.getZ() + inputRange) >> 4;
         double rangeSquared = (double) inputRange * inputRange;
 
-        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
-            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+        for (int chunkX = minChunkX; chunkX <= maxChunkX && remainingTransfer > 0; chunkX++) {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ && remainingTransfer > 0; chunkZ++) {
                 if (!serverLevel.hasChunk(chunkX, chunkZ)) {
                     continue;
                 }
@@ -341,39 +317,32 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                             || !matrixCore.canProvideSource()) {
                         continue;
                     }
-                    result.add(matrixCore);
-                }
-            }
-        }
-    }
-
-    /**
-     * Integrated relays are also found directly in loaded chunks. This keeps
-     * mine operation reliable if Ars Nouveau's special-provider cache has not
-     * yet refreshed after loading or placing the relay.
-     */
-    private void addNearbyIntegratedRelays(Set<ISourceTile> result, int inputRange) {
-        if (!(level instanceof ServerLevel serverLevel)) return;
-
-        int minChunkX = (worldPosition.getX() - inputRange) >> 4;
-        int maxChunkX = (worldPosition.getX() + inputRange) >> 4;
-        int minChunkZ = (worldPosition.getZ() - inputRange) >> 4;
-        int maxChunkZ = (worldPosition.getZ() + inputRange) >> 4;
-        double rangeSquared = (double) inputRange * inputRange;
-
-        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
-            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
-                if (!serverLevel.hasChunk(chunkX, chunkZ)) continue;
-                LevelChunk chunk = serverLevel.getChunk(chunkX, chunkZ);
-                for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
-                    if (blockEntity instanceof IntegratedSourceRelayBlockEntity relay
-                            && relay.getBlockPos().distSqr(worldPosition) <= rangeSquared
-                            && relay.canProvideSource()) {
-                        result.add(relay);
+                    remainingTransfer = pullFromSource(matrixCore, remainingTransfer);
+                    if (remainingTransfer <= 0) {
+                        break;
                     }
                 }
             }
         }
+        return remainingTransfer;
+    }
+
+    private int pullFromSource(ISourceTile source, int remainingTransfer) {
+        int offered = Math.max(0, Math.min(
+                remainingTransfer,
+                source.removeSource(remainingTransfer, true)
+        ));
+        int accepted = sourceStorage.receiveSource(offered, true);
+        if (accepted <= 0) {
+            return remainingTransfer;
+        }
+
+        int extracted = Math.max(0, Math.min(
+                accepted,
+                source.removeSource(accepted, false)
+        ));
+        int stored = sourceStorage.receiveSource(extracted, false);
+        return remainingTransfer - stored;
     }
 
     @Nullable
@@ -561,15 +530,10 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                 for (int z = -radius; z <= radius; z++) {
                     boolean node = x == 0 && z == 0
                             || Math.abs(x) == radius && Math.abs(z) == radius;
-                    boolean blacklistAnchor = !node && (Math.abs(x) == radius && z == 0
-                            || x == 0 && Math.abs(z) == radius);
                     BlockState state = level.getBlockState(worldPosition.offset(x, y, z));
                     boolean validNode = state.is(NODE_BLOCKS)
                             || x == 0 && z == 0 && state.is(ModBlocks.ARCANE_AMPLIFIER.get());
-                    boolean validFrame = layer == 0 || blacklistAnchor
-                            ? state.is(BASIC_FRAME_BLOCKS)
-                            : state.is(FRAME_BLOCKS);
-                    if (node ? !validNode : !validFrame) {
+                    if (node ? !validNode : !state.is(FRAME_BLOCKS)) {
                         valid = false;
                         break;
                     }
@@ -989,7 +953,7 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     }
 
     private SourceStorage createSourceStorage() {
-        return new SourceStorage(0, 0, 0) {
+        return new SourceStorage(getMaxSource(), Integer.MAX_VALUE, 0) {
             @Override
             public boolean canProvideSource(int amount) {
                 return false;
@@ -1009,10 +973,12 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
     }
 
     private void refreshSourceLimits() {
-        sourceStorage.setMaxSource(0);
-        sourceStorage.setMaxReceive(0);
-        sourceStorage.setMaxExtract(0);
-        sourceStorage.setSource(0);
+        sourceStorage.setMaxSource(getMaxSource());
+        sourceStorage.setMaxReceive(Integer.MAX_VALUE);
+        sourceStorage.setMaxExtract(Integer.MAX_VALUE);
+        if (sourceStorage.getSource() > getMaxSource()) {
+            sourceStorage.setSource(getMaxSource());
+        }
     }
 
     private void setChangedAndSyncClient() {
@@ -1055,14 +1021,6 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         return amplifierCount;
     }
 
-    public int getAmplifierPityMaterialPoints() {
-        return amplifierPityMaterialPoints;
-    }
-
-    public int getAmplifierPityLimit() {
-        return MatrixConfig.MINE_AMPLIFIER_PITY_MATERIAL_POINTS.get();
-    }
-
     public int getWhitelistCount() {
         return whitelistCount;
     }
@@ -1093,7 +1051,7 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
     @Override
     public int getMaxSource() {
-        return 0;
+        return MatrixConfig.MINE_SOURCE_CAPACITY.get();
     }
 
     @Override
@@ -1103,7 +1061,7 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
     @Override
     public boolean canAcceptSource() {
-        return false;
+        return getSource() < getMaxSource();
     }
 
     @Override
@@ -1118,17 +1076,18 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
     @Override
     public int setSource(int source) {
-        return 0;
+        sourceStorage.setSource(Math.max(0, Math.min(source, getMaxSource())));
+        return getSource();
     }
 
     @Override
     public int addSource(int amount) {
-        return 0;
+        return setSource((int) Math.min((long) getSource() + Math.max(0, amount), getMaxSource()));
     }
 
     @Override
     public int addSource(int amount, boolean simulate) {
-        return 0;
+        return sourceStorage.receiveSource(amount, simulate);
     }
 
     @Override
@@ -1143,6 +1102,17 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
     @Override
     public void getTooltip(List<Component> tooltip) {
+        if (ArsNouveauAPI.ENABLE_DEBUG_NUMBERS) {
+            tooltip.add(Component.translatable(
+                    "tooltip.ars_arcane_matrix.arcane_mine.source_exact",
+                    getSource(), getMaxSource()
+            ));
+        } else {
+            int fullness = getMaxSource() == 0 ? 0 : getSource() * 100 / getMaxSource();
+            tooltip.add(Component.translatable(
+                    "tooltip.ars_arcane_matrix.arcane_mine.source_percent", fullness
+            ));
+        }
         tooltip.add(Component.translatable(
                 "tooltip.ars_arcane_matrix.arcane_mine.layers",
                 completedLayers, MatrixConfig.mineLayerSizes().size(), materialPoints
@@ -1185,11 +1155,11 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         tag.putInt("BlacklistCount", blacklistCount);
         tag.putInt("MaterialPoints", materialPoints);
         tag.putInt("CooldownTicks", cooldownTicks);
+        tag.putInt("Source", getSource());
         tag.putBoolean("RedstonePaused", redstonePaused);
         tag.putString("OperatingState", operatingState.name());
         tag.putInt("TargetMaterialCost", targetMaterialCost);
         tag.putInt("TargetSourceCost", targetSourceCost);
-        tag.putInt("AmplifierPityMaterialPoints", amplifierPityMaterialPoints);
         tag.put("PendingOutput", pendingOutput.saveOptional(registries));
         tag.put("PendingByproduct", pendingByproduct.saveOptional(registries));
         tag.put("TargetOutput", targetOutput.saveOptional(registries));
@@ -1223,15 +1193,12 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         }
         targetMaterialCost = Math.max(0, tag.getInt("TargetMaterialCost"));
         targetSourceCost = Math.max(0, tag.getInt("TargetSourceCost"));
-        amplifierPityMaterialPoints = Math.max(0, Math.min(
-                tag.getInt("AmplifierPityMaterialPoints"),
-                MatrixConfig.MINE_AMPLIFIER_PITY_MATERIAL_POINTS.get() - 1
-        ));
         materialPoints = Math.max(0, Math.min(
                 tag.getInt("MaterialPoints"), getEffectiveMaterialPointCapacity()
         ));
         cooldownTicks = Math.max(0, tag.getInt("CooldownTicks"));
         refreshSourceLimits();
+        sourceStorage.setSource(Math.max(0, Math.min(tag.getInt("Source"), getMaxSource())));
         pendingOutput = tag.contains("PendingOutput", Tag.TAG_COMPOUND)
                 ? ItemStack.parseOptional(registries, tag.getCompound("PendingOutput"))
                 : ItemStack.EMPTY;

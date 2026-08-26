@@ -1,4 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": { "all": "ars_arcane_matrix:block/enchanted_archwood_charcoal_block" }
-}

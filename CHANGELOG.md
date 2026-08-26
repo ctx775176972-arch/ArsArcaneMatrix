@@ -1,24 +1,5 @@
 # Changelog
 
-## Unreleased
-
-- Aligned Arcane Mine layers with vanilla mining tiers: wood, stone, iron,
-  and diamond; automatically discovered modded ores now use their block tool tags.
-- Added one Source Stone Generator controller with exact 3x3x3 pedestal recipes,
-  passive progress, Source acceleration, four-amplifier multiblock upgrades,
-  64-block batches, downward buffered output, data-pack recipes, JEI, and Jade.
-
-## 0.4.2 - 2026-08-04
-
-- Added empty-hand translucent structure previews for the Arcane Matrix and
-  Arcane Mine controllers.
-- Changed previews to render only missing or invalid structure positions while
-  recognizing configured block tags and valid Arcane Amplifier substitutions.
-- Disabled previews for maximally complete structures and automatically closed
-  an active preview when its final required block was placed.
-- Added a dedicated Ars Arcane Matrix category to the Ars Nouveau spell book
-  and simplified the project overview.
-
 ## 0.4.1 - 2026-08-02
 
 - Removed an unreachable Imbuement Core batch-size guard identified by Qodana.
@@ -88,6 +69,9 @@
   without losing remainder XP.
 - Use Dominion Wand links for ore input, mineral output, and Experience Gem
   output, with no conventional machine GUI.
+- Let an empty-hand interaction with multiblock controller cores toggle a
+  client-side translucent preview of the complete structure, while Dominion
+  Wand interactions remain reserved for logistics links.
 
 ## Planned 0.6.0 - Arcane Stabilization Core
 

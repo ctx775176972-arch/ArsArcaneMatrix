@@ -1,9 +1,0 @@
-{
-  "name":"奥术真空漏斗","icon":"ars_arcane_matrix:arcane_vacuum_hopper","category":"ars_nouveau:ars_arcane_matrix",
-  "pages":[
-    {"type":"patchouli:text","text":"奥术真空漏斗直接收纳半径12格内的掉落物和原版经验球，不受墙体或障碍物阻挡。它不会处理其他模组的点数实体。红石信号会暂停收取、转换与输出。空手右击打开界面；潜行空手右击把玩家的全部经验存入缓存。"},
-    {"type":"patchouli:text","text":"经验可自动转换为经验宝石：普通经验宝石消耗3点，高等经验宝石消耗12点。物品和经验宝石拥有独立缓存、输出模式与支配之杖绑定目标；界面中的“当前绑定”决定下一次绑定的是哪一种输出。未绑定时可默认输出至下方容器。"},
-    {"type":"patchouli:text","text":"九格过滤样板支持不限、白名单与黑名单，并按物品及其组件精确匹配。“销毁匹配项”默认关闭；启用后，所有与任一样板匹配的掉落物都会被吸入并永久销毁，其优先级高于收集过滤。漏斗采用魔源石分级漏斗外形。"},
-    {"type":"ars_nouveau:apparatus_recipe","recipe":"ars_arcane_matrix:arcane_vacuum_hopper"}
-  ]
-}

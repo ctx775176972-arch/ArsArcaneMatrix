@@ -1,8 +1,0 @@
-{
-  "name":"奥术反应釜","icon":"ars_arcane_matrix:arcane_reaction_vessel","category":"ars_nouveau:ars_arcane_matrix",
-  "pages":[
-    {"type":"patchouli:text","text":"$(l)初学者的物质转换$()$(br2)奥术反应釜使用平滑魔源石、炼药锅、普通魔源宝石、魔源罐和漏斗制作，不需要烈焰棒或炼药台。它负责消耗物品、流体与魔源进行基础转换。"},
-    {"type":"patchouli:text","text":"4个玻璃、250 mB水与200魔源可在10秒内生成1个下界石英。64个石头、2,000 mB水与800魔源则在5秒内生成64个虫蚀石头，可配合生死魔源通道构成初学者魔源农场。魔源在开工时支付；红石暂停，输出堵塞时保留进度。"},
-    {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_reaction_vessel"}
-  ]
-}

@@ -17,9 +17,15 @@
     {
       "item": "ars_nouveau:volcanic_sourcelink"
     },
-    { "item": "ars_arcane_matrix:enchanted_crystal" },
-    { "item": "ars_arcane_matrix:casting_crystal" },
-    { "item": "ars_arcane_matrix:enriched_mineral_crystal" }
+    {
+      "item": "minecraft:nether_star"
+    },
+    {
+      "item": "ars_nouveau:wilden_tribute"
+    },
+    {
+      "item": "minecraft:conduit"
+    }
   ],
   "reagent": {
     "item": "ars_nouveau:arcane_core"
@@ -28,5 +34,5 @@
     "count": 1,
     "id": "ars_arcane_matrix:matrix_core"
   },
-  "sourceCost": 50000
+  "sourceCost": 10000
 }

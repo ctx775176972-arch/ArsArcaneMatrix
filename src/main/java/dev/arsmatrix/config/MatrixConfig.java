@@ -31,7 +31,6 @@ public final class MatrixConfig {
     public static final ModConfigSpec.IntValue MINE_OUTPUT_BONUS_PER_AMPLIFIER;
     public static final ModConfigSpec.DoubleValue MINE_COST_INCREASE_PER_AMPLIFIER;
     public static final ModConfigSpec.DoubleValue MINE_AMPLIFIER_DROP_CHANCE;
-    public static final ModConfigSpec.IntValue MINE_AMPLIFIER_PITY_MATERIAL_POINTS;
     public static final ModConfigSpec.IntValue MINE_SOURCESTONE_POINTS;
     public static final ModConfigSpec.IntValue MINE_SOURCE_GEM_POINTS;
     public static final ModConfigSpec.IntValue MINE_SOURCE_GEM_BLOCK_POINTS;
@@ -44,18 +43,13 @@ public final class MatrixConfig {
     public static final ModConfigSpec.IntValue MINE_PARTICLE_INTERVAL;
     public static final ModConfigSpec.DoubleValue MINE_PARTICLE_DENSITY;
     public static final ModConfigSpec.BooleanValue MINE_ENABLE_SOUNDS;
+    public static final ModConfigSpec.IntValue IMBUEMENT_SOURCE_CAPACITY;
     public static final ModConfigSpec.IntValue IMBUEMENT_SOURCE_INPUT_RANGE;
+    public static final ModConfigSpec.IntValue IMBUEMENT_MAX_SOURCE_INPUT_PER_SECOND;
     public static final ModConfigSpec.IntValue IMBUEMENT_MINIMUM_CHAMBER_DISTANCE;
     public static final ModConfigSpec.IntValue IMBUEMENT_MAXIMUM_CHAMBER_DISTANCE;
     public static final ModConfigSpec.IntValue IMBUEMENT_MAX_COMPRESSED_INPUTS;
     public static final ModConfigSpec.IntValue IMBUEMENT_CYCLE_TICKS;
-    public static final ModConfigSpec.IntValue GENERATOR_DEFAULT_PROCESSING_COST;
-    public static final ModConfigSpec.IntValue GENERATOR_PASSIVE_PROGRESS_PER_SECOND;
-    public static final ModConfigSpec.IntValue GENERATOR_POWERED_DURATION_SECONDS;
-    public static final ModConfigSpec.IntValue GENERATOR_SECONDS_REDUCTION_PER_AMPLIFIER;
-    public static final ModConfigSpec.IntValue GENERATOR_MINIMUM_DURATION_SECONDS;
-    public static final ModConfigSpec.IntValue GENERATOR_SOURCE_INPUT_RANGE;
-    public static final ModConfigSpec.IntValue DRYGMY_ARENA_CYCLE_TICKS;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -65,8 +59,8 @@ public final class MatrixConfig {
                 .comment("Maximum Source stored inside one Matrix Core.")
                 .defineInRange("sourceCapacity", 10_000_000, 1, Integer.MAX_VALUE);
         OUTPUT_RANGE = builder
-                .comment("Source output range in blocks, measured from the Matrix Core. Runtime keeps a minimum of 16 blocks so the multiblock frame does not consume most of the usable radius.")
-                .defineInRange("outputRange", 16, 1, 64);
+                .comment("Source output range in blocks.")
+                .defineInRange("outputRange", 5, 1, 64);
         BASE_GENERATION = builder
                 .comment("Source generated per second at the minimum frame count.")
                 .defineInRange("baseGenerationPerSecond", 1_000, 0, Integer.MAX_VALUE);
@@ -128,11 +122,8 @@ public final class MatrixConfig {
                 .comment("Source and material cost multiplier added by each Arcane Amplifier.")
                 .defineInRange("costIncreasePerAmplifier", 0.5D, 0.0D, 100.0D);
         MINE_AMPLIFIER_DROP_CHANCE = builder
-                .comment("Arcane Amplifier chance per 128 material points consumed by a full four-layer mine.")
+                .comment("Chance for a full four-layer mine to produce one Arcane Amplifier as a separate byproduct.")
                 .defineInRange("amplifierByproductChance", 0.01D, 0.0D, 1.0D);
-        MINE_AMPLIFIER_PITY_MATERIAL_POINTS = builder
-                .comment("Guaranteed Arcane Amplifier after this many material points are consumed without one.")
-                .defineInRange("amplifierPityMaterialPoints", 12_800, 1, 100_000_000);
         MINE_SOURCESTONE_POINTS = builder
                 .comment("Material points supplied by one item in the arcane_mine_material_sourcestone tag.")
                 .defineInRange("sourcestonePoints", 1, 1, 1_000_000);
@@ -179,9 +170,13 @@ public final class MatrixConfig {
         builder.pop(2);
 
         builder.comment("Arcane Imbuement Core settings.").push("arcane_imbuement_core");
+        IMBUEMENT_SOURCE_CAPACITY = builder
+                .defineInRange("sourceCapacity", 1_000_000, 1, Integer.MAX_VALUE);
         IMBUEMENT_SOURCE_INPUT_RANGE = builder
-                .comment("Range used to pay Source directly from Ars Nouveau providers.")
+                .comment("Range used to pull Source from Ars Nouveau providers.")
                 .defineInRange("sourceInputRange", 5, 1, 64);
+        IMBUEMENT_MAX_SOURCE_INPUT_PER_SECOND = builder
+                .defineInRange("maxSourceInputPerSecond", 100_000, 0, Integer.MAX_VALUE);
         IMBUEMENT_MINIMUM_CHAMBER_DISTANCE = builder
                 .comment("Minimum vertical distance to a chamber in the same X/Z column.")
                 .defineInRange("minimumChamberDistance", 2, 1, 16);
@@ -189,38 +184,11 @@ public final class MatrixConfig {
                 .comment("Maximum vertical distance to a chamber in the same X/Z column.")
                 .defineInRange("maximumChamberDistance", 6, 1, 32);
         IMBUEMENT_MAX_COMPRESSED_INPUTS = builder
-                .comment("Maximum Lapis or Amethyst items/blocks processed in one cycle.")
+                .comment("Maximum Lapis or Amethyst Blocks processed in one cycle.")
                 .defineInRange("maxCompressedInputsPerCycle", 4, 1, 7);
         IMBUEMENT_CYCLE_TICKS = builder
                 .comment("Duration of one bulk cycle. 100 ticks equals five seconds.")
                 .defineInRange("cycleTicks", 100, 1, 72_000);
-        builder.pop();
-
-        builder.comment("Source Stone Generator settings.").push("source_stone_generator");
-        GENERATOR_DEFAULT_PROCESSING_COST = builder
-                .comment("Progress required by the fallback 64 Cobblestone recipe.")
-                .defineInRange("defaultProcessingCost", 200, 1, Integer.MAX_VALUE);
-        GENERATOR_PASSIVE_PROGRESS_PER_SECOND = builder
-                .comment("Free imbuement-style progress gained each second without external Source.")
-                .defineInRange("passiveProgressPerSecond", 20, 0, Integer.MAX_VALUE);
-        GENERATOR_POWERED_DURATION_SECONDS = builder
-                .comment("Powered batch duration with no cardinal Arcane Amplifiers.")
-                .defineInRange("poweredDurationSeconds", 5, 1, 3_600);
-        GENERATOR_SECONDS_REDUCTION_PER_AMPLIFIER = builder
-                .comment("Seconds removed from the powered duration by each cardinal Arcane Amplifier.")
-                .defineInRange("secondsReductionPerAmplifier", 1, 0, 3_600);
-        GENERATOR_MINIMUM_DURATION_SECONDS = builder
-                .comment("Hard minimum powered batch duration.")
-                .defineInRange("minimumPoweredDurationSeconds", 1, 1, 3_600);
-        GENERATOR_SOURCE_INPUT_RANGE = builder
-                .comment("Range used to draw Source from Ars Nouveau providers.")
-                .defineInRange("sourceInputRange", 5, 1, 64);
-        builder.pop();
-
-        builder.comment("Arcane Hunting Grounds settings.").push("drygmy_arena");
-        DRYGMY_ARENA_CYCLE_TICKS = builder
-                .comment("Ticks per special-output cycle. 6000 ticks equals five minutes.")
-                .defineInRange("cycleTicks", 6_000, 20, 1_728_000);
         builder.pop();
         SPEC = builder.build();
     }
@@ -255,13 +223,6 @@ public final class MatrixConfig {
                 + Math.max(0, Math.min(amplifiers, MINE_AMPLIFIER_POSITIONS))
                 * MINE_COST_INCREASE_PER_AMPLIFIER.get();
         return (int) Math.min(Integer.MAX_VALUE, Math.ceil(Math.max(0, baseCost) * multiplier));
-    }
-
-    public static int generatorPoweredDurationSeconds(int amplifiers) {
-        int configured = GENERATOR_POWERED_DURATION_SECONDS.get()
-                - Math.max(0, Math.min(4, amplifiers))
-                * GENERATOR_SECONDS_REDUCTION_PER_AMPLIFIER.get();
-        return Math.max(GENERATOR_MINIMUM_DURATION_SECONDS.get(), configured);
     }
 
     public static int mineOperationCooldown(

@@ -21,7 +21,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-/** GUI-free standalone bulk Source Gem converter. */
+/** GUI-free bulk controller placed below an Ars Nouveau Imbuement Chamber. */
 public final class ArcaneImbuementCoreBlock extends BaseEntityBlock {
 
     private static final VoxelShape SHAPE = Shapes.or(
@@ -84,11 +84,6 @@ public final class ArcaneImbuementCoreBlock extends BaseEntityBlock {
             Player player,
             BlockHitResult hitResult
     ) {
-        // Item interactions that return PASS may fall through to this hook. In particular,
-        // Dominion Wand binding must never be mistaken for an empty-hand mode toggle.
-        if (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()) {
-            return InteractionResult.PASS;
-        }
         if (!level.isClientSide
                 && level.getBlockEntity(pos) instanceof ArcaneImbuementCoreBlockEntity core) {
             ArcaneImbuementCoreBlockEntity.OutputMode mode = core.toggleOutputMode();

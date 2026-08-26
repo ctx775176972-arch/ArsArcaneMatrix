@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    { "item": "ars_nouveau:blank_parchment" },
-    { "item": "ars_nouveau:manipulation_essence" }
-  ],
-  "result": { "id": "ars_arcane_matrix:crafting_guide", "count": 1 }
-}

@@ -1,9 +1,0 @@
-{
-  "ingredients": [
-    {"item": "minecraft:glass", "count": 4}
-  ],
-  "input_fluid": {"id": "minecraft:water", "amount": 250},
-  "output": {"item": "minecraft:quartz", "amount": 1},
-  "source_cost": 200,
-  "processing_ticks": 200
-}

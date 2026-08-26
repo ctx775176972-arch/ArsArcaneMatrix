@@ -1,8 +1,0 @@
-{
-  "ingredients": [
-    {"tag": "ars_arcane_matrix:reaction_lava_stones", "count": 8}
-  ],
-  "output": {"fluid": "minecraft:lava", "amount": 1000},
-  "source_cost": 200,
-  "processing_ticks": 100
-}

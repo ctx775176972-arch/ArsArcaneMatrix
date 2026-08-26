@@ -1,5 +1,0 @@
-{
-  "type":"minecraft:crafting_shaped","category":"misc","pattern":["SGS","GBG","SGS"],
-  "key":{"S":{"item":"ars_nouveau:sourcestone"},"G":{"item":"minecraft:glass"},"B":{"item":"ars_nouveau:source_gem_block"}},
-  "result":{"id":"ars_arcane_matrix:fluid_capacity_upgrade","count":1}
-}

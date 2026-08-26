@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "ars_arcane_matrix:block/arcane_vacuum_hopper" },
-    "facing=east":  { "model": "ars_arcane_matrix:block/arcane_vacuum_hopper", "y": 90 },
-    "facing=south": { "model": "ars_arcane_matrix:block/arcane_vacuum_hopper", "y": 180 },
-    "facing=west":  { "model": "ars_arcane_matrix:block/arcane_vacuum_hopper", "y": 270 }
-  }
-}

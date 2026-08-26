@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:block",
-  "pools": [{
-    "rolls": 1,
-    "entries": [{ "type": "minecraft:item", "name": "ars_arcane_matrix:arcane_crusher_core" }],
-    "conditions": [{ "condition": "minecraft:survives_explosion" }]
-  }]
-}

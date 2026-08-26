@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "ars_arcane_matrix:block/arcane_structural_frame_solid_hd"
-  }
-}

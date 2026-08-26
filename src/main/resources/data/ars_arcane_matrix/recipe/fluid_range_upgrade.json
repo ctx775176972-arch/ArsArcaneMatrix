@@ -1,5 +1,0 @@
-{
-  "type":"minecraft:crafting_shaped","category":"misc","pattern":[" A ","AEA"," A "],
-  "key":{"A":{"item":"ars_nouveau:air_essence"},"E":{"item":"minecraft:ender_eye"}},
-  "result":{"id":"ars_arcane_matrix:fluid_range_upgrade","count":1}
-}

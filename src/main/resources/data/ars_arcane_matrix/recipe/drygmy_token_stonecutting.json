@@ -1,5 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {"item": "ars_arcane_matrix:casting_crystal"},
-  "result": {"id": "ars_nouveau:drygmy_shard", "count": 1}
-}

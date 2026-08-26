@@ -4,19 +4,6 @@
     "ars_arcane_matrix:matrix_core",
     "ars_arcane_matrix:arcane_mine_core",
     "ars_arcane_matrix:arcane_amplifier",
-    "ars_arcane_matrix:arcane_structural_frame",
-    "ars_arcane_matrix:arcane_imbuement_core",
-    "ars_arcane_matrix:advanced_imbuement_chamber",
-    "ars_arcane_matrix:drygmy_arena",
-    "ars_arcane_matrix:arcane_processor_core",
-    "ars_arcane_matrix:arcane_smelter_core",
-    "ars_arcane_matrix:arcane_crusher_core"
-    ,"ars_arcane_matrix:super_source_jar_core"
-    ,"ars_arcane_matrix:integrated_source_relay"
-    ,"ars_arcane_matrix:dimension_anchor"
-    ,"ars_arcane_matrix:arcane_fluid_reservoir"
-    ,"ars_arcane_matrix:arcane_fluid_tank"
-    ,"ars_arcane_matrix:arcane_reaction_vessel"
-    ,"ars_arcane_matrix:arcane_vacuum_hopper"
+    "ars_arcane_matrix:arcane_imbuement_core"
   ]
 }

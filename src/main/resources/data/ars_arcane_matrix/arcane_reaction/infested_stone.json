@@ -1,9 +1,0 @@
-{
-  "ingredients": [
-    {"item": "minecraft:stone", "count": 64}
-  ],
-  "input_fluid": {"id": "minecraft:water", "amount": 2000},
-  "output": {"item": "minecraft:infested_stone", "amount": 64},
-  "source_cost": 800,
-  "processing_ticks": 100
-}
