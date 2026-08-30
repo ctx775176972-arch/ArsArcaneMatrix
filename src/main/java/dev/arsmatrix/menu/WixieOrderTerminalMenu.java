@@ -10,6 +10,7 @@ import dev.arsmatrix.registry.ModItems;
 import dev.arsmatrix.item.CraftingGuideItem;
 import dev.arsmatrix.compat.DynamicCraftingRecipeSupport;
 import dev.arsmatrix.compat.RecipeAutomationSupport;
+import dev.arsmatrix.network.StorageEntriesDeltaPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -29,6 +30,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +72,7 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
     private boolean storagePageActive;
     private int selectedIndex = -1;
     private int requestedCount = 1;
+    private long lastStorageRefreshTime = Long.MIN_VALUE;
 
     public WixieOrderTerminalMenu(int containerId, Inventory inventory, RegistryFriendlyByteBuf data) {
         this(containerId, inventory, readOpeningData(data));
@@ -354,8 +357,70 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
 
     private void refreshStoredEntries(AdvancedStorageLecternBlockEntity lectern) {
         storedEntries.clear();
-        lectern.getStoredStacks().forEach(entry ->
+        lectern.getStoredStacks().stream().limit(512).forEach(entry ->
                 storedEntries.add(new StorageEntry(entry.stack().copy(), entry.count())));
+    }
+
+    /** Applies server-sent changes without replacing unchanged storage entries. */
+    public void applyStorageDelta(List<StorageEntry> changes) {
+        for (StorageEntry change : changes) {
+            int existing = findStoredEntry(storedEntries, change.stack());
+            if (change.count() <= 0) {
+                if (existing >= 0) storedEntries.remove(existing);
+            } else if (existing >= 0) {
+                storedEntries.set(existing, new StorageEntry(change.stack().copy(), change.count()));
+            } else {
+                storedEntries.add(new StorageEntry(change.stack().copy(), change.count()));
+            }
+        }
+    }
+
+    @Override
+    public void broadcastChanges() {
+        super.broadcastChanges();
+        if (!advancedStorage || menuPlayer.level().isClientSide
+                || !(menuPlayer instanceof ServerPlayer serverPlayer)) return;
+        long gameTime = menuPlayer.level().getGameTime();
+        if (lastStorageRefreshTime != Long.MIN_VALUE
+                && gameTime - lastStorageRefreshTime < 20L) return;
+        lastStorageRefreshTime = gameTime;
+        if (!(menuPlayer.level().getBlockEntity(terminalPos)
+                instanceof AdvancedStorageLecternBlockEntity lectern)) return;
+
+        List<StorageEntry> snapshot = lectern.getStoredStacks().stream().limit(512)
+                .map(entry -> new StorageEntry(entry.stack().copy(), entry.count()))
+                .toList();
+        List<StorageEntry> changes = storageDelta(storedEntries, snapshot);
+        if (changes.isEmpty()) return;
+        storedEntries.clear();
+        storedEntries.addAll(snapshot);
+        PacketDistributor.sendToPlayer(serverPlayer,
+                new StorageEntriesDeltaPayload(containerId, changes));
+    }
+
+    private static List<StorageEntry> storageDelta(
+            List<StorageEntry> previous, List<StorageEntry> current
+    ) {
+        List<StorageEntry> changes = new ArrayList<>();
+        for (StorageEntry entry : current) {
+            int oldIndex = findStoredEntry(previous, entry.stack());
+            if (oldIndex < 0 || previous.get(oldIndex).count() != entry.count()) {
+                changes.add(entry);
+            }
+        }
+        for (StorageEntry entry : previous) {
+            if (findStoredEntry(current, entry.stack()) < 0) {
+                changes.add(new StorageEntry(entry.stack().copy(), 0));
+            }
+        }
+        return changes;
+    }
+
+    private static int findStoredEntry(List<StorageEntry> entries, ItemStack stack) {
+        for (int index = 0; index < entries.size(); index++) {
+            if (ItemStack.isSameItemSameComponents(entries.get(index).stack(), stack)) return index;
+        }
+        return -1;
     }
 
     private void mergeStoredPreview(ItemStack stack, int amount) {

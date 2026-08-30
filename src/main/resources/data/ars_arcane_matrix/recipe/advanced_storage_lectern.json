@@ -1,12 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "pattern": ["SGS", "LTL", "FFF"],
+  "pattern": ["SGS", "LTE", "FFF"],
   "key": {
     "S": { "item": "ars_nouveau:sourcestone" },
     "G": { "item": "ars_nouveau:source_gem_block" },
     "L": { "item": "ars_nouveau:storage_lectern" },
     "T": { "item": "ars_arcane_matrix:wixie_order_terminal" },
+    "E": { "item": "ars_arcane_matrix:enriched_mineral_crystal" },
     "F": { "item": "ars_arcane_matrix:arcane_structural_frame" }
   },
   "result": { "id": "ars_arcane_matrix:advanced_storage_lectern", "count": 1 }

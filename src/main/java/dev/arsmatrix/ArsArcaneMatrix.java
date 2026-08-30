@@ -25,6 +25,7 @@ import dev.arsmatrix.registry.ModItems;
 import dev.arsmatrix.registry.ModMenus;
 import dev.arsmatrix.registry.ModRecipeTypes;
 import dev.arsmatrix.spell.ModGlyphs;
+import dev.arsmatrix.network.ModNetworking;
 import dev.arsmatrix.world.ModChunkLoading;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -55,6 +56,7 @@ public class ArsArcaneMatrix {
         ModBlockEntities.register(modBus);
         ModMenus.register(modBus);
         ModCreativeTabs.register(modBus);
+        modBus.addListener(ModNetworking::register);
         modBus.addListener(ModChunkLoading::registerControllers);
         modBus.addListener(ModCapabilities::register);
         NeoForge.EVENT_BUS.addListener(ArcaneMineOreManager::registerReloadListener);

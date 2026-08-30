@@ -524,7 +524,7 @@
   ,"documentation.ars_arcane_matrix.drygmy_enhancement.overview": "德格米石阵会读取附近奥术基座上的武器作为模拟击杀工具。锋利提高工作速度，抢夺提高战利品数量，斩首类效果可以参与模拟击杀。只有能提供大量经验的目标才会明显产生经验宝石。"
   ,"documentation.ars_arcane_matrix.drygmy_enhancement.weapon": "基座武器不会被消耗。石阵会同步提高单次魔源抽取能力；魔源不足时会明确显示等待状态。"
   ,"documentation.ars_arcane_matrix.stock_requester.overview": "自动请求展示盒监控绑定容器内的一种物品。当库存低于设定下限时，它会向绑定的薇克精下单终端提交一次指定数量的订单，并从绑定库存网络消耗一份操纵精华。"
-  ,"documentation.ars_arcane_matrix.stock_requester.setup": "在GUI中设置目标物品、库存下限、单次请求数量并启用自动合成，然后绑定目标容器和下单终端。等待已有订单完成期间不会重复提交；成功、缺少精华、无法规划或网络不可用都会通过消息栏提示。"
+  ,"documentation.ars_arcane_matrix.stock_requester.setup": "手持目标物品右击展示盒进行设置；空手右击打开GUI并调整库存下限、单次请求数量和消息提示，然后使用支配之杖分别绑定目标容器与下单终端。等待已有订单完成期间不会重复提交；订单提交与完成、缺少精华、无法规划或网络不可用都会通过消息栏提示。"
   ,"documentation.ars_arcane_matrix.storage.overview": "高级存储讲台统一搜索连接容器与晶格目录，并提供折叠式3×3合成区。书龙负责建立存储连接，讲台负责查看和操作，并不会要求书龙持续搬运每一件物品。"
   ,"documentation.ars_arcane_matrix.storage.grid.title": "晶格目录"
   ,"documentation.ars_arcane_matrix.storage.grid.text": "晶格目录适合保存大量同类材料。基础容量为16种、4096件；GUI内最多安装四个晶格扩容仓库，每个增加64种与262144件容量。装备等拥有大量不同组件的数据不适合集中放入晶格。破坏目录时库存和升级会保存在掉落物中。"

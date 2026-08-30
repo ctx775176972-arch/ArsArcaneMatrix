@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -152,6 +153,15 @@ public final class AutomaticStockRequesterBlockEntity extends BlockEntity
             settleTicks = 0;
         }
 
+        // Do not consume a catalyst or create another order when the destination
+        // cannot accept even one result. Orders that were already accepted are
+        // handled above and remain safely buffered until space becomes available.
+        ItemStack insertionProbe = target.copyWithCount(1);
+        if (!ItemHandlerHelper.insertItemStacked(inventory, insertionProbe, true).isEmpty()) {
+            setState(OperatingState.OUTPUT_BLOCKED);
+            return;
+        }
+
         if (catalyst.getStackInSlot(0).isEmpty()) {
             ItemStack supplied = terminal.takeOneStoredForAutomation(
                     new ItemStack(ItemsRegistry.MANIPULATION_ESSENCE.get()));
@@ -171,6 +181,8 @@ public final class AutomaticStockRequesterBlockEntity extends BlockEntity
                 automaticRequestStartGameTime = level.getGameTime();
                 automaticRequestedAmount = requestAmount;
                 setState(OperatingState.REQUESTED);
+                notifyPlayer("message.ars_arcane_matrix.stock_requester.submitted",
+                        target.getHoverName(), requestAmount);
             }
             case BUSY -> setState(OperatingState.TERMINAL_BUSY);
             case RECIPE_UNAVAILABLE -> setState(OperatingState.RECIPE_UNAVAILABLE);
