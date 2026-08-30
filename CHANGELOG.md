@@ -2,11 +2,40 @@
 
 ## Unreleased
 
-- Aligned Arcane Mine layers with vanilla mining tiers: wood, stone, iron,
-  and diamond; automatically discovered modded ores now use their block tool tags.
-- Added one Source Stone Generator controller with exact 3x3x3 pedestal recipes,
-  passive progress, Source acceleration, four-amplifier multiblock upgrades,
-  64-block batches, downward buffered output, data-pack recipes, JEI, and Jade.
+- No unreleased changes.
+
+## 0.5.0 - 2026-08-31
+
+- Expanded Ars Arcane Matrix into a staged Source-powered production system,
+  with an updated Ars Nouveau spell-book category and survival progression.
+- Added the Processor, Smelter, and Crusher multiblocks with mixed-input batch
+  processing, catalysts, guaranteed byproducts, metal dusts, redstone control,
+  Dominion Wand logistics, structure previews, and JEI/Jade integration.
+- Added the Source Stone Generator, Source Stone Furnace, Arcane Reaction
+  Vessel, Advanced Imbuement Chamber, Formless Essence, and bulk Source Gem
+  production through the Arcane Imbuement Core.
+- Added one-million-capacity Arcane Source Jars, the 100-million-capacity Matrix
+  Source Jar multiblock, Integrated Source Relays, and Source-aware advanced
+  storage infrastructure.
+- Added Wixie order automation: Order Pedestals, Crafting Guides, Pattern
+  Providers, Order Terminals, automatic stock requests, parallel crafting,
+  recipe matching modes, and advanced storage access.
+- Added Storage Grid Directories and expansion modules for high-count item
+  storage, plus tiered Starbuncle logistics management with per-Starbuncle
+  filters, route inspection, recovery, protection, and high-throughput transfer.
+- Added the Arcane Fluid Controller and installable Arcane Fluid Tanks, fluid
+  upgrades, world-fluid collection, wireless transfer, fluid-aware crafting,
+  and the Arcane Vacuum Hopper for items and experience.
+- Added the data-driven Arcane Hunting Grounds and Alakarkinos expedition
+  simulation for difficult-to-renew rewards without spawning or killing mobs.
+- Added Capture as a tier-three glyph, including mounted-entity handling and a
+  strengthened boss-only mode.
+- Enhanced Whirlisprigs, Amethyst Golems, Drygmy Henges, and Starbuncles for
+  automation while retaining Ars Nouveau-style interaction and progression.
+- Added the Matrix Construction Wand and consistent empty-hand multiblock
+  previews, including creative-mode construction support.
+- Reorganized documentation, recipes, models, handheld transforms, textures,
+  translations, CI checks, and compatibility behavior for the 0.5.0 release.
 
 ## 0.4.2 - 2026-08-04
 
@@ -71,23 +100,6 @@
   based on the in-game Matrix Core's thin, offset frames and violet crystal,
   finished with restrained rune fragments, Source-light accents, and a pixel-art
   rendering of the Ars Arcane Matrix name.
-
-## Planned 0.5.0 - Ore Processing and Structure Previews
-
-- Add the Arcane Ore Processing Array, a compact Source-powered multiblock that
-  processes ore blocks internally without spawning dropped items or XP orbs.
-- Give the Array one base processing lane and up to four Arcane Amplifier
-  positions, for a maximum of five parallel ore operations.
-- Use Arcane Pedestals on the upper layer and render an upward beacon beam from
-  the core while ore is being processed.
-- Add an optional, server-configurable pedestal upgrade rule, disabled by
-  default: each upper Arcane Pedestal replaced by a vanilla Beacon adds one
-  Fortune level. Base Fortune remains separately configurable.
-- Resolve ore loot internally, buffer the corresponding XP, and convert it
-  proportionally into Ars Nouveau Experience Gems and Greater Experience Gems
-  without losing remainder XP.
-- Use Dominion Wand links for ore input, mineral output, and Experience Gem
-  output, with no conventional machine GUI.
 
 ## Planned 0.6.0 - Arcane Stabilization Core
 
