@@ -43,6 +43,11 @@ public final class WixiePatternProviderBlockEntity extends BlockEntity implement
     private int upgradeTier;
     private final ItemStackHandler guides = new ItemStackHandler(GUIDE_SLOTS_PER_TIER) {
         @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
         public boolean isItemValid(int slot, ItemStack stack) {
             return stack.is(dev.arsmatrix.registry.ModItems.CRAFTING_GUIDE.get())
                     && CraftingGuideItem.getRecipeId(stack) != null;

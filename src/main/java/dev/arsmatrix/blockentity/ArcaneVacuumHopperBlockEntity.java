@@ -55,6 +55,29 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         @Override public int getSlotLimit(int slot) { return 1; }
         @Override protected void onContentsChanged(int slot) { sync(); }
     };
+    /**
+     * Automation-facing view of the item buffer. Matching insertions are accepted
+     * and voided only when the explicitly configured destroy toggle is enabled;
+     * every other operation behaves exactly like the ordinary buffer.
+     */
+    private final IItemHandler automationItems = new IItemHandler() {
+        @Override public int getSlots() { return drops.getSlots(); }
+        @Override public ItemStack getStackInSlot(int slot) { return drops.getStackInSlot(slot); }
+        @Override public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            if (!stack.isEmpty() && automationDestroyActive() && matchesFilter(stack)) {
+                return ItemStack.EMPTY;
+            }
+            return drops.insertItem(slot, stack, simulate);
+        }
+        @Override public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return drops.extractItem(slot, amount, simulate);
+        }
+        @Override public int getSlotLimit(int slot) { return drops.getSlotLimit(slot); }
+        @Override public boolean isItemValid(int slot, ItemStack stack) {
+            return (!stack.isEmpty() && automationDestroyActive() && matchesFilter(stack))
+                    || drops.isItemValid(slot, stack);
+        }
+    };
     private int experience;
     private boolean collectItems = true;
     private boolean collectExperience = true;
@@ -150,7 +173,7 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     private boolean accepts(ItemStack stack) {
         if (filterMode == FilterMode.DISABLED) return true;
         boolean matched = matchesFilter(stack);
-        return filterMode == FilterMode.WHITELIST ? matched : !matched;
+        return (filterMode == FilterMode.WHITELIST) == matched;
     }
 
     private boolean matchesFilter(ItemStack stack) {
@@ -161,6 +184,10 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
                     : ItemStack.isSameItem(filter, stack))) return true;
         }
         return false;
+    }
+
+    private boolean automationDestroyActive() {
+        return destroyMatches && level != null && !level.hasNeighborSignal(worldPosition);
     }
 
     private void convertExperience() {
@@ -239,7 +266,8 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         return bind(target, face, player);
     }
     private Result bind(GlobalPos target, @Nullable Direction face, Player player) {
-        if (!(player instanceof ServerPlayer serverPlayer) || target == null) return Result.FAIL;
+        if (!(player instanceof ServerPlayer serverPlayer) || target == null
+                || serverPlayer.getServer() == null) return Result.FAIL;
         ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
         if (targetLevel == null || !targetLevel.hasChunkAt(target.pos())
                 || targetLevel.getCapability(Capabilities.ItemHandler.BLOCK, target.pos(), face) == null) {
@@ -275,6 +303,7 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     public void cycleBindChannel() { bindChannel = bindChannel.next(); sync(); }
 
     public ItemStackHandler drops() { return drops; }
+    public IItemHandler automationItems() { return automationItems; }
     public ItemStackHandler gems() { return gems; }
     public ItemStackHandler filters() { return filters; }
     public int experience() { return experience; }
@@ -294,7 +323,7 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     @Override public Component getDisplayName() {
         return Component.translatable("block.ars_arcane_matrix.arcane_vacuum_hopper");
     }
-    @Nullable @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+    @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new ArcaneVacuumHopperMenu(id, inventory, this);
     }
     @Override public void getTooltip(List<Component> tooltip) {
@@ -363,7 +392,7 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     }
     private static <T> T value(T[] values, int ordinal) { return values[Math.floorMod(ordinal, values.length)]; }
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) { return saveWithoutMetadata(registries); }
-    @Nullable @Override public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
+    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() { return ClientboundBlockEntityDataPacket.create(this); }
 
     private record Target(@Nullable GlobalPos pos, @Nullable Direction face) {}
     public enum FilterMode { DISABLED, WHITELIST, BLACKLIST; public FilterMode next(){ return value(values(), ordinal()+1); } }

@@ -68,10 +68,25 @@ public final class AlakarkinosExpeditionManager extends SimpleJsonResourceReload
         int workTicks = positive(GsonHelper.getAsInt(json, "work_ticks"), "work_ticks");
         int sourceCost = positive(GsonHelper.getAsInt(json, "source_cost"), "source_cost");
         boolean hasTable = json.has("loot_table");
+        boolean hasTables = json.has("loot_tables");
         boolean hasOutput = json.has("output");
-        if (hasTable == hasOutput) throw new IllegalArgumentException("recipe needs exactly one loot_table or output");
-        ResourceLocation table = hasTable
-                ? ResourceLocation.parse(GsonHelper.getAsString(json, "loot_table")) : null;
+        if ((hasTable ? 1 : 0) + (hasTables ? 1 : 0) + (hasOutput ? 1 : 0) != 1) {
+            throw new IllegalArgumentException("recipe needs exactly one loot_table, loot_tables, or output");
+        }
+        List<AlakarkinosExpeditionRule.LootTableChoice> tables = new ArrayList<>();
+        if (hasTable) {
+            tables.add(new AlakarkinosExpeditionRule.LootTableChoice(
+                    ResourceLocation.parse(GsonHelper.getAsString(json, "loot_table")), 1));
+        } else if (hasTables) {
+            JsonArray tableArray = GsonHelper.getAsJsonArray(json, "loot_tables");
+            for (JsonElement element : tableArray) {
+                JsonObject table = GsonHelper.convertToJsonObject(element, "expedition loot table");
+                tables.add(new AlakarkinosExpeditionRule.LootTableChoice(
+                        ResourceLocation.parse(GsonHelper.getAsString(table, "id")),
+                        positive(GsonHelper.getAsInt(table, "weight", 1), "loot table weight")));
+            }
+            if (tables.isEmpty()) throw new IllegalArgumentException("loot_tables cannot be empty");
+        }
         ResourceLocation outputId = null;
         int outputCount = 0;
         if (hasOutput) {
@@ -91,7 +106,7 @@ public final class AlakarkinosExpeditionManager extends SimpleJsonResourceReload
         JsonArray excludedArray = GsonHelper.getAsJsonArray(json, "excluded_outputs", new JsonArray());
         excludedArray.forEach(element -> excluded.add(ResourceLocation.parse(GsonHelper.convertToString(element, "excluded output"))));
         return new AlakarkinosExpeditionRule(id, inputs, proof,
-                workTicks, sourceCost, table, outputId, outputCount, display, excluded,
+                workTicks, sourceCost, tables, outputId, outputCount, display, excluded,
                 GsonHelper.getAsBoolean(json, "enabled", true));
     }
 

@@ -25,8 +25,9 @@ public record ArcaneHuntingRule(
 
     public record Result(ResourceLocation itemId, int count) {
         public ItemStack createStack() {
-            var item = BuiltInRegistries.ITEM.get(itemId);
-            return item == null ? ItemStack.EMPTY : new ItemStack(item, count);
+            return BuiltInRegistries.ITEM.getOptional(itemId)
+                    .map(item -> new ItemStack(item, count))
+                    .orElse(ItemStack.EMPTY);
         }
     }
 }

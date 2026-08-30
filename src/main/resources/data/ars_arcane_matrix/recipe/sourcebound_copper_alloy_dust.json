@@ -6,6 +6,7 @@
     { "item": "ars_arcane_matrix:copper_dust" },
     { "item": "ars_arcane_matrix:copper_dust" },
     { "item": "ars_arcane_matrix:gold_dust" },
+    { "item": "ars_nouveau:source_gem" },
     { "item": "ars_arcane_matrix:enchanted_crystal" },
     { "item": "ars_arcane_matrix:casting_crystal" },
     { "item": "ars_arcane_matrix:enriched_mineral_crystal" }

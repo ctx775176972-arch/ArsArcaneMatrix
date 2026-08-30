@@ -169,11 +169,11 @@ public final class ModItems {
 
     public static final DeferredItem<BlockItem> SUPER_SOURCE_JAR_CORE =
             ITEMS.registerSimpleBlockItem("super_source_jar_core", ModBlocks.SUPER_SOURCE_JAR_CORE,
-                    new Item.Properties());
+                    new Item.Properties().stacksTo(1));
 
     public static final DeferredItem<BlockItem> ARCANE_SOURCE_JAR =
             ITEMS.registerSimpleBlockItem("arcane_source_jar", ModBlocks.ARCANE_SOURCE_JAR,
-                    new Item.Properties());
+                    new Item.Properties().stacksTo(1));
 
     public static final DeferredItem<BlockItem> INTEGRATED_SOURCE_RELAY =
             ITEMS.registerSimpleBlockItem("integrated_source_relay", ModBlocks.INTEGRATED_SOURCE_RELAY,

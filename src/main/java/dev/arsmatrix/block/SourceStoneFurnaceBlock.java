@@ -42,7 +42,7 @@ public final class SourceStoneFurnaceBlock extends BaseEntityBlock {
 
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
-    @Nullable @Override
+    @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
@@ -61,7 +61,7 @@ public final class SourceStoneFurnaceBlock extends BaseEntityBlock {
 
     @Override protected RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
 
-    @Nullable @Override
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new SourceStoneFurnaceBlockEntity(pos, state);
     }

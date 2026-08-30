@@ -39,6 +39,7 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
     public static final int PROCESS_TICKS = 100;
     public static final int SOURCE_COST = 20;
     private static final int SOURCE_RANGE = 5;
+    private static final int LIT_HOLD_TICKS = 10;
 
     private final ItemStackHandler inventory = new ItemStackHandler(2) {
         @Override public boolean isItemValid(int slot, ItemStack stack) {
@@ -50,6 +51,7 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
     private final IItemHandler bottomHandler = new FaceHandler(false);
     private int progress;
     private boolean sourcePaid;
+    private int litHoldTicks;
     /** Locked while one Advanced Lectern/Wixie machine task owns both slots. */
     private boolean networkReserved;
 
@@ -73,12 +75,13 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
 
     public static void serverTick(Level level, BlockPos pos, BlockState state,
                                   SourceStoneFurnaceBlockEntity furnace) {
+        if (furnace.litHoldTicks > 0) furnace.litHoldTicks--;
         ItemStack input = furnace.inventory.getStackInSlot(0);
         AbstractCookingRecipe recipe = furnace.findRecipe(input);
         ItemStack output = recipe == null ? ItemStack.EMPTY
                 : recipe.assemble(new SingleRecipeInput(input.copyWithCount(1)), level.registryAccess());
         if (recipe == null || output.isEmpty() || !furnace.canOutput(output)) {
-            furnace.setLit(false);
+            furnace.setLit(furnace.litHoldTicks > 0);
             if (recipe == null || input.isEmpty()) {
                 furnace.progress = 0;
                 furnace.sourcePaid = false;
@@ -88,12 +91,13 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
         }
         if (!furnace.sourcePaid) {
             if (!furnace.consumeSource(SOURCE_COST)) {
-                furnace.setLit(false);
+                furnace.setLit(furnace.litHoldTicks > 0);
                 return;
             }
             furnace.sourcePaid = true;
             furnace.setChanged();
         }
+        furnace.litHoldTicks = LIT_HOLD_TICKS;
         furnace.setLit(true);
         furnace.progress++;
         if (furnace.progress < PROCESS_TICKS) {
@@ -106,7 +110,6 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
         else stored.grow(output.getCount());
         furnace.progress = 0;
         furnace.sourcePaid = false;
-        furnace.setLit(false);
         furnace.setChanged();
     }
 
@@ -134,7 +137,8 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
         for (ISpecialSourceProvider provider : providers) {
             ISourceTile source = provider.getSource();
             if (source != null && source.canProvideSource()) {
-                available += Math.max(0, source.removeSource(cost - Math.min(cost, available), true));
+                int needed = cost - available;
+                available += Math.max(0, Math.min(needed, source.removeSource(needed, true)));
                 if (available >= cost) break;
             }
         }
@@ -201,7 +205,7 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
     @Override public Component getDisplayName() {
         return Component.translatable("block.ars_arcane_matrix.source_stone_furnace");
     }
-    @Nullable @Override public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
+    @Override public AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
         return new SourceStoneFurnaceMenu(id, inv, this);
     }
 

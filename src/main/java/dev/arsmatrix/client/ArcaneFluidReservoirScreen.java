@@ -93,20 +93,16 @@ public final class ArcaneFluidReservoirScreen extends AbstractContainerScreen<Ar
     }
     private static Component fluidName(int index) {
         Fluid fluid = BuiltInRegistries.FLUID.byId(index);
-        return fluid == null || fluid == Fluids.EMPTY
+        return fluid == Fluids.EMPTY
                 ? Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.empty")
                 : new FluidStack(fluid, 1).getHoverName();
     }
     private static void drawFluid(GuiGraphics graphics, int registryId, int x, int y, int width, int height) {
         if (height <= 0) return;
         Fluid fluid = BuiltInRegistries.FLUID.byId(registryId);
-        if (fluid == null || fluid == Fluids.EMPTY) return;
+        if (fluid == Fluids.EMPTY) return;
         IClientFluidTypeExtensions properties = IClientFluidTypeExtensions.of(fluid);
         ResourceLocation texture = properties.getStillTexture(new FluidStack(fluid, 1));
-        if (texture == null) {
-            graphics.fill(x, y, x + width, y + height, 0xFF241D2D);
-            return;
-        }
         int tint = properties.getTintColor(new FluidStack(fluid, 1));
         graphics.setColor(((tint >>> 16) & 255) / 255.0F, ((tint >>> 8) & 255) / 255.0F,
                 (tint & 255) / 255.0F, ((tint >>> 24) & 255) / 255.0F);
@@ -153,10 +149,14 @@ public final class ArcaneFluidReservoirScreen extends AbstractContainerScreen<Ar
                 8, 130, 0xCBBCE3, false);
         graphics.drawString(font, Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.modules"),
                 164, 116, 0xCBBCE3, false);
-        graphics.drawString(font, Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless",
-                        Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless_tier."
-                                + menu.wirelessTier())),
+        graphics.drawString(font, Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.targets",
+                        menu.inputTargetCount(), menu.maxWirelessTargets(),
+                        menu.outputTargetCount(), menu.maxWirelessTargets()),
                 8, 143, 0xAFA0C8, false);
+        Component wireless = Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless",
+                Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless_tier."
+                        + menu.wirelessTier()));
+        graphics.drawString(font, wireless, imageWidth - 8 - font.width(wireless), 143, 0xAFA0C8, false);
         graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xCBBCE3, false);
     }
 }

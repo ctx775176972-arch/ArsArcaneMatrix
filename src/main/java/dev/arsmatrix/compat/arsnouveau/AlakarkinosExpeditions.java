@@ -275,7 +275,8 @@ public final class AlakarkinosExpeditions {
             ExplorationTask task) {
         if (task.rule != null && task.rule.isFixedOutput()) return task.rule.displayOutputStacks();
         ResourceLocation tableId = task.rule != null
-                ? task.rule.lootTable() : task.nativeRecipe.table().location();
+                ? task.rule.chooseLootTable(level.random) : task.nativeRecipe.table().location();
+        if (tableId == null) return List.of();
         LootTable table = level.getServer().reloadableRegistries().getLootTable(
                 ResourceKey.create(Registries.LOOT_TABLE, tableId));
         LootParams params = new LootParams.Builder(level)

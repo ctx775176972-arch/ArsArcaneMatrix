@@ -253,7 +253,7 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
 
     private boolean matchesFluid(int registryId, String query) {
         Fluid fluid = BuiltInRegistries.FLUID.byId(registryId);
-        if (fluid == null || fluid == Fluids.EMPTY) return false;
+        if (fluid == Fluids.EMPTY) return false;
         ResourceLocation id = BuiltInRegistries.FLUID.getKey(fluid);
         String name = new FluidStack(fluid, 1).getHoverName().getString().toLowerCase(Locale.ROOT);
         return query.isEmpty() || name.contains(query) || id.toString().toLowerCase(Locale.ROOT).contains(query);
@@ -281,7 +281,7 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
     private Fluid fluidForIndex(int index) {
         if (index >= 0) return Fluids.EMPTY;
         Fluid fluid = BuiltInRegistries.FLUID.byId(menu.getLinkedFluidType(-index - 1));
-        return fluid == null ? Fluids.EMPTY : fluid;
+        return fluid;
     }
 
     private int rows() { return storageTab ? storageRows : ORDER_ROWS; }
@@ -477,7 +477,7 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
             ItemStack hovered = storageTab ? menu.getStoredEntries().get(hoveredSourceIndex).stack()
                     : menu.getCraftableOutputs().get(hoveredSourceIndex);
             graphics.renderTooltip(font, hovered, mouseX, mouseY);
-        } else if (hoveredSourceIndex != Integer.MIN_VALUE && hoveredSourceIndex < 0) {
+        } else if (hoveredSourceIndex != Integer.MIN_VALUE) {
             int tank = -hoveredSourceIndex - 1;
             Fluid fluid = fluidForIndex(hoveredSourceIndex);
             int amount = menu.getLinkedFluidAmount(tank);
@@ -519,11 +519,10 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
     }
 
     private static void drawFluidCell(GuiGraphics graphics, Fluid fluid, int x, int y) {
-        if (fluid == null || fluid == Fluids.EMPTY) return;
+        if (fluid == Fluids.EMPTY) return;
         FluidStack stack = new FluidStack(fluid, 1);
         IClientFluidTypeExtensions properties = IClientFluidTypeExtensions.of(fluid);
         ResourceLocation texture = properties.getStillTexture(stack);
-        if (texture == null) return;
         TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager()
                 .getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(texture);
         int tint = properties.getTintColor(stack);

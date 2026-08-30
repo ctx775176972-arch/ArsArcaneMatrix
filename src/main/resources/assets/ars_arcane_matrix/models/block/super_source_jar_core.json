@@ -5,9 +5,10 @@
     64
   ],
   "render_type": "cutout",
+  "ambientocclusion": false,
   "parent": "block/cube_all",
   "textures": {
-    "2": "ars_arcane_matrix:block/arcane_source_jar",
+    "2": "ars_arcane_matrix:block/matrix_source_jar",
     "particle": "ars_arcane_matrix:block/arcane_structural_frame_solid_hd",
     "frame": "ars_arcane_matrix:block/arcane_structural_frame_solid_hd"
   },

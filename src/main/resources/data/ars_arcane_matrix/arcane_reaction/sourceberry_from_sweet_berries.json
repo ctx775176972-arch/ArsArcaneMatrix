@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"item": "minecraft:sweet_berries", "count": 1}
+  ],
+  "input_fluid": {"id": "minecraft:water", "amount": 250},
+  "output": {"item": "ars_nouveau:sourceberry_bush", "amount": 1},
+  "source_cost": 200,
+  "processing_ticks": 100
+}

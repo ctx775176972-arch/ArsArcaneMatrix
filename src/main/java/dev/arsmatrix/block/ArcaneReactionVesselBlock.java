@@ -29,9 +29,9 @@ public final class ArcaneReactionVesselBlock extends BaseEntityBlock {
     public ArcaneReactionVesselBlock(Properties properties) { super(properties); registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH)); }
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING); }
-    @Nullable @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()); }
+    @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()); }
     @Override protected RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
-    @Nullable @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new ArcaneReactionVesselBlockEntity(pos, state); }
+    @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new ArcaneReactionVesselBlockEntity(pos, state); }
     @Nullable @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide ? null : createTickerHelper(type, ModBlockEntities.ARCANE_REACTION_VESSEL.get(), ArcaneReactionVesselBlockEntity::serverTick);
     }

@@ -4,10 +4,12 @@ import com.hollingsworth.arsnouveau.api.documentation.ReloadDocumentationEvent;
 import com.hollingsworth.arsnouveau.api.documentation.DocCategory;
 import com.hollingsworth.arsnouveau.api.documentation.builder.DocEntryBuilder;
 import com.hollingsworth.arsnouveau.api.registry.DocumentationRegistry;
+import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import dev.arsmatrix.ArsArcaneMatrix;
 import dev.arsmatrix.FeatureFlags;
 import dev.arsmatrix.registry.ModItems;
+import dev.arsmatrix.spell.EffectCapture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -55,7 +57,7 @@ public final class ModDocumentation {
 
         DocEntryBuilder builder = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID,
-                minerals,
+                source,
                 matrixCore
         )
                 .withSortNum(50)
@@ -68,7 +70,7 @@ public final class ModDocumentation {
                 .withTextPage(Component.translatable("documentation.ars_arcane_matrix.multiblock.building"))
                 .addConnectedSearch(matrixCore);
 
-        DocumentationRegistry.registerEntry(minerals, builder.build());
+        DocumentationRegistry.registerEntry(source, builder.build());
 
         Item mineCore = ModItems.ARCANE_MINE_CORE.get();
         DocEntryBuilder mineBuilder = new DocEntryBuilder(
@@ -180,8 +182,8 @@ public final class ModDocumentation {
 
         Item reactionVessel = ModItems.ARCANE_REACTION_VESSEL.get();
         DocEntryBuilder reactionBuilder = new DocEntryBuilder(
-                ArsArcaneMatrix.MOD_ID, source, reactionVessel)
-                .withSortNum(25)
+                ArsArcaneMatrix.MOD_ID, gettingStarted, reactionVessel)
+                .withSortNum(10)
                 .withIntroPageNoIncrement(
                         Component.translatable("documentation.ars_arcane_matrix.arcane_reaction_vessel"),
                         Component.translatable("block.ars_arcane_matrix.arcane_reaction_vessel"),
@@ -192,7 +194,7 @@ public final class ModDocumentation {
                 .addConnectedSearch(reactionVessel)
                 .addConnectedSearch(ModItems.ARCANE_FLUID_RESERVOIR.get())
                 .addConnectedSearch(ModItems.ARCANE_FLUID_TANK.get());
-        DocumentationRegistry.registerEntry(source, reactionBuilder.build());
+        DocumentationRegistry.registerEntry(gettingStarted, reactionBuilder.build());
 
         Item smelter = ModItems.ARCANE_SMELTER_CORE.get();
         DocEntryBuilder smelterBuilder = new DocEntryBuilder(
@@ -226,6 +228,39 @@ public final class ModDocumentation {
                 .addConnectedSearch(crusher)
                 .addConnectedSearch(ModItems.ENRICHED_MINERAL_CRYSTAL.get());
         DocumentationRegistry.registerEntry(minerals, crusherBuilder.build());
+
+        Item metalDust = ModItems.IRON_DUST.get();
+        DocEntryBuilder metalDustBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, minerals, metalDust)
+                .withSortNum(45)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.metal_dusts.summary"),
+                        Component.translatable("documentation.ars_arcane_matrix.metal_dusts.title"),
+                        metalDust.getDefaultInstance())
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.metal_dusts.operation"))
+                .addConnectedSearch(ModItems.IRON_DUST.get())
+                .addConnectedSearch(ModItems.COPPER_DUST.get())
+                .addConnectedSearch(ModItems.GOLD_DUST.get())
+                .addConnectedSearch(ModItems.ANCIENT_DEBRIS_DUST.get());
+        DocumentationRegistry.registerEntry(minerals, metalDustBuilder.build());
+
+        Item sourceboundAlloy = ModItems.SOURCEBOUND_COPPER_ALLOY.get();
+        DocEntryBuilder sourceboundAlloyBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, minerals, sourceboundAlloy)
+                .withSortNum(5)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.sourcebound_alloy.summary"),
+                        Component.translatable("item.ars_arcane_matrix.sourcebound_copper_alloy"),
+                        sourceboundAlloy.getDefaultInstance())
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.sourcebound_alloy.operation"))
+                .withCraftingPages()
+                .withCraftingPages(
+                        ResourceLocation.fromNamespaceAndPath(
+                                ArsArcaneMatrix.MOD_ID, "sourcebound_copper_alloy_dust"),
+                        ModItems.SOURCEBOUND_COPPER_ALLOY_DUST.get())
+                .addConnectedSearch(sourceboundAlloy)
+                .addConnectedSearch(ModItems.SOURCEBOUND_COPPER_ALLOY_DUST.get());
+        DocumentationRegistry.registerEntry(minerals, sourceboundAlloyBuilder.build());
 
         Item orderTerminal = ModItems.WIXIE_ORDER_TERMINAL.get();
         DocEntryBuilder craftingNetworkBuilder = new DocEntryBuilder(
@@ -470,9 +505,23 @@ public final class ModDocumentation {
                         fluidController.getDefaultInstance())
                 .withTextPage(Component.translatable(
                         "documentation.ars_arcane_matrix.arcane_fluid_controller.operation"))
+                .withTextPage(Component.translatable(
+                        "documentation.ars_arcane_matrix.arcane_fluid_controller.upgrades"))
                 .withCraftingPages()
+                .withCraftingPages(
+                        ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "fluid_capacity_upgrade"),
+                        ModItems.FLUID_CAPACITY_UPGRADE.get())
+                .withCraftingPages(
+                        ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "fluid_range_upgrade"),
+                        ModItems.FLUID_RANGE_UPGRADE.get())
+                .withCraftingPages(
+                        ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "fluid_speed_upgrade"),
+                        ModItems.FLUID_SPEED_UPGRADE.get())
                 .addConnectedSearch(fluidController)
                 .addConnectedSearch(ModItems.ARCANE_FLUID_TANK.get())
+                .addConnectedSearch(ModItems.FLUID_CAPACITY_UPGRADE.get())
+                .addConnectedSearch(ModItems.FLUID_RANGE_UPGRADE.get())
+                .addConnectedSearch(ModItems.FLUID_SPEED_UPGRADE.get())
                 .addConnectedSearch(ModItems.ARCANE_REACTION_VESSEL.get());
         DocumentationRegistry.registerEntry(storage, fluidControllerBuilder.build());
 
@@ -575,6 +624,20 @@ public final class ModDocumentation {
                 .withCraftingPages()
                 .addConnectedSearch(ModItems.RARE_CREATURE_SUMMONING_TABLET.get());
         DocumentationRegistry.registerEntry(adventure, ritualBuilder.build());
+
+        Item captureGlyph = EffectCapture.INSTANCE.getGlyph();
+        DocEntryBuilder captureGlyphBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, adventure, captureGlyph)
+                .withSortNum(5)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.capture_glyph.summary"),
+                        Component.translatable("documentation.ars_arcane_matrix.capture_glyph.title"),
+                        captureGlyph.getDefaultInstance())
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.capture_glyph.operation"))
+                .withCraftingPages()
+                .addConnectedSearch(captureGlyph)
+                .addConnectedSearch(BlockRegistry.MOB_JAR.asItem());
+        DocumentationRegistry.registerEntry(adventure, captureGlyphBuilder.build());
 
         DocEntryBuilder troubleshooting = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID, misc, "troubleshooting")

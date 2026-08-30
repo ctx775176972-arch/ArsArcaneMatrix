@@ -2,6 +2,7 @@ package dev.arsmatrix.source;
 
 import com.hollingsworth.arsnouveau.api.item.IWandable;
 import dev.arsmatrix.blockentity.AdvancedStorageLecternBlockEntity;
+import dev.arsmatrix.blockentity.ArcaneSourceJarBlockEntity;
 import dev.arsmatrix.blockentity.IntegratedSourceRelayBlockEntity;
 import dev.arsmatrix.blockentity.MatrixCoreBlockEntity;
 import dev.arsmatrix.blockentity.SuperSourceJarCoreBlockEntity;
@@ -21,11 +22,15 @@ public final class SourceNetworkLinking {
                 || endpoint.getLevel() == null || target == null) {
             return IWandable.Result.FAIL;
         }
+        var server = serverPlayer.getServer();
+        if (server == null) return IWandable.Result.FAIL;
+        var endpointLevel = endpoint.getLevel();
+        if (endpointLevel == null) return IWandable.Result.FAIL;
         EndpointKind endpointKind = kindOf(endpoint);
-        GlobalPos endpointPos = GlobalPos.of(endpoint.getLevel().dimension(), endpoint.getBlockPos());
+        GlobalPos endpointPos = GlobalPos.of(endpointLevel.dimension(), endpoint.getBlockPos());
         if (endpointKind == null || endpointPos.equals(target)) return IWandable.Result.FAIL;
 
-        ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
+        ServerLevel targetLevel = server.getLevel(target.dimension());
         if (targetLevel == null || !targetLevel.hasChunkAt(target.pos())) {
             player.displayClientMessage(Component.translatable(
                     "message.ars_arcane_matrix.source_network.target_unloaded"), true);
@@ -44,7 +49,7 @@ public final class SourceNetworkLinking {
         Endpoint relay = endpoint(first, second, EndpointKind.RELAY);
         Endpoint gateway = endpoint(first, second, EndpointKind.GATEWAY);
         Endpoint matrix = endpoint(first, second, EndpointKind.MATRIX);
-        SourceNetworkSavedData data = SourceNetworkSavedData.get(serverPlayer.getServer());
+        SourceNetworkSavedData data = SourceNetworkSavedData.get(server);
 
         if (jar != null && relay != null) {
             if (!jar.pos().dimension().equals(relay.pos().dimension())) {
@@ -83,17 +88,19 @@ public final class SourceNetworkLinking {
     }
 
     public static void clear(BlockEntity endpoint) {
-        if (endpoint.getLevel() == null || endpoint.getLevel().getServer() == null) return;
+        var endpointLevel = endpoint.getLevel();
+        if (endpointLevel == null || endpointLevel.getServer() == null) return;
         EndpointKind kind = kindOf(endpoint);
         if (kind == null) return;
-        GlobalPos pos = GlobalPos.of(endpoint.getLevel().dimension(), endpoint.getBlockPos());
-        SourceNetworkSavedData data = SourceNetworkSavedData.get(endpoint.getLevel().getServer());
+        GlobalPos pos = GlobalPos.of(endpointLevel.dimension(), endpoint.getBlockPos());
+        SourceNetworkSavedData data = SourceNetworkSavedData.get(endpointLevel.getServer());
         if (kind == EndpointKind.GATEWAY) data.unlinkGateway(pos);
         else data.unlinkNode(pos);
     }
 
     public static boolean isSourceEndpoint(GlobalPos target, Player player) {
-        if (!(player instanceof ServerPlayer serverPlayer) || target == null) return false;
+        if (!(player instanceof ServerPlayer serverPlayer) || target == null
+                || serverPlayer.getServer() == null) return false;
         ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
         return targetLevel != null && targetLevel.hasChunkAt(target.pos())
                 && kindOf(targetLevel.getBlockEntity(target.pos())) != null;
@@ -113,6 +120,7 @@ public final class SourceNetworkLinking {
     }
 
     private static EndpointKind kindOf(BlockEntity blockEntity) {
+        if (blockEntity instanceof ArcaneSourceJarBlockEntity) return EndpointKind.JAR;
         if (blockEntity instanceof SuperSourceJarCoreBlockEntity) return EndpointKind.JAR;
         if (blockEntity instanceof IntegratedSourceRelayBlockEntity) return EndpointKind.RELAY;
         if (blockEntity instanceof AdvancedStorageLecternBlockEntity) return EndpointKind.GATEWAY;

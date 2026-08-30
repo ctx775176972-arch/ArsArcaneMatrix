@@ -4,13 +4,13 @@
   "package": "dev.arsmatrix.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ArcanePedestalSpellBookMixin",
     "BlockEntityTypeMixin",
     "DrygmyTileEnhancementMixin",
     "HarvestClusterGoalMixin",
     "HarvestClusterGoalTimingMixin",
     "GrowClusterGoalMixin",
     "ImbuementTileMixin",
+    "RitualHarvestAncientCropMixin",
     "WhirlisprigTileMixin"
   ],
   "client": [

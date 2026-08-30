@@ -5,6 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -19,7 +20,7 @@ public record AlakarkinosExpeditionRule(
         ResourceLocation proof,
         int workTicks,
         int sourceCost,
-        ResourceLocation lootTable,
+        List<LootTableChoice> lootTables,
         ResourceLocation fixedOutput,
         int fixedOutputCount,
         List<DisplayResult> displayResults,
@@ -28,12 +29,28 @@ public record AlakarkinosExpeditionRule(
 ) {
     public AlakarkinosExpeditionRule {
         inputs = List.copyOf(inputs);
+        lootTables = List.copyOf(lootTables);
         displayResults = List.copyOf(displayResults);
         excludedOutputs = Set.copyOf(excludedOutputs);
     }
 
     public boolean requiresProof() { return proof != null; }
     public boolean isFixedOutput() { return fixedOutput != null; }
+
+    /** Selects the real chest table before generation so table-id loot modifiers see it. */
+    public ResourceLocation chooseLootTable(RandomSource random) {
+        if (lootTables.isEmpty()) return null;
+        int totalWeight = 0;
+        for (LootTableChoice choice : lootTables) {
+            totalWeight = Math.addExact(totalWeight, choice.weight());
+        }
+        int selected = random.nextInt(totalWeight);
+        for (LootTableChoice choice : lootTables) {
+            selected -= choice.weight();
+            if (selected < 0) return choice.id();
+        }
+        return lootTables.getLast().id();
+    }
 
     public List<List<ItemStack>> inputDisplayStacks() {
         return inputs.stream().map(IngredientCost::displayStacks).toList();
@@ -60,6 +77,8 @@ public record AlakarkinosExpeditionRule(
             return resolved == Items.AIR ? ItemStack.EMPTY : new ItemStack(resolved, count);
         }
     }
+
+    public record LootTableChoice(ResourceLocation id, int weight) {}
 
     public record IngredientCost(ResourceLocation value, boolean tag, int count) {
         public boolean matches(ItemStack stack) {

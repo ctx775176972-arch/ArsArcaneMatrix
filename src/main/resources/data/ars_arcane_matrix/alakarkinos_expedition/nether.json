@@ -4,7 +4,14 @@
   ],
   "work_ticks": 160,
   "source_cost": 10000,
-  "loot_table": "ars_arcane_matrix:chests/expedition_nether",
+  "loot_tables": [
+    { "id": "minecraft:chests/nether_bridge" },
+    { "id": "minecraft:chests/bastion_bridge" },
+    { "id": "minecraft:chests/bastion_hoglin_stable" },
+    { "id": "minecraft:chests/bastion_other" },
+    { "id": "minecraft:chests/bastion_treasure" },
+    { "id": "minecraft:chests/ruined_portal" }
+  ],
   "display_outputs": [
     { "item": "minecraft:ancient_debris" },
     { "item": "minecraft:netherite_scrap" },

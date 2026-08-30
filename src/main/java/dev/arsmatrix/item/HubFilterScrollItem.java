@@ -55,7 +55,7 @@ public final class HubFilterScrollItem extends ItemScroll {
         catch (IllegalArgumentException ignored) { parsedMode = MatchMode.ITEM; }
         final MatchMode mode = parsedMode;
         boolean matches = templates.stream().anyMatch(template -> matches(candidate, template, mode));
-        boolean accepted = allow ? matches : !matches;
+        boolean accepted = allow == matches;
         return accepted ? (allow ? SortPref.HIGHEST : SortPref.LOW) : SortPref.INVALID;
     }
 

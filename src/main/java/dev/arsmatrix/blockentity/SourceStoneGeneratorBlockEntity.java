@@ -8,7 +8,6 @@ import dev.arsmatrix.config.MatrixConfig;
 import dev.arsmatrix.data.SourceStoneGeneratorRecipeManager;
 import dev.arsmatrix.data.SourceStoneGeneratorRule;
 import dev.arsmatrix.registry.ModBlockEntities;
-import dev.arsmatrix.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -38,16 +37,14 @@ import java.util.List;
 
 /**
  * A GUI-free bulk block generator. Pedestals select an exact data-driven recipe;
- * passive imbuement progress keeps it useful without Source, while four cardinal
- * Arcane Amplifiers raise its Source throughput to one default batch per second.
+ * passive imbuement progress keeps it useful without Source, while external
+ * Source completes a standard batch in five seconds.
  */
 public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
 
     private static final int OUTPUT_SLOTS = 9;
     private static final int CONTEXT_INTERVAL = 5;
-    private static final Direction[] HORIZONTAL_DIRECTIONS = {
-            Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST
-    };
+    private static final int POWERED_DURATION_SECONDS = 5;
 
     private final List<ItemStack> bufferedOutputs = new ArrayList<>();
     private final IItemHandler outputHandler = new OutputHandler();
@@ -58,7 +55,6 @@ public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
     private int sourceRateRemainder;
     private int passiveProgressSinceSourcePull;
     private int tickCounter;
-    private int amplifierCount;
     private int pedestalItemCount;
     private int sourceAcceleratedTicks;
     private int progressGainWindow;
@@ -132,11 +128,6 @@ public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
     }
 
     private void refreshContext() {
-        int newAmplifierCount = countCardinalAmplifiers();
-        if (newAmplifierCount != amplifierCount) {
-            amplifierCount = newAmplifierCount;
-            sourceRateRemainder = 0;
-        }
         List<ItemStack> pedestalStacks = scanPedestals();
         pedestalItemCount = pedestalStacks.stream().mapToInt(ItemStack::getCount).sum();
         switchRecipe(SourceStoneGeneratorRecipeManager.findMatch(pedestalStacks));
@@ -183,21 +174,6 @@ public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
         return List.copyOf(stacks);
     }
 
-    private int countCardinalAmplifiers() {
-        if (level == null) {
-            return 0;
-        }
-        int count = 0;
-        for (Direction direction : HORIZONTAL_DIRECTIONS) {
-            BlockPos candidate = worldPosition.relative(direction);
-            if (level.hasChunkAt(candidate)
-                    && level.getBlockState(candidate).is(ModBlocks.ARCANE_AMPLIFIER.get())) {
-                count++;
-            }
-        }
-        return count;
-    }
-
     private void addPassiveProgress() {
         long accumulated = (long) passiveRemainder
                 + MatrixConfig.GENERATOR_PASSIVE_PROGRESS_PER_SECOND.get();
@@ -210,7 +186,7 @@ public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
     }
 
     private void addSourceProgress() {
-        int targetTicks = getPoweredDurationSeconds() * 20;
+        int targetTicks = POWERED_DURATION_SECONDS * 20;
         long accumulated = (long) sourceRateRemainder
                 + (long) activeRecipe.processingCost() * CONTEXT_INTERVAL;
         int totalProgressAllowance = (int) (accumulated / targetTicks);
@@ -400,16 +376,12 @@ public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
         return bufferedOutputs.stream().mapToInt(ItemStack::getCount).sum();
     }
 
-    public int getAmplifierCount() {
-        return amplifierCount;
-    }
-
     public int getPedestalItemCount() {
         return pedestalItemCount;
     }
 
     public int getPoweredDurationSeconds() {
-        return MatrixConfig.generatorPoweredDurationSeconds(amplifierCount);
+        return POWERED_DURATION_SECONDS;
     }
 
     public int getPassiveProgressPerSecond() {
@@ -449,7 +421,6 @@ public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
         tag.putInt("PassiveRemainder", passiveRemainder);
         tag.putInt("SourceRateRemainder", sourceRateRemainder);
         tag.putInt("PassiveSinceSourcePull", passiveProgressSinceSourcePull);
-        tag.putInt("Amplifiers", amplifierCount);
         tag.putInt("PedestalItems", pedestalItemCount);
         tag.putInt("CurrentEfficiency", currentEfficiency);
         tag.putString("OperatingState", operatingState.name());
@@ -483,7 +454,6 @@ public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
         passiveRemainder = Math.max(0, tag.getInt("PassiveRemainder"));
         sourceRateRemainder = Math.max(0, tag.getInt("SourceRateRemainder"));
         passiveProgressSinceSourcePull = Math.max(0, tag.getInt("PassiveSinceSourcePull"));
-        amplifierCount = Math.max(0, Math.min(4, tag.getInt("Amplifiers")));
         pedestalItemCount = Math.max(0, tag.getInt("PedestalItems"));
         currentEfficiency = Math.max(0, tag.getInt("CurrentEfficiency"));
         try {

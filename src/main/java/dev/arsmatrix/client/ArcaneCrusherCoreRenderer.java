@@ -15,6 +15,6 @@ public final class ArcaneCrusherCoreRenderer implements BlockEntityRenderer<Arca
     }
     @Override public boolean shouldRenderOffScreen(ArcaneCrusherCoreBlockEntity core) { return true; }
     @Override public AABB getRenderBoundingBox(ArcaneCrusherCoreBlockEntity core) {
-        return new AABB(core.getBlockPos()).inflate(3.0D);
+        return new AABB(core.getBlockPos()).inflate(5.0D);
     }
 }

@@ -39,7 +39,10 @@ public final class DimensionAnchorBlock extends BaseEntityBlock {
                 && level.getBlockEntity(pos) instanceof DimensionAnchorBlockEntity anchor) {
             player.displayClientMessage(Component.translatable(
                     "message.ars_arcane_matrix.dimension_anchor.status",
-                    Component.translatable(anchor.getState().translationKey())), true);
+                    Component.translatable(anchor.getState().translationKey()),
+                    anchor.getLoadedRadius() * 2 + 1,
+                    anchor.getLoadedRadius() * 2 + 1,
+                    anchor.getSourceCostPerSecond()), true);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

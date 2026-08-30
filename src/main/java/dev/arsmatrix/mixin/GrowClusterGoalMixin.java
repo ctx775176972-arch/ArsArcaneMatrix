@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import java.util.List;
+
 @Mixin(value = GrowClusterGoal.class, remap = false)
 public abstract class GrowClusterGoalMixin {
     @Shadow public AmethystGolem golem;
@@ -21,6 +23,23 @@ public abstract class GrowClusterGoalMixin {
     @ModifyConstant(method = "start", constant = @Constant(intValue = 120), remap = false)
     private int arsMatrix$shortenGrowthAction(int originalTicks) {
         return AmethystGolemEnhancements.acceleratedActionTicks(golem, originalTicks);
+    }
+
+    @Redirect(
+            method = "start",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lcom/hollingsworth/arsnouveau/common/util/ArrayUtil;getRandomElement(Ljava/util/List;)Ljava/lang/Object;"
+            ),
+            remap = false
+    )
+    private Object arsMatrix$selectPersistentGrowthBatch(List<?> ignored) {
+        return AmethystGolemEnhancements.prepareGrowthBatch(golem);
+    }
+
+    @ModifyConstant(method = "growCluster", constant = @Constant(intValue = 300), remap = false)
+    private int arsMatrix$staggerGrowthCooldown(int originalTicks) {
+        return AmethystGolemEnhancements.staggeredGrowthCooldown(golem, originalTicks);
     }
 
     @Redirect(

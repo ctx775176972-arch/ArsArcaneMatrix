@@ -68,7 +68,7 @@ public final class SourceStoneGeneratorJeiCategory
         int catalystCount = recipe.catalysts().size();
         for (int index = 0; index < recipe.catalysts().size(); index++) {
             SourceStoneGeneratorCatalyst catalyst = recipe.catalysts().get(index);
-            double angle = catalystCount == 0 ? 0.0D : index * 2.0D * Math.PI / catalystCount;
+            double angle = index * 2.0D * Math.PI / catalystCount;
             int x = (int) Math.round(48.0D + Math.sin(angle) * 32.0D);
             int y = (int) Math.round(45.0D - Math.cos(angle) * 32.0D);
             builder.addSlot(RecipeIngredientRole.INPUT, x, y)

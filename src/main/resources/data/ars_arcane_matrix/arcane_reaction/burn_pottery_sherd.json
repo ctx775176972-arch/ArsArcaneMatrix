@@ -1,0 +1,10 @@
+{
+  "ingredients": [
+    {"item": "minecraft:brick", "count": 1},
+    {"item": "ars_nouveau:earth_essence", "count": 1}
+  ],
+  "input_fluid": {"id": "minecraft:lava", "amount": 250},
+  "output": {"item": "minecraft:burn_pottery_sherd", "amount": 1},
+  "source_cost": 500,
+  "processing_ticks": 100
+}

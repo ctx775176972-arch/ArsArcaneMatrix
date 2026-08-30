@@ -101,16 +101,16 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
             BlockEntity be = accessor.getBlockEntity();
             if (be instanceof WhirlisprigTile whirlisprig) {
                 WhirlisprigEnhancements.Mode whirlMode = WhirlisprigEnhancements.currentMode(whirlisprig);
-                Object[] arr = new Object[1];
-                arr[0] = Component.translatable("message.ars_arcane_matrix.whirlisprig.mode." + whirlMode.name().toLowerCase(Locale.ROOT));
-                tooltip.add(Component.translatable("jade.ars_arcane_matrix.whirlisprig.mode", arr));
+                tooltip.add(Component.translatable("jade.ars_arcane_matrix.whirlisprig.mode",
+                        Component.translatable("message.ars_arcane_matrix.whirlisprig.mode."
+                                + whirlMode.name().toLowerCase(Locale.ROOT))));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.whirlisprig.production",
                         Component.translatable("jade.ars_arcane_matrix.whirlisprig.production."
                                 + whirlMode.name().toLowerCase(Locale.ROOT))));
                 if (whirlMode != WhirlisprigEnhancements.Mode.NONE) {
                     tooltip.add(Component.translatable("jade.ars_arcane_matrix.whirlisprig.diversity",
                             WhirlisprigEnhancements.diversityLevel(whirlisprig),
-                            WhirlisprigEnhancements.workTimePercent(whirlisprig)));
+                            WhirlisprigEnhancements.requiredProgressActions(whirlisprig)));
                 }
             } else if (be instanceof AutomaticStockRequesterBlockEntity requester) {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.stock_requester.status", Component.translatable(requester.getState().translationKey())));
@@ -140,14 +140,19 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
             } else if (be instanceof DimensionAnchorBlockEntity anchor) {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.dimension_anchor.status", Component.translatable(anchor.getState().translationKey())));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.dimension_anchor.source_cost",
-                        DimensionAnchorBlockEntity.SOURCE_COST_PER_SECOND));
-                tooltip.add(Component.translatable("jade.ars_arcane_matrix.dimension_anchor.range"));
+                        anchor.getSourceCostPerSecond()));
+                int diameter = anchor.getLoadedRadius() * 2 + 1;
+                tooltip.add(Component.translatable("jade.ars_arcane_matrix.dimension_anchor.range",
+                        diameter, diameter, anchor.getLoadedChunkCount()));
             } else if (be instanceof ArcaneFluidReservoirBlockEntity reservoir) {
                 Object[] arr = new Object[1];
                 arr[0] = Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.mode." + reservoir.mode().name().toLowerCase(Locale.ROOT));
                 tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.mode", arr));
                 tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.tanks", reservoir.unlockedTankCount(), reservoir.capacity()));
                 tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.wireless", Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless_tier." + reservoir.wirelessTier())));
+                tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.targets",
+                        reservoir.inputTargetCount(), reservoir.maxWirelessTargets(),
+                        reservoir.outputTargetCount(), reservoir.maxWirelessTargets()));
                 tooltip.add(Component.translatable("state.ars_arcane_matrix.arcane_fluid_reservoir." + reservoir.operatingState().name().toLowerCase(Locale.ROOT)));
             } else if (be instanceof ArcaneFluidTankBlockEntity tank) {
                 var fluid = tank.fluid();
@@ -159,8 +164,12 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
             } else if (be instanceof ArcaneReactionVesselBlockEntity vessel) {
                 tooltip.add(Component.translatable("state.ars_arcane_matrix.arcane_reaction_vessel."
                         + vessel.state().name().toLowerCase(Locale.ROOT)));
-                tooltip.add(Component.translatable("screen.ars_arcane_matrix.arcane_reaction_vessel.fluids",
-                        vessel.inputTank().getFluidAmount(), vessel.outputTank().getFluidAmount()));
+                var fluid = vessel.tank().getFluid();
+                tooltip.add(Component.translatable("screen.ars_arcane_matrix.arcane_reaction_vessel.fluid",
+                        fluid.isEmpty()
+                                ? Component.translatable("screen.ars_arcane_matrix.arcane_reaction_vessel.empty")
+                                : fluid.getHoverName(),
+                        fluid.getAmount(), ArcaneReactionVesselBlockEntity.TANK_CAPACITY));
             } else if (be instanceof ArcaneVacuumHopperBlockEntity hopper) {
                 tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_vacuum_hopper.range",
                         Component.translatable(hopper.rangeMode().translationKey()),
@@ -243,6 +252,7 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.arcane_processor.links",
                         Component.translatable(processor.hasInputContainer() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound"),
                         Component.translatable(processor.hasOutputContainer() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound"),
+                        Component.translatable(processor.hasConsumableContainer() ? "message.ars_arcane_matrix.state.present" : "message.ars_arcane_matrix.state.missing"),
                         processor.getBufferedItemCount()));
             } else if (be instanceof ArcaneSmelterCoreBlockEntity smelter) {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.arcane_smelter.status", Component.translatable(smelter.getState().translationKey())));
@@ -251,7 +261,8 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.arcane_smelter.crystal", smelter.getSpecialPity(), smelter.getSpecialWork()));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.arcane_smelter.links",
                         Component.translatable(smelter.hasInputContainer() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound"),
-                        Component.translatable(smelter.hasOutputContainer() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound")));
+                        Component.translatable(smelter.hasOutputContainer() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound"),
+                        Component.translatable(smelter.hasConsumableContainer() ? "message.ars_arcane_matrix.state.present" : "message.ars_arcane_matrix.state.missing")));
             } else if (be instanceof ArcaneCrusherCoreBlockEntity crusher) {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.arcane_crusher.status", Component.translatable(crusher.getState().translationKey())));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.arcane_crusher.operation",
@@ -259,12 +270,13 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.arcane_crusher.crystal", crusher.getWaterPity(), crusher.getWaterWork()));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.arcane_crusher.links",
                         Component.translatable(crusher.hasInputContainer() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound"),
-                        Component.translatable(crusher.hasOutputContainer() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound")));
+                        Component.translatable(crusher.hasOutputContainer() ? "message.ars_arcane_matrix.state.bound" : "message.ars_arcane_matrix.state.unbound"),
+                        Component.translatable(crusher.hasConsumableContainer() ? "message.ars_arcane_matrix.state.present" : "message.ars_arcane_matrix.state.missing")));
             } else if (be instanceof SourceStoneGeneratorBlockEntity generator) {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.source_stone_generator.status", Component.translatable(generator.getOperatingState().translationKey())));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.source_stone_generator.output", generator.getOutputDescription(), generator.getCurrentOutput().getCount()));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.source_stone_generator.progress", generator.getProgress(), generator.getProcessingCost(), generator.getCurrentEfficiency()));
-                tooltip.add(Component.translatable("jade.ars_arcane_matrix.source_stone_generator.structure", generator.getAmplifierCount(), generator.getBufferedItemCount()));
+                tooltip.add(Component.translatable("jade.ars_arcane_matrix.source_stone_generator.structure", generator.getBufferedItemCount()));
             } else if (be instanceof DrygmyArenaBlockEntity arena) {
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.drygmy_arena.status", Component.translatable(arena.getOperatingState().translationKey())));
                 tooltip.add(Component.translatable("jade.ars_arcane_matrix.drygmy_arena.target", arena.getTargetDescription()));
