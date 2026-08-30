@@ -20,7 +20,6 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -35,7 +34,7 @@ public final class ArcaneFluidTankBlock extends BaseEntityBlock {
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
     @Override public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
 
-    @Nullable @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ArcaneFluidTankBlockEntity(pos, state);
     }
 

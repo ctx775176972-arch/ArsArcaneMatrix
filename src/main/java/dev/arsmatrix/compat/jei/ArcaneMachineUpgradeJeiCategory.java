@@ -1,8 +1,8 @@
 package dev.arsmatrix.compat.jei;
 
 import com.hollingsworth.arsnouveau.client.jei.EnchantingApparatusRecipeCategory;
-import com.hollingsworth.arsnouveau.common.crafting.recipes.EnchantingApparatusRecipe;
 import dev.arsmatrix.ArsArcaneMatrix;
+import dev.arsmatrix.recipe.ArcaneMachineUpgradeRecipe;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModDataComponents;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -18,9 +18,9 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 
 /** Ars-style apparatus display dedicated to upgrading an existing Matrix machine. */
 public final class ArcaneMachineUpgradeJeiCategory
-        extends EnchantingApparatusRecipeCategory<EnchantingApparatusRecipe> {
+        extends EnchantingApparatusRecipeCategory<ArcaneMachineUpgradeRecipe> {
 
-    public static final RecipeType<RecipeHolder<EnchantingApparatusRecipe>> TYPE =
+    public static final RecipeType<RecipeHolder<ArcaneMachineUpgradeRecipe>> TYPE =
             RecipeType.createRecipeHolderType(ResourceLocation.fromNamespaceAndPath(
                     ArsArcaneMatrix.MOD_ID, "arcane_machine_upgrade"));
 
@@ -35,7 +35,7 @@ public final class ArcaneMachineUpgradeJeiCategory
     }
 
     @Override
-    public RecipeType<RecipeHolder<EnchantingApparatusRecipe>> getRecipeType() {
+    public RecipeType<RecipeHolder<ArcaneMachineUpgradeRecipe>> getRecipeType() {
         return TYPE;
     }
 
@@ -50,9 +50,9 @@ public final class ArcaneMachineUpgradeJeiCategory
     }
 
     @Override
-    public void draw(RecipeHolder<EnchantingApparatusRecipe> holder, IRecipeSlotsView slots,
+    public void draw(RecipeHolder<ArcaneMachineUpgradeRecipe> holder, IRecipeSlotsView slots,
                      GuiGraphics graphics, double mouseX, double mouseY) {
-        EnchantingApparatusRecipe recipe = holder.value();
+        ArcaneMachineUpgradeRecipe recipe = holder.value();
         ItemStack[] reagentOptions = recipe.reagent().getItems();
         int from = reagentOptions.length == 0 ? 0 : tierOf(reagentOptions[0]);
         int to = tierOf(recipe.result());

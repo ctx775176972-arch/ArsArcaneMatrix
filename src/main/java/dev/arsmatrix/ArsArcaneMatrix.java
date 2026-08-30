@@ -15,6 +15,7 @@ import dev.arsmatrix.data.AlakarkinosExpeditionManager;
 import dev.arsmatrix.data.ArcaneReactionManager;
 import dev.arsmatrix.ritual.ModRituals;
 import dev.arsmatrix.event.StarbuncleLogisticsProtectionEvents;
+import dev.arsmatrix.event.SpellBookPedestalInteractionEvents;
 import dev.arsmatrix.registry.ModBlockEntities;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModCapabilities;
@@ -22,6 +23,7 @@ import dev.arsmatrix.registry.ModCreativeTabs;
 import dev.arsmatrix.registry.ModDataComponents;
 import dev.arsmatrix.registry.ModItems;
 import dev.arsmatrix.registry.ModMenus;
+import dev.arsmatrix.registry.ModRecipeTypes;
 import dev.arsmatrix.spell.ModGlyphs;
 import dev.arsmatrix.world.ModChunkLoading;
 import net.neoforged.api.distmarker.Dist;
@@ -31,6 +33,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import org.slf4j.Logger;
 
 @Mod(ArsArcaneMatrix.MOD_ID)
@@ -40,9 +43,12 @@ public class ArsArcaneMatrix {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public ArsArcaneMatrix(IEventBus modBus, ModContainer modContainer) {
+        // The reaction vessel and fluid controller treat the vanilla milk bucket as a fluid container.
+        NeoForgeMod.enableMilkFluid();
         ModGlyphs.register();
         // 🟢 核心修复：在此处注册数据同步附件，让 NeoForge 在启动时强制绑定槽位，彻底消除 Unbound 崩溃
         ModDataComponents.register(modBus);
+        ModRecipeTypes.register(modBus);
         ModBlocks.register(modBus);
         ModRituals.register();
         ModItems.register(modBus);
@@ -60,6 +66,7 @@ public class ArsArcaneMatrix {
         NeoForge.EVENT_BUS.addListener(AlakarkinosExpeditions::onEntityTick);
         NeoForge.EVENT_BUS.addListener(StarbuncleLogisticsProtectionEvents::onIncomingDamage);
         NeoForge.EVENT_BUS.addListener(StarbuncleLogisticsProtectionEvents::onLevelSound);
+        NeoForge.EVENT_BUS.addListener(SpellBookPedestalInteractionEvents::onRightClickBlock);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modBus.addListener(ClientModEvents::clientSetup);
             modBus.addListener(ClientModEvents::registerLayerDefinitions);

@@ -27,10 +27,12 @@ import dev.arsmatrix.blockentity.ArcaneSmelterCoreBlockEntity;
 import dev.arsmatrix.block.ArcaneCrusherCoreBlock;
 import dev.arsmatrix.blockentity.ArcaneCrusherCoreBlockEntity;
 import dev.arsmatrix.blockentity.DrygmyArenaBlockEntity;
+import dev.arsmatrix.blockentity.DimensionAnchorBlockEntity;
 import dev.arsmatrix.block.SuperSourceJarCoreBlock;
 import dev.arsmatrix.blockentity.SuperSourceJarCoreBlockEntity;
 import net.minecraft.world.level.block.Blocks;
 import dev.arsmatrix.util.MultiblockClearance;
+import dev.arsmatrix.util.StructureInventoryAccess;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.List;
@@ -42,6 +44,11 @@ public final class StructurePreviewRenderer {
     private static final BlockState SOURCESTONE = blockState("sourcestone");
     private static final BlockState ARCANE_PEDESTAL = blockState("arcane_pedestal");
     private static final BlockState MOB_JAR = blockState("mob_jar");
+    // Chests are rendered by a block-entity renderer. Feeding their baked fallback model
+    // through the translucent projection path produces detached/overlapping texture pieces.
+    // A barrel is a stable full baked model and acts as the visual stand-in for any valid
+    // item-handler container; the construction wand uses the same barrel by default.
+    private static final BlockState CONSUMABLE_CONTAINER = Blocks.BARREL.defaultBlockState();
     private static final TagKey<Block> MATRIX_FRAME_BLOCKS = blockTag("matrix_frame_blocks");
     private static final TagKey<Block> MINE_FRAME_BLOCKS = blockTag("arcane_mine_frame_blocks");
     private static final TagKey<Block> MINE_BASIC_FRAME_BLOCKS = blockTag("arcane_mine_basic_frame_blocks");
@@ -79,6 +86,8 @@ public final class StructurePreviewRenderer {
             type = PreviewType.HUNTING_GROUNDS;
         } else if (block == ModBlocks.SUPER_SOURCE_JAR_CORE.get()) {
             type = PreviewType.MATRIX_SOURCE_RESERVOIR;
+        } else if (block == ModBlocks.DIMENSION_ANCHOR.get()) {
+            type = PreviewType.DIMENSION_ANCHOR;
         } else {
             return;
         }
@@ -142,6 +151,24 @@ public final class StructurePreviewRenderer {
         return previewType == PreviewType.MINE && pos.equals(previewPos);
     }
 
+    public static void renderDimensionAnchor(BlockPos pos, PoseStack poseStack,
+                                             MultiBufferSource bufferSource) {
+        if (previewType != PreviewType.DIMENSION_ANCHOR || !pos.equals(previewPos)) return;
+        Level level = Minecraft.getInstance().level;
+        if (level == null) return;
+        MultiBufferSource previewBuffers = translucentBuffers(bufferSource);
+        boolean missing = false;
+        for (BlockPos frame : DimensionAnchorBlockEntity.expansionFramePositions(pos)) {
+            if (!level.getBlockState(frame).is(ModBlocks.ARCANE_STRUCTURAL_FRAME.get())) {
+                renderBlock(poseStack, previewBuffers,
+                        ModBlocks.ARCANE_STRUCTURAL_FRAME.get().defaultBlockState(),
+                        frame.getX() - pos.getX(), frame.getY() - pos.getY(), frame.getZ() - pos.getZ());
+                missing = true;
+            }
+        }
+        if (!missing) closeCompletedPreview(pos, PreviewType.DIMENSION_ANCHOR);
+    }
+
     public static boolean isProcessorPreviewActive(BlockPos pos) {
         return previewType == PreviewType.PROCESSOR && pos.equals(previewPos);
     }
@@ -165,12 +192,13 @@ public final class StructurePreviewRenderer {
                 missing = true;
             }
         }
-        BlockPos pedestal = pos.above(2);
-        if (!level.getBlockState(pedestal).is(ARCANE_PEDESTAL.getBlock())) {
-            renderBlock(poseStack, previewBuffers, ARCANE_PEDESTAL, 0, 2, 0);
+        BlockPos container = ArcaneSmelterCoreBlockEntity.consumableContainerPosition(pos);
+        if (StructureInventoryAccess.at(level, container) == null) {
+            renderBlock(poseStack, previewBuffers, CONSUMABLE_CONTAINER,
+                    container.getX() - pos.getX(), container.getY() - pos.getY(), container.getZ() - pos.getZ());
             missing = true;
         }
-        if (!missing && MultiblockClearance.isOpen(level, pos.above())) {
+        if (!missing) {
             closeCompletedPreview(pos, PreviewType.SMELTER);
         }
     }
@@ -214,12 +242,13 @@ public final class StructurePreviewRenderer {
                 missing = true;
             }
         }
-        BlockPos pedestal = pos.above(2);
-        if (!level.getBlockState(pedestal).is(ARCANE_PEDESTAL.getBlock())) {
-            renderBlock(poseStack, previewBuffers, ARCANE_PEDESTAL, 0, 2, 0);
+        BlockPos container = ArcaneCrusherCoreBlockEntity.consumableContainerPosition(pos, facing);
+        if (StructureInventoryAccess.at(level, container) == null) {
+            renderBlock(poseStack, previewBuffers, CONSUMABLE_CONTAINER,
+                    container.getX() - pos.getX(), container.getY() - pos.getY(), container.getZ() - pos.getZ());
             missing = true;
         }
-        if (!missing && MultiblockClearance.isOpen(level, pos.above())) {
+        if (!missing) {
             closeCompletedPreview(pos, PreviewType.CRUSHER);
         }
     }
@@ -238,16 +267,19 @@ public final class StructurePreviewRenderer {
                 missing = true;
             }
         }
-        for (BlockPos pedestal : ArcaneProcessorCoreBlockEntity.pedestalPositions(pos, facing)) {
-            if (!level.getBlockState(pedestal).is(ARCANE_PEDESTAL.getBlock())) {
-                renderBlock(poseStack, previewBuffers, ARCANE_PEDESTAL,
-                        pedestal.getX() - pos.getX(), pedestal.getY() - pos.getY(), pedestal.getZ() - pos.getZ());
-                missing = true;
-            }
+        BlockPos toolPedestal = ArcaneProcessorCoreBlockEntity.toolPedestalPosition(pos, facing);
+        if (!level.getBlockState(toolPedestal).is(ARCANE_PEDESTAL.getBlock())) {
+            renderBlock(poseStack, previewBuffers, ARCANE_PEDESTAL,
+                    toolPedestal.getX() - pos.getX(), toolPedestal.getY() - pos.getY(), toolPedestal.getZ() - pos.getZ());
+            missing = true;
         }
-        if (!missing && MultiblockClearance.isOpen(level, pos.above(2))
-                && MultiblockClearance.isOpen(level, pos.relative(facing))
-                && MultiblockClearance.isOpen(level, pos.relative(facing.getOpposite()))) {
+        BlockPos foodContainer = ArcaneProcessorCoreBlockEntity.foodContainerPosition(pos, facing);
+        if (StructureInventoryAccess.at(level, foodContainer) == null) {
+            renderBlock(poseStack, previewBuffers, CONSUMABLE_CONTAINER,
+                    foodContainer.getX() - pos.getX(), foodContainer.getY() - pos.getY(), foodContainer.getZ() - pos.getZ());
+            missing = true;
+        }
+        if (!missing) {
             closeCompletedPreview(pos, PreviewType.PROCESSOR);
         }
     }
@@ -363,6 +395,9 @@ public final class StructurePreviewRenderer {
     }
 
     private static boolean isStructureComplete(Level level, BlockPos pos, PreviewType type) {
+        if (type == PreviewType.DIMENSION_ANCHOR) {
+            return DimensionAnchorBlockEntity.isExpandedStructure(level, pos);
+        }
         if (type == PreviewType.MATRIX_SOURCE_RESERVOIR) {
             return SuperSourceJarCoreBlockEntity.isStructureFormed(level, pos,
                     level.getBlockState(pos).getValue(SuperSourceJarCoreBlock.FACING));
@@ -527,6 +562,7 @@ public final class StructurePreviewRenderer {
         SMELTER,
         CRUSHER,
         HUNTING_GROUNDS,
-        MATRIX_SOURCE_RESERVOIR
+        MATRIX_SOURCE_RESERVOIR,
+        DIMENSION_ANCHOR
     }
 }

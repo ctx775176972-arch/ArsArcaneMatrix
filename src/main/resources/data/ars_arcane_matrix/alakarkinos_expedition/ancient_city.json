@@ -4,7 +4,10 @@
   ],
   "work_ticks": 200,
   "source_cost": 10000,
-  "loot_table": "ars_arcane_matrix:chests/expedition_ancient_city",
+  "loot_tables": [
+    { "id": "minecraft:chests/ancient_city", "weight": 4 },
+    { "id": "minecraft:chests/ancient_city_ice_box" }
+  ],
   "display_outputs": [
     { "item": "minecraft:echo_shard" },
     { "item": "minecraft:recovery_compass" },

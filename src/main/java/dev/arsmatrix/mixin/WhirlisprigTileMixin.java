@@ -5,10 +5,8 @@ import dev.arsmatrix.compat.arsnouveau.WhirlisprigEnhancements;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -17,9 +15,11 @@ import java.util.Map;
 @Mixin(value = WhirlisprigTile.class, remap = false)
 public abstract class WhirlisprigTileMixin {
 
-    @ModifyConstant(method = "addProgress", constant = @Constant(intValue = 30), remap = false)
-    private int arsMatrix$applyEcologicalDiversity(int nativeDivisor) {
-        return WhirlisprigEnhancements.progressDivisor((WhirlisprigTile) (Object) this, nativeDivisor);
+    @Inject(method = "addProgress", at = @At("HEAD"), cancellable = true, remap = false)
+    private void arsMatrix$applyCompactGroveProgress(CallbackInfo ci) {
+        if (WhirlisprigEnhancements.addCompactGroveProgress((WhirlisprigTile) (Object) this)) {
+            ci.cancel();
+        }
     }
 
     @ModifyArg(

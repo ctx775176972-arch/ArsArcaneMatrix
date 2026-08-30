@@ -26,7 +26,6 @@ public final class ArcaneImbuementCoreBlock extends BaseEntityBlock {
 
     private static final VoxelShape SHAPE = Shapes.or(
             box(2.0D, 0.0D, 2.0D, 14.0D, 4.0D, 14.0D),
-            box(4.0D, 12.0D, 4.0D, 12.0D, 14.0D, 12.0D),
             box(6.0D, 8.0D, 6.0D, 10.0D, 12.0D, 10.0D)
     );
 

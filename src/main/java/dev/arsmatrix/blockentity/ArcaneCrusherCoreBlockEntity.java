@@ -1,7 +1,6 @@
 package dev.arsmatrix.blockentity;
 
 import com.hollingsworth.arsnouveau.api.item.IWandable;
-import com.hollingsworth.arsnouveau.common.block.tile.ArcanePedestalTile;
 import dev.arsmatrix.ArsArcaneMatrix;
 import dev.arsmatrix.block.ArcaneCrusherCoreBlock;
 import dev.arsmatrix.data.CrusherRecipeResolver;
@@ -9,7 +8,7 @@ import dev.arsmatrix.data.CrusherRecipeRule;
 import dev.arsmatrix.registry.ModBlockEntities;
 import dev.arsmatrix.registry.ModItems;
 import dev.arsmatrix.util.MixedItemBuffer;
-import dev.arsmatrix.util.MultiblockClearance;
+import dev.arsmatrix.util.StructureInventoryAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -86,12 +85,15 @@ public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements I
         if (inputs.isEmpty()) { progressTicks = 0; setState(OperatingState.NO_INPUT); return; }
         if (recipe.isEmpty()) { progressTicks = 0; setState(OperatingState.INVALID_INPUT); return; }
 
-        ArcanePedestalTile pedestal = catalystPedestal();
-        ItemStack catalyst = pedestal == null ? ItemStack.EMPTY : pedestal.getStack();
+        IItemHandler essenceContainer = essenceContainer();
+        int essenceSlot = StructureInventoryAccess.firstSlot(essenceContainer,
+                stack -> modeOf(stack) != Mode.NONE);
+        ItemStack catalyst = essenceSlot < 0 ? ItemStack.EMPTY : essenceContainer.getStackInSlot(essenceSlot);
         mode = modeOf(catalyst);
         if (mode == Mode.NONE) {
             progressTicks = 0;
-            setState(catalyst.isEmpty() ? OperatingState.NO_ESSENCE : OperatingState.INVALID_ESSENCE);
+            setState(essenceContainer == null || !StructureInventoryAccess.hasAnyItem(essenceContainer)
+                    ? OperatingState.NO_ESSENCE : OperatingState.INVALID_ESSENCE);
             return;
         }
         ItemStack oneOutput = mode == Mode.AIR ? recipe.get().airOutput() : recipe.get().baseOutput();
@@ -100,15 +102,18 @@ public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements I
         progressTicks++;
         setState(mode == Mode.AIR ? OperatingState.AIR_RUNNING : OperatingState.WATER_RUNNING);
         if (progressTicks >= CYCLE_TICKS) {
-            processBatch(serverLevel, pedestal);
+            processBatch(serverLevel, essenceContainer, essenceSlot, mode);
             progressTicks = 0;
         } else if (tickCounter % 20 == 0) sync();
     }
 
-    private void processBatch(ServerLevel serverLevel, @Nullable ArcanePedestalTile pedestal) {
-        if (pedestal == null) return;
-        ItemStack catalyst = pedestal.getStack();
-        Mode activeMode = modeOf(catalyst);
+    private void processBatch(ServerLevel serverLevel, @Nullable IItemHandler container, int essenceSlot, Mode activeMode) {
+        if (container == null || essenceSlot < 0) return;
+        ItemStack consumed = container.extractItem(essenceSlot, 1, false);
+        if (consumed.isEmpty() || modeOf(consumed) != activeMode) {
+            if (!consumed.isEmpty()) ItemHandlerHelper.insertItemStacked(container, consumed, false);
+            return;
+        }
         int available = Math.min(MAX_BATCH, inputs.count());
         int completed = 0;
         int waterProgress = 0;
@@ -125,9 +130,10 @@ public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements I
                 waterProgress += input.is(Items.ANCIENT_DEBRIS) ? WATER_ROLL_ITEMS : 1;
             }
         }
-        if (completed > 0) catalyst.shrink(1);
-        pedestal.setStack(catalyst.isEmpty() ? ItemStack.EMPTY : catalyst);
-        pedestal.setChanged();
+        if (completed <= 0) {
+            ItemStack leftover = ItemHandlerHelper.insertItemStacked(container, consumed, false);
+            if (!leftover.isEmpty()) storeOutput(leftover);
+        }
         if (activeMode == Mode.WATER && waterProgress > 0) advanceWaterRolls(serverLevel, waterProgress);
         sync();
     }
@@ -220,9 +226,8 @@ public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements I
         return null;
     }
 
-    @Nullable private ArcanePedestalTile catalystPedestal() {
-        return level != null && level.getBlockEntity(worldPosition.above(2)) instanceof ArcanePedestalTile pedestal
-                ? pedestal : null;
+    @Nullable private IItemHandler essenceContainer() {
+        return StructureInventoryAccess.at(level, consumableContainerPosition(worldPosition, facing()));
     }
 
     private static Mode modeOf(ItemStack stack) {
@@ -235,27 +240,33 @@ public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements I
 
     public static boolean isStructureFormed(Level level, BlockPos core, Direction facing) {
         for (BlockPos pos : framePositions(core, facing)) if (!level.getBlockState(pos).is(FRAME)) return false;
-        return level.getBlockEntity(core.above(2)) instanceof ArcanePedestalTile
-                && MultiblockClearance.isOpen(level, core.above());
+        return StructureInventoryAccess.at(level, consumableContainerPosition(core, facing)) != null;
+    }
+
+    public static BlockPos consumableContainerPosition(BlockPos core, Direction facing) {
+        return core.below();
     }
 
     public static List<BlockPos> framePositions(BlockPos core, Direction facing) {
         Direction right = facing.getClockWise();
         Direction back = facing.getOpposite();
         List<BlockPos> result = new ArrayList<>();
-        // A broad open grinding frame, deliberately unlike the Smelter's compact furnace shell.
-        for (int x = -2; x <= 2; x++) {
-            result.add(core.relative(right, x).relative(back));
+        // The core sits at the front midpoint of the rim, directly above the
+        // Essence container, so every interaction remains reachable from ground level.
+        for (int depth = 1; depth <= 3; depth++) {
+            for (int x = -1; x <= 1; x++) {
+                result.add(core.relative(right, x).relative(back, depth).below());
+                result.add(core.relative(right, x).relative(back, depth).above(2));
+            }
         }
-        for (int x : new int[]{-2, -1, 1, 2}) {
-            result.add(core.relative(right, x));
+        for (int depth = 0; depth <= 4; depth++) {
+            for (int x = -2; x <= 2; x++) {
+                if (Math.abs(x) == 2 || depth == 0 || depth == 4) {
+                    if (x == 0 && depth == 0) continue;
+                    result.add(core.relative(right, x).relative(back, depth));
+                }
+            }
         }
-        for (int x : new int[]{-2, 2}) {
-            result.add(core.relative(right, x).above());
-            result.add(core.relative(right, x).above(2));
-        }
-        result.add(core.relative(back).above());
-        result.add(core.relative(back).above(2));
         return List.copyOf(result);
     }
 
@@ -298,6 +309,9 @@ public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements I
     public int getBufferedItemCount() { return outputs.stream().mapToInt(ItemStack::getCount).sum(); }
     public boolean hasInputContainer() { return inputContainer != null; }
     public boolean hasOutputContainer() { return outputContainer != null; }
+    public boolean hasConsumableContainer() {
+        return StructureInventoryAccess.at(level, consumableContainerPosition(worldPosition, facing())) != null;
+    }
 
     public void dropContents() {
         if (level == null || level.isClientSide) return;

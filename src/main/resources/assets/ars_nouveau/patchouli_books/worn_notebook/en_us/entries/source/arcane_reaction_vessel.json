@@ -1,8 +1,8 @@
 {
   "name":"Arcane Reaction Vessel","icon":"ars_arcane_matrix:arcane_reaction_vessel","category":"ars_nouveau:ars_arcane_matrix",
   "pages":[
-    {"type":"patchouli:text","text":"$(l)Novice material conversion$()$(br2)The Arcane Reaction Vessel is crafted from Smooth Sourcestone, a Cauldron, ordinary Source Gems, a Source Jar, and a Hopper. It performs basic item, fluid, and Source conversions without requiring Blaze Rods or a Brewing Stand."},
-    {"type":"patchouli:text","text":"Four Glass, 250 mB water, and 200 Source produce one Nether Quartz in ten seconds. Sixty-four Stone, 2,000 mB water, and 800 Source become 64 Infested Stone in five seconds for a Novice Vitalic Source farm. Source is paid when work starts; redstone pauses and blocked output preserves progress."},
+    {"type":"patchouli:text","text":"$(l)Novice material conversion$()$(br2)After obtaining the first Source Gem, craft the vessel from Smooth Sourcestone, a Cauldron, ordinary Source Gems, a Source Jar, and a Hopper. It combines fluids, materials, and a small amount of Source to bridge quartz, raw gold, Sourceberries, Archwood fruits, and pottery sherds."},
+    {"type":"patchouli:text","text":"The vessel reduces biome and random-exploration bottlenecks in both Ars Nouveau and Matrix progression. It can also mass-produce Infested Stone for a Novice Vitalic Sourcelink farm. See the Arcane Reaction JEI category for exact ingredients, fluid amounts, Source costs, and times."},
     {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_reaction_vessel"}
   ]
 }

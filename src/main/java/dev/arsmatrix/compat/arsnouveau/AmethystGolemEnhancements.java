@@ -10,7 +10,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -25,6 +24,9 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /** Adds non-consuming Arcane Pedestal upgrades to Ars Nouveau's Amethyst Golem. */
 public final class AmethystGolemEnhancements {
@@ -32,6 +34,10 @@ public final class AmethystGolemEnhancements {
     private static final int WORK_SCAN_INTERVAL = 100;
     private static final int TRANSFER_INTERVAL = 5;
     private static final int COLLECTION_RANGE = 10;
+    private static final int GROWTH_BATCH_SIZE = 4;
+    private static final String GROWTH_CURSOR_TAG = "ars_arcane_matrix_growth_cursor";
+    private static final String GROWTH_CURSOR_INITIALIZED_TAG =
+            "ars_arcane_matrix_growth_cursor_initialized";
 
     private static final Map<AmethystGolem, EnhancementState> STATES = new WeakHashMap<>();
 
@@ -63,7 +69,10 @@ public final class AmethystGolemEnhancements {
             golem.harvestCooldown = Math.max(0, golem.harvestCooldown - state.efficiency);
         }
 
-        if (state.hopperTransfer && gameTime % TRANSFER_INTERVAL == 0) {
+        // The simulated-tool mode is already an explicit opt-in. While it is active,
+        // route amethyst products to the home inventory without requiring a second
+        // pedestal merely to hold a Hopper.
+        if (!state.tool.isEmpty() && gameTime % TRANSFER_INTERVAL == 0) {
             transferDrops(level, golem.getHome());
         }
 
@@ -106,7 +115,6 @@ public final class AmethystGolemEnhancements {
         state.scannedHome = home.immutable();
         state.tool = ItemStack.EMPTY;
         state.efficiency = 0;
-        state.hopperTransfer = false;
         golem.amethystBlocks = new ArrayList<>();
         golem.buddingBlocks = new ArrayList<>();
         BlockState cluster = Blocks.AMETHYST_CLUSTER.defaultBlockState();
@@ -130,10 +138,6 @@ public final class AmethystGolemEnhancements {
             if (level.getBlockEntity(cursor) instanceof ArcanePedestalTile pedestal) {
                 ItemStack offered = pedestal.getStack();
                 if (offered.isEmpty()) continue;
-                if (offered.is(Items.HOPPER)) {
-                    state.hopperTransfer = true;
-                    continue;
-                }
                 if (!offered.isCorrectToolForDrops(cluster)) continue;
 
                 int candidateEfficiency = enchantmentLevel(level, offered, Enchantments.EFFICIENCY);
@@ -150,6 +154,76 @@ public final class AmethystGolemEnhancements {
                 }
             }
         }
+        initializeGrowthCursor(level, golem, home);
+        // scanWorkArea rebuilds the list in deterministic coordinate order.
+        state.appliedGrowthCursor = 0;
+    }
+
+    /**
+     * Gives each golem a stable starting batch without removing any budding blocks
+     * from its work list. Multiple golems therefore retain their full throughput,
+     * while UUID order makes them prefer different blocks when enough are present.
+     */
+    private static void initializeGrowthCursor(ServerLevel level, AmethystGolem golem, BlockPos home) {
+        if (golem.buddingBlocks.isEmpty()
+                || golem.getPersistentData().getBoolean(GROWTH_CURSOR_INITIALIZED_TAG)) {
+            return;
+        }
+        List<AmethystGolem> group = homeGroup(level, home);
+        int owner = group.indexOf(golem);
+        if (owner < 0) return;
+        int cursor = Math.floorMod(owner * GROWTH_BATCH_SIZE, golem.buddingBlocks.size());
+        golem.getPersistentData().putInt(GROWTH_CURSOR_TAG, cursor);
+        golem.getPersistentData().putBoolean(GROWTH_CURSOR_INITIALIZED_TAG, true);
+    }
+
+    private static List<AmethystGolem> homeGroup(ServerLevel level, BlockPos home) {
+        List<AmethystGolem> group = level.getEntitiesOfClass(
+                AmethystGolem.class,
+                new AABB(home).inflate(WORK_RANGE * 2),
+                candidate -> candidate.isAlive() && home.equals(candidate.getHome()));
+        group.sort(Comparator.comparing(AmethystGolem::getUUID));
+        return group;
+    }
+
+    /**
+     * Applies a one-time UUID-derived phase offset after the first growth action.
+     * Later actions keep Ars Nouveau's ordinary cooldown, so stacking golems adds
+     * throughput instead of making every golem pause and resume in lockstep.
+     */
+    public static int staggeredGrowthCooldown(AmethystGolem golem, int originalTicks) {
+        if (!(golem.level() instanceof ServerLevel level) || golem.getHome() == null) {
+            return originalTicks;
+        }
+        EnhancementState state = STATES.computeIfAbsent(golem, ignored -> new EnhancementState());
+        if (state.staggerApplied) return originalTicks;
+        state.staggerApplied = true;
+
+        List<AmethystGolem> group = homeGroup(level, golem.getHome());
+        int owner = group.indexOf(golem);
+        if (owner <= 0 || group.size() <= 1) return originalTicks;
+        return originalTicks + owner * originalTicks / group.size();
+    }
+
+    /**
+     * Selects the visible target and rotates the next batch fairly. The cursor is
+     * stored on the entity rather than in the transient enhancement cache, so a
+     * world restart resumes the same point in the assigned list.
+     */
+    public static BlockPos prepareGrowthBatch(AmethystGolem golem) {
+        List<BlockPos> blocks = golem.buddingBlocks;
+        if (blocks == null || blocks.isEmpty()) {
+            return golem.getHome() == null ? golem.blockPosition() : golem.getHome();
+        }
+        EnhancementState state = STATES.computeIfAbsent(golem, ignored -> new EnhancementState());
+        int cursor = Math.floorMod(golem.getPersistentData().getInt(GROWTH_CURSOR_TAG), blocks.size());
+        int applied = Math.floorMod(state.appliedGrowthCursor, blocks.size());
+        int rotation = Math.floorMod(cursor - applied, blocks.size());
+        if (rotation != 0) Collections.rotate(blocks, -rotation);
+        state.appliedGrowthCursor = cursor;
+        int next = Math.floorMod(cursor + Math.min(GROWTH_BATCH_SIZE, blocks.size()), blocks.size());
+        golem.getPersistentData().putInt(GROWTH_CURSOR_TAG, next);
+        return blocks.getFirst();
     }
 
     private static int enchantmentLevel(
@@ -179,7 +253,8 @@ public final class AmethystGolemEnhancements {
     private static final class EnhancementState {
         private ItemStack tool = ItemStack.EMPTY;
         private int efficiency;
-        private boolean hopperTransfer;
+        private int appliedGrowthCursor;
+        private boolean staggerApplied;
         private long nextScan;
         private BlockPos scannedHome;
     }

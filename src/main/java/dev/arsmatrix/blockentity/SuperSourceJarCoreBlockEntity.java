@@ -6,7 +6,6 @@ import com.hollingsworth.arsnouveau.api.source.ISourceTile;
 import com.hollingsworth.arsnouveau.api.source.ISpecialSourceProvider;
 import com.hollingsworth.arsnouveau.api.source.SourceManager;
 import com.hollingsworth.arsnouveau.common.capability.SourceStorage;
-import com.hollingsworth.arsnouveau.common.block.tile.SourcelinkTile;
 import dev.arsmatrix.registry.ModBlockEntities;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.block.SuperSourceJarCoreBlock;
@@ -19,6 +18,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -36,11 +37,14 @@ public final class SuperSourceJarCoreBlockEntity extends BlockEntity
     public static final int CAPACITY = 100_000_000;
     public static final int TRANSFER_RATE = 1_000_000;
     public static final int PULL_RANGE = 24;
-    public static final int PER_PROVIDER_PULL = 10_000;
+    /** Covers the output of one fully amplified Matrix Core without backing up. */
+    public static final int PER_PROVIDER_PULL = 20_000;
 
     private final SourceStorage storage = new SourceStorage(CAPACITY, TRANSFER_RATE, 0) {
         @Override public int receiveSource(int amount, boolean simulate) {
-            return structureFormed ? super.receiveSource(amount, simulate) : 0;
+            int accepted = structureFormed ? super.receiveSource(amount, simulate) : 0;
+            if (!simulate && accepted > 0) recordReceived(accepted);
+            return accepted;
         }
         @Override public boolean canAcceptSource(int amount) {
             return structureFormed && super.canAcceptSource(amount);
@@ -62,31 +66,38 @@ public final class SuperSourceJarCoreBlockEntity extends BlockEntity
     private boolean linkedCache;
     private boolean structureFormed;
     private int lastPulled;
+    private int receivedThisSecond;
+    private List<BlockPos> cachedProducers = List.of();
 
     public SuperSourceJarCoreBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SUPER_SOURCE_JAR_CORE.get(), pos, state);
     }
 
     public void serverTick() {
-        if (level == null || level.isClientSide) return;
+        if (!(level instanceof ServerLevel serverLevel)) return;
         registerTick++;
         if (registerTick == 1L || registerTick % 20L == 0L) {
-            boolean formed = isStructureFormed(level, worldPosition,
+            boolean formed = isStructureFormed(serverLevel, worldPosition,
                     getBlockState().getValue(SuperSourceJarCoreBlock.FACING));
             if (formed != structureFormed) {
                 structureFormed = formed;
                 sync();
             }
         }
-        if (structureFormed && registerTick % 200L == 1L) SourceManager.INSTANCE.addInterface(level, provider);
+        if (structureFormed && registerTick % 200L == 1L) SourceManager.INSTANCE.addInterface(serverLevel, provider);
+        if (structureFormed && (registerTick == 1L || registerTick % 100L == 0L)) {
+            cachedProducers = NearbySourceProducerScanner.scan(serverLevel, worldPosition, PULL_RANGE);
+        }
         if (structureFormed && registerTick % 20L == 0L) {
-            int pulled = pullFromProducers();
-            if (pulled != lastPulled) {
-                lastPulled = pulled;
+            pullFromProducers();
+            int received = receivedThisSecond;
+            receivedThisSecond = 0;
+            if (received != lastPulled) {
+                lastPulled = received;
                 sync();
             }
         }
-        boolean linked = SourceNetworkSavedData.get(level.getServer()).targetForJar(globalPos()) != null;
+        boolean linked = SourceNetworkSavedData.get(serverLevel.getServer()).targetForJar(globalPos(serverLevel)) != null;
         if (linkedCache != linked) { linkedCache = linked; sync(); }
     }
 
@@ -101,23 +112,29 @@ public final class SuperSourceJarCoreBlockEntity extends BlockEntity
 
     public SourceStorage getSourceStorage() { return storage; }
 
+    private void recordReceived(int amount) {
+        receivedThisSecond = (int) Math.min(Integer.MAX_VALUE,
+                (long) receivedThisSecond + Math.max(0, amount));
+    }
+
     /** Pull only from real generators, never from another storage or machine. */
     private int pullFromProducers() {
-        if (level == null || getSource() >= CAPACITY) return 0;
+        if (!(level instanceof ServerLevel serverLevel) || getSource() >= CAPACITY) return 0;
         int remaining = Math.min(TRANSFER_RATE, CAPACITY - getSource());
         int pulled = 0;
-        double rangeSquared = (double) PULL_RANGE * PULL_RANGE;
-        for (ISpecialSourceProvider candidate : SourceManager.INSTANCE.getCopySetForLevel(level)) {
+        for (BlockPos producerPos : cachedProducers) {
             if (remaining <= 0) break;
-            if (!candidate.isValid() || worldPosition.distSqr(candidate.getCurrentPos()) > rangeSquared) continue;
-            ISourceTile source = candidate.getSource();
-            if (!(source instanceof SourcelinkTile) && !(source instanceof MatrixCoreBlockEntity)) continue;
+            ISourceTile source = NearbySourceProducerScanner.resolve(serverLevel, producerPos);
+            if (source == null || !source.canProvideSource()) continue;
             int requested = Math.min(PER_PROVIDER_PULL, remaining);
             int available = Math.max(0, Math.min(requested, source.removeSource(requested, true)));
             int acceptable = Math.max(0, Math.min(available, storage.receiveSource(available, true)));
             if (acceptable <= 0) continue;
             int extracted = Math.max(0, Math.min(acceptable, source.removeSource(acceptable, false)));
             int accepted = storage.receiveSource(extracted, false);
+            if (extracted > 0) {
+                NearbySourceProducerScanner.syncAfterExtraction(serverLevel, producerPos);
+            }
             pulled += accepted;
             remaining -= accepted;
         }
@@ -132,12 +149,14 @@ public final class SuperSourceJarCoreBlockEntity extends BlockEntity
     }
 
     public boolean isLinked() {
-        return level != null && level.getServer() != null
-                ? SourceNetworkSavedData.get(level.getServer()).targetForJar(globalPos()) != null
-                : linkedCache;
+        if (!(level instanceof ServerLevel serverLevel)) return linkedCache;
+        return SourceNetworkSavedData.get(serverLevel.getServer())
+                .targetForJar(globalPos(serverLevel)) != null;
     }
 
-    private GlobalPos globalPos() { return GlobalPos.of(level.dimension(), worldPosition); }
+    private GlobalPos globalPos(Level currentLevel) {
+        return GlobalPos.of(currentLevel.dimension(), worldPosition);
+    }
 
     @Override public int getTransferRate() { return TRANSFER_RATE; }
     @Override public boolean canAcceptSource() { return structureFormed && getSource() < getMaxSource(); }
@@ -241,7 +260,7 @@ public final class SuperSourceJarCoreBlockEntity extends BlockEntity
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return saveWithoutMetadata(registries);
     }
-    @Nullable @Override public ClientboundBlockEntityDataPacket getUpdatePacket() {
+    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 }

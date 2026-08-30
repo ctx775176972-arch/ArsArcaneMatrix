@@ -51,9 +51,6 @@ public final class MatrixConfig {
     public static final ModConfigSpec.IntValue IMBUEMENT_CYCLE_TICKS;
     public static final ModConfigSpec.IntValue GENERATOR_DEFAULT_PROCESSING_COST;
     public static final ModConfigSpec.IntValue GENERATOR_PASSIVE_PROGRESS_PER_SECOND;
-    public static final ModConfigSpec.IntValue GENERATOR_POWERED_DURATION_SECONDS;
-    public static final ModConfigSpec.IntValue GENERATOR_SECONDS_REDUCTION_PER_AMPLIFIER;
-    public static final ModConfigSpec.IntValue GENERATOR_MINIMUM_DURATION_SECONDS;
     public static final ModConfigSpec.IntValue GENERATOR_SOURCE_INPUT_RANGE;
     public static final ModConfigSpec.IntValue DRYGMY_ARENA_CYCLE_TICKS;
 
@@ -203,15 +200,6 @@ public final class MatrixConfig {
         GENERATOR_PASSIVE_PROGRESS_PER_SECOND = builder
                 .comment("Free imbuement-style progress gained each second without external Source.")
                 .defineInRange("passiveProgressPerSecond", 20, 0, Integer.MAX_VALUE);
-        GENERATOR_POWERED_DURATION_SECONDS = builder
-                .comment("Powered batch duration with no cardinal Arcane Amplifiers.")
-                .defineInRange("poweredDurationSeconds", 5, 1, 3_600);
-        GENERATOR_SECONDS_REDUCTION_PER_AMPLIFIER = builder
-                .comment("Seconds removed from the powered duration by each cardinal Arcane Amplifier.")
-                .defineInRange("secondsReductionPerAmplifier", 1, 0, 3_600);
-        GENERATOR_MINIMUM_DURATION_SECONDS = builder
-                .comment("Hard minimum powered batch duration.")
-                .defineInRange("minimumPoweredDurationSeconds", 1, 1, 3_600);
         GENERATOR_SOURCE_INPUT_RANGE = builder
                 .comment("Range used to draw Source from Ars Nouveau providers.")
                 .defineInRange("sourceInputRange", 5, 1, 64);
@@ -255,13 +243,6 @@ public final class MatrixConfig {
                 + Math.max(0, Math.min(amplifiers, MINE_AMPLIFIER_POSITIONS))
                 * MINE_COST_INCREASE_PER_AMPLIFIER.get();
         return (int) Math.min(Integer.MAX_VALUE, Math.ceil(Math.max(0, baseCost) * multiplier));
-    }
-
-    public static int generatorPoweredDurationSeconds(int amplifiers) {
-        int configured = GENERATOR_POWERED_DURATION_SECONDS.get()
-                - Math.max(0, Math.min(4, amplifiers))
-                * GENERATOR_SECONDS_REDUCTION_PER_AMPLIFIER.get();
-        return Math.max(GENERATOR_MINIMUM_DURATION_SECONDS.get(), configured);
     }
 
     public static int mineOperationCooldown(

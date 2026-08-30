@@ -4,7 +4,20 @@
   ],
   "work_ticks": 100,
   "source_cost": 1000,
-  "loot_table": "ars_arcane_matrix:chests/expedition_overworld_ruins",
+  "loot_tables": [
+    { "id": "minecraft:chests/abandoned_mineshaft" },
+    { "id": "minecraft:chests/desert_pyramid" },
+    { "id": "minecraft:chests/igloo_chest" },
+    { "id": "minecraft:chests/jungle_temple" },
+    { "id": "minecraft:chests/pillager_outpost" },
+    { "id": "minecraft:chests/ruined_portal" },
+    { "id": "minecraft:chests/simple_dungeon" },
+    { "id": "minecraft:chests/spawn_bonus_chest" },
+    { "id": "minecraft:chests/stronghold_corridor" },
+    { "id": "minecraft:chests/stronghold_crossing" },
+    { "id": "minecraft:chests/stronghold_library" },
+    { "id": "minecraft:chests/woodland_mansion" }
+  ],
   "display_outputs": [
     { "item": "minecraft:name_tag" },
     { "item": "minecraft:enchanted_book" },

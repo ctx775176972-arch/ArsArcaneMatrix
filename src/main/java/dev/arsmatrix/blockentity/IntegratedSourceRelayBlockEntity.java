@@ -18,6 +18,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -52,7 +53,8 @@ public final class IntegratedSourceRelayBlockEntity extends BlockEntity
         if (!(level instanceof ServerLevel serverLevel)) return;
         if (++tickCounter % 20 != 0) return;
         SourceManager.INSTANCE.addInterface(level, provider);
-        boolean linked = SourceNetworkSavedData.get(serverLevel.getServer()).sourceForRelay(globalPos()) != null;
+        boolean linked = SourceNetworkSavedData.get(serverLevel.getServer())
+                .sourceForRelay(globalPos(serverLevel)) != null;
         if (linkedCache != linked) { linkedCache = linked; sync(); }
     }
 
@@ -62,16 +64,19 @@ public final class IntegratedSourceRelayBlockEntity extends BlockEntity
     }
 
     public boolean isLinked() {
-        return level != null && level.getServer() != null
-                ? SourceNetworkSavedData.get(level.getServer()).sourceForRelay(globalPos()) != null
-                : linkedCache;
+        if (!(level instanceof ServerLevel serverLevel)) return linkedCache;
+        return SourceNetworkSavedData.get(serverLevel.getServer())
+                .sourceForRelay(globalPos(serverLevel)) != null;
     }
-    private GlobalPos globalPos() { return GlobalPos.of(level.dimension(), worldPosition); }
+    private GlobalPos globalPos(Level currentLevel) {
+        return GlobalPos.of(currentLevel.dimension(), worldPosition);
+    }
 
     @Nullable
     private BlockEntity linkedSource() {
         if (!(level instanceof ServerLevel serverLevel)) return null;
-        GlobalPos source = SourceNetworkSavedData.get(serverLevel.getServer()).sourceForRelay(globalPos());
+        GlobalPos source = SourceNetworkSavedData.get(serverLevel.getServer())
+                .sourceForRelay(globalPos(serverLevel));
         if (source == null) return null;
         ServerLevel sourceLevel = serverLevel.getServer().getLevel(source.dimension());
         if (sourceLevel == null || !sourceLevel.hasChunkAt(source.pos())) return null;
@@ -80,6 +85,7 @@ public final class IntegratedSourceRelayBlockEntity extends BlockEntity
 
     private int linkedSourceAmount() {
         BlockEntity source = linkedSource();
+        if (source instanceof ArcaneSourceJarBlockEntity jar) return jar.getSource();
         if (source instanceof SuperSourceJarCoreBlockEntity jar) return jar.getSource();
         if (source instanceof AdvancedStorageLecternBlockEntity gateway) {
             return gateway.extractNetworkSource(Integer.MAX_VALUE, true);
@@ -93,6 +99,9 @@ public final class IntegratedSourceRelayBlockEntity extends BlockEntity
     private int extractLinkedSource(int amount, boolean simulate) {
         if (amount <= 0) return 0;
         BlockEntity source = linkedSource();
+        if (source instanceof ArcaneSourceJarBlockEntity jar) {
+            return jar.extractForNetwork(amount, simulate);
+        }
         if (source instanceof SuperSourceJarCoreBlockEntity jar) {
             return jar.extractForNetwork(amount, simulate);
         }
@@ -151,7 +160,7 @@ public final class IntegratedSourceRelayBlockEntity extends BlockEntity
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return saveWithoutMetadata(registries);
     }
-    @Nullable @Override public ClientboundBlockEntityDataPacket getUpdatePacket() {
+    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 }

@@ -243,6 +243,10 @@ public class WixieOrderTerminalBlockEntity extends BlockEntity implements MenuPr
     ) {}
 
     private AutomaticRequestResult startOrder(ItemStack requested, int count, UUID requester) {
+        Level currentLevel = level;
+        if (currentLevel == null || currentLevel.isClientSide) {
+            return AutomaticRequestResult.RECIPE_UNAVAILABLE;
+        }
         boolean isEncoded = getCraftableOutputs().stream().anyMatch(output ->
                 ItemStack.isSameItemSameComponents(output, requested));
         if (!isEncoded) return AutomaticRequestResult.RECIPE_UNAVAILABLE;
@@ -263,7 +267,7 @@ public class WixieOrderTerminalBlockEntity extends BlockEntity implements MenuPr
                         collectWixieOutputInventories(providers)
                 )
         );
-        orderStartGameTime = level.getGameTime();
+        orderStartGameTime = currentLevel.getGameTime();
         orderCraftOperations = 0;
         orderSourceSpent = 0;
         orderProducedCount = 0;
@@ -456,6 +460,8 @@ public class WixieOrderTerminalBlockEntity extends BlockEntity implements MenuPr
             Set<Item> path,
             int depth
     ) {
+        Level currentLevel = level;
+        if (currentLevel == null) return DispatchResult.MISSING;
         if (depth > MAX_RECURSION_DEPTH || !path.add(target.getItem())) {
             reportMissing(target.copyWithCount(Math.max(1, requiredCount)));
             return DispatchResult.MISSING;
@@ -528,7 +534,7 @@ public class WixieOrderTerminalBlockEntity extends BlockEntity implements MenuPr
             if (waiting) {
                 return DispatchResult.WAITING;
             }
-            ItemStack output = RecipeAutomationSupport.result(recipe, level.registryAccess());
+            ItemStack output = RecipeAutomationSupport.result(recipe, currentLevel.registryAccess());
             boolean finalOutput = ItemStack.isSameItemSameComponents(output, activeTarget);
             if (RecipeAutomationSupport.isCooking(recipe)) {
                 List<WixiePatternProviderBlockEntity> workers = availableWorkers(providers);

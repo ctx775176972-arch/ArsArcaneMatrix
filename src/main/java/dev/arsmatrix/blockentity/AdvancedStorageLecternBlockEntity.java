@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import org.jetbrains.annotations.Nullable;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -88,7 +89,10 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
             if (remaining <= 0) break;
             ServerLevel jarLevel = serverLevel.getServer().getLevel(jarPos.dimension());
             if (jarLevel == null || !jarLevel.hasChunkAt(jarPos.pos())) continue;
-            if (jarLevel.getBlockEntity(jarPos.pos()) instanceof SuperSourceJarCoreBlockEntity jar) {
+            BlockEntity blockEntity = jarLevel.getBlockEntity(jarPos.pos());
+            if (blockEntity instanceof ArcaneSourceJarBlockEntity jar) {
+                remaining -= jar.extractForNetwork(remaining, simulate);
+            } else if (blockEntity instanceof SuperSourceJarCoreBlockEntity jar) {
                 remaining -= jar.extractForNetwork(remaining, simulate);
             }
         }
@@ -125,7 +129,8 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
     }
 
     private boolean isStorageLectern(GlobalPos target, Player player) {
-        if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return false;
+        if (target == null || !(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+                || serverPlayer.getServer() == null) return false;
         ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
         return targetLevel != null
                 && targetLevel.getBlockEntity(target.pos()) instanceof StorageLecternTile;
@@ -139,14 +144,16 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
     }
 
     private boolean isFluidReservoir(GlobalPos target, Player player) {
-        if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)) return false;
+        if (target == null || !(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+                || serverPlayer.getServer() == null) return false;
         ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
         return targetLevel != null
                 && targetLevel.getBlockEntity(target.pos()) instanceof ArcaneFluidReservoirBlockEntity;
     }
 
     private IWandable.Result linkFluidReservoir(GlobalPos target, Player player) {
-        if (!(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) || level == null) {
+        if (target == null || !(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+                || serverPlayer.getServer() == null || level == null) {
             return IWandable.Result.FAIL;
         }
         ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
@@ -248,8 +255,11 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         for (GlobalPos jarPos : SourceNetworkSavedData.get(serverLevel.getServer()).jarsForGateway(gateway)) {
             ServerLevel jarLevel = serverLevel.getServer().getLevel(jarPos.dimension());
             if (jarLevel == null || !jarLevel.hasChunkAt(jarPos.pos())) continue;
-            if (jarLevel.getBlockEntity(jarPos.pos()) instanceof SuperSourceJarCoreBlockEntity jar
-                    && jar.isStructureFormed()) {
+            BlockEntity blockEntity = jarLevel.getBlockEntity(jarPos.pos());
+            if (blockEntity instanceof ArcaneSourceJarBlockEntity jar) {
+                stored += jar.getSource();
+                capacity += jar.getMaxSource();
+            } else if (blockEntity instanceof SuperSourceJarCoreBlockEntity jar && jar.isStructureFormed()) {
                 stored += jar.getSource();
                 capacity += jar.getMaxSource();
             }
@@ -450,7 +460,7 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         return saveWithoutMetadata(registries);
     }
 
-    @Nullable @Override public ClientboundBlockEntityDataPacket getUpdatePacket() {
+    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 

@@ -4,9 +4,11 @@ import com.mojang.serialization.MapCodec;
 import dev.arsmatrix.ArsArcaneMatrix;
 import dev.arsmatrix.blockentity.MatrixCoreBlockEntity;
 import dev.arsmatrix.registry.ModBlocks;
+import dev.arsmatrix.source.SourceNetworkLinking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
@@ -136,6 +138,22 @@ public class MatrixCoreBlock extends BaseEntityBlock {
                 core.serverTick();
             }
         };
+    }
+
+    @Override
+    protected void onRemove(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            BlockState newState,
+            boolean moving
+    ) {
+        if (!state.is(newState.getBlock())
+                && level instanceof ServerLevel serverLevel
+                && level.getBlockEntity(pos) instanceof MatrixCoreBlockEntity core) {
+            SourceNetworkLinking.remove(serverLevel, core);
+        }
+        super.onRemove(state, level, pos, newState, moving);
     }
 
     @Override

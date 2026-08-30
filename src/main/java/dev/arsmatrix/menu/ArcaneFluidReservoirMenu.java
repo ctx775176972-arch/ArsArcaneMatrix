@@ -35,7 +35,7 @@ public final class ArcaneFluidReservoirMenu extends AbstractContainerMenu {
                 : inventory.player.level().getBlockEntity(pos) instanceof ArcaneFluidReservoirBlockEntity found ? found : null;
         ItemStackHandler upgrades = reservoir == null ? new ItemStackHandler(4) : reservoir.getUpgrades();
         ItemStackHandler modules = reservoir == null ? new ItemStackHandler(2) : reservoir.getTankModules();
-        data = supplied == null ? new SimpleContainerData(13) : serverData(supplied);
+        data = supplied == null ? new SimpleContainerData(16) : serverData(supplied);
         addDataSlots(data);
         for (int slot = 0; slot < 4; slot++) addSlot(new SlotItemHandler(upgrades, slot, 82 + slot * 20, 126));
         for (int slot = 0; slot < 2; slot++) addSlot(new SlotItemHandler(modules, slot, 172 + slot * 20, 126));
@@ -56,11 +56,14 @@ public final class ArcaneFluidReservoirMenu extends AbstractContainerMenu {
                     case 8, 9, 10 -> reservoir.tankType(index - 8);
                     case 11 -> reservoir.unlockedTankCount();
                     case 12 -> reservoir.wirelessTier();
+                    case 13 -> reservoir.inputTargetCount();
+                    case 14 -> reservoir.outputTargetCount();
+                    case 15 -> reservoir.maxWirelessTargets();
                     default -> 0;
                 };
             }
             @Override public void set(int index, int value) {}
-            @Override public int getCount() { return 13; }
+            @Override public int getCount() { return 16; }
         };
     }
     @Override public boolean clickMenuButton(Player player, int id) {
@@ -80,6 +83,9 @@ public final class ArcaneFluidReservoirMenu extends AbstractContainerMenu {
     public int tankType(int tank) { return data.get(8 + tank); }
     public int unlockedTankCount() { return data.get(11); }
     public int wirelessTier() { return data.get(12); }
+    public int inputTargetCount() { return data.get(13); }
+    public int outputTargetCount() { return data.get(14); }
+    public int maxWirelessTargets() { return data.get(15); }
     @Override public ItemStack quickMoveStack(Player player, int index) {
         Slot slot = slots.get(index);
         if (!slot.hasItem()) return ItemStack.EMPTY;

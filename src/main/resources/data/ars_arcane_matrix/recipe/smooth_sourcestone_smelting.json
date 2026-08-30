@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "ingredient": {
+    "item": "ars_nouveau:sourcestone"
+  },
+  "result": {
+    "id": "ars_nouveau:smooth_sourcestone"
+  },
+  "experience": 0.1,
+  "cookingtime": 200
+}

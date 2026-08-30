@@ -24,6 +24,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
@@ -101,10 +102,10 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     private Mode mode;
     private int inputFluid;
     private int outputFluid;
-    private GlobalPos boundTarget;
-    private Direction boundFace;
-    private GlobalPos outputTarget;
-    private Direction outputTargetFace;
+    private final List<FluidTarget> inputTargets = new ArrayList<>();
+    private final List<FluidTarget> outputTargets = new ArrayList<>();
+    private int inputTargetCursor;
+    private int outputTargetCursor;
     private int tickCounter;
     private int scanCursor;
     private State state;
@@ -176,13 +177,14 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     }
 
     private boolean collectInfiniteWaterBelow(Fluid wanted) {
-        if (wanted != WATER || !this.level.getGameRules().getBoolean(GameRules.RULE_WATER_SOURCE_CONVERSION)) {
+        if (!(this.level instanceof ServerLevel serverLevel) || wanted != WATER
+                || !serverLevel.getGameRules().getBoolean(GameRules.RULE_WATER_SOURCE_CONVERSION)) {
             return false;
         }
 
         BlockPos intake = this.worldPosition.below();
-        if (!this.level.hasChunkAt(intake)) return false;
-        var fluidState = this.level.getFluidState(intake);
+        if (!serverLevel.hasChunkAt(intake)) return false;
+        var fluidState = serverLevel.getFluidState(intake);
         if (!fluidState.isSource() || fluidState.getType() != WATER) return false;
 
         this.insertFluid(WATER, 1000, false);
@@ -191,15 +193,18 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     }
 
     private boolean tryCollectWorldSource(BlockPos offset, Fluid wanted) {
+        if (!(this.level instanceof ServerLevel serverLevel)) return false;
         BlockPos target = this.worldPosition.offset(offset);
-        if (!this.level.hasChunkAt(target)) {
+        if (!serverLevel.hasChunkAt(target)) {
             return false;
         } else {
-            BlockState targetState = this.level.getBlockState(target);
+            BlockState targetState = serverLevel.getBlockState(target);
             if (targetState.getBlock() instanceof LiquidBlock && targetState.getFluidState().isSource() && targetState.getFluidState().getType() == wanted) {
-                this.level.setBlock(target, Blocks.AIR.defaultBlockState(), 3);
+                serverLevel.setBlock(target, Blocks.AIR.defaultBlockState(), 3);
                 this.insertFluid(wanted, 1000, false);
-                boolean renewable = wanted == WATER ? this.level.getGameRules().getBoolean(GameRules.RULE_WATER_SOURCE_CONVERSION) : this.level.getGameRules().getBoolean(GameRules.RULE_LAVA_SOURCE_CONVERSION);
+                boolean renewable = wanted == WATER
+                        ? serverLevel.getGameRules().getBoolean(GameRules.RULE_WATER_SOURCE_CONVERSION)
+                        : serverLevel.getGameRules().getBoolean(GameRules.RULE_LAVA_SOURCE_CONVERSION);
                 this.setState(renewable ? ArcaneFluidReservoirBlockEntity.State.RENEWABLE_SOURCE : ArcaneFluidReservoirBlockEntity.State.RUNNING);
                 this.sync();
                 return true;
@@ -233,95 +238,88 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     }
 
     private boolean pullBoundFluid(ServerLevel serverLevel) {
-        if (this.boundTarget == null) {
+        int activeTargets = Math.min(this.maxWirelessTargets(), this.inputTargets.size());
+        if (activeTargets <= 0) {
             this.setState(ArcaneFluidReservoirBlockEntity.State.NO_TARGET);
             return false;
-        } else if (!this.wirelessReachable(this.boundTarget)) {
-            this.setState(ArcaneFluidReservoirBlockEntity.State.WIRELESS_OUT_OF_RANGE);
-            return false;
-        } else {
-            ServerLevel targetLevel = serverLevel.getServer().getLevel(this.boundTarget.dimension());
-            if (targetLevel != null && targetLevel.hasChunkAt(this.boundTarget.pos())) {
-                IFluidHandler target = (IFluidHandler)targetLevel.getCapability(FluidHandler.BLOCK, this.boundTarget.pos(), this.boundFace);
-                if (target == null) {
-                    this.setState(ArcaneFluidReservoirBlockEntity.State.INVALID_TARGET);
-                    return false;
-                } else {
-                    int limit = 1000 * (1 + this.countUpgrade((Item)ModItems.FLUID_SPEED_UPGRADE.get()));
-                    FluidStack simulated = target.drain(limit, FluidAction.SIMULATE);
-                    if (!simulated.isEmpty() && simulated.getFluid() != Fluids.EMPTY) {
-                        int accepted = this.insertFluid(simulated.getFluid(), simulated.getAmount(), true);
-                        if (accepted <= 0) {
-                            this.setState(ArcaneFluidReservoirBlockEntity.State.OUTPUT_BLOCKED);
-                            return false;
-                        } else {
-                            FluidStack request = simulated.copyWithAmount(accepted);
-                            FluidStack drained = target.drain(request, FluidAction.EXECUTE);
-                            this.insertFluid(drained.getFluid(), drained.getAmount(), false);
-                            this.setState(ArcaneFluidReservoirBlockEntity.State.RUNNING);
-                            this.sync();
-                            return true;
-                        }
-                    } else {
-                        this.setState(ArcaneFluidReservoirBlockEntity.State.INPUT_EMPTY);
-                        return false;
-                    }
-                }
-            } else {
-                this.setState(ArcaneFluidReservoirBlockEntity.State.TARGET_UNLOADED);
-                return false;
-            }
         }
+
+        int remainingBudget = this.transferBudget();
+        int start = Math.floorMod(this.inputTargetCursor++, activeTargets);
+        boolean worked = false;
+        State failure = State.INPUT_EMPTY;
+        for (int offset = 0; offset < activeTargets && remainingBudget > 0; ++offset) {
+            FluidTarget link = this.inputTargets.get((start + offset) % activeTargets);
+            int remainingTargets = activeTargets - offset;
+            int targetBudget = Math.max(1, (remainingBudget + remainingTargets - 1) / remainingTargets);
+            if (!this.wirelessReachable(link.pos())) {
+                failure = State.WIRELESS_OUT_OF_RANGE;
+                continue;
+            }
+            ServerLevel targetLevel = serverLevel.getServer().getLevel(link.pos().dimension());
+            if (targetLevel == null || !targetLevel.hasChunkAt(link.pos().pos())) {
+                failure = State.TARGET_UNLOADED;
+                continue;
+            }
+            IFluidHandler target = targetLevel.getCapability(FluidHandler.BLOCK, link.pos().pos(), link.face());
+            if (target == null) {
+                failure = State.INVALID_TARGET;
+                continue;
+            }
+            FluidStack simulated = target.drain(targetBudget, FluidAction.SIMULATE);
+            if (simulated.isEmpty() || simulated.getFluid() == Fluids.EMPTY) continue;
+            int accepted = this.insertFluid(simulated.getFluid(), simulated.getAmount(), true);
+            if (accepted <= 0) {
+                failure = State.OUTPUT_BLOCKED;
+                continue;
+            }
+            FluidStack drained = target.drain(simulated.copyWithAmount(accepted), FluidAction.EXECUTE);
+            int inserted = this.insertFluid(drained.getFluid(), drained.getAmount(), false);
+            remainingBudget -= Math.max(0, inserted);
+            worked |= inserted > 0;
+        }
+        this.setState(worked ? State.RUNNING : failure);
+        if (worked) this.sync();
+        return worked;
     }
 
     private void pushSelectedFluid() {
-        if (this.outputFluid >= 0 && this.outputFluid < this.unlockedTankCount() && this.amounts[this.outputFluid] > 0 && this.tankTypes[this.outputFluid] >= 0 && this.level != null) {
-            this.pushToBoundOutput();
+        if (this.level == null || this.level.getServer() == null) return;
+        int activeTargets = Math.min(this.maxWirelessTargets(), this.outputTargets.size());
+        if (activeTargets <= 0) return;
+
+        int remainingBudget = this.transferBudget();
+        int start = Math.floorMod(this.outputTargetCursor++, activeTargets);
+        boolean worked = false;
+        for (int offset = 0; offset < activeTargets && remainingBudget > 0; ++offset) {
+            FluidTarget link = this.outputTargets.get((start + offset) % activeTargets);
+            int remainingTargets = activeTargets - offset;
+            int targetBudget = Math.max(1, (remainingBudget + remainingTargets - 1) / remainingTargets);
+            int tank = link.tank();
+            if (tank < 0 || tank >= this.unlockedTankCount()
+                    || this.amounts[tank] <= 0 || this.tankTypes[tank] < 0
+                    || !this.wirelessReachable(link.pos())) continue;
+
+            ServerLevel targetLevel = this.level.getServer().getLevel(link.pos().dimension());
+            if (targetLevel == null || !targetLevel.hasChunkAt(link.pos().pos())) continue;
+            IFluidHandler target = targetLevel.getCapability(FluidHandler.BLOCK, link.pos().pos(), link.face());
+            if (target == null) continue;
+
+            int offered = Math.min(targetBudget, this.amounts[tank]);
+            Fluid selectedFluid = fluidByRegistryId(this.tankTypes[tank]);
+            int accepted = target.fill(new FluidStack(selectedFluid, offered), FluidAction.SIMULATE);
+            if (accepted <= 0) continue;
+            int inserted = target.fill(new FluidStack(selectedFluid, accepted), FluidAction.EXECUTE);
+            this.amounts[tank] -= Math.max(0, inserted);
+            this.clearEmptyTank(tank);
+            remainingBudget -= Math.max(0, inserted);
+            worked |= inserted > 0;
         }
+        if (worked) this.sync();
     }
 
-    private boolean pushToBoundOutput() {
-        if (this.outputTarget != null && this.level != null && this.level.getServer() != null) {
-            if (!this.wirelessReachable(this.outputTarget)) {
-                this.setState(ArcaneFluidReservoirBlockEntity.State.WIRELESS_OUT_OF_RANGE);
-                return false;
-            } else {
-                ServerLevel targetLevel = this.level.getServer().getLevel(this.outputTarget.dimension());
-                if (targetLevel != null && targetLevel.hasChunkAt(this.outputTarget.pos())) {
-                    IFluidHandler target = (IFluidHandler)targetLevel.getCapability(FluidHandler.BLOCK, this.outputTarget.pos(), this.outputTargetFace);
-                    if (target == null) {
-                        return false;
-                    } else {
-                        int offered = Math.min(1000 * (1 + this.countUpgrade((Item)ModItems.FLUID_SPEED_UPGRADE.get())), this.amounts[this.outputFluid]);
-                        if (offered <= 0) {
-                            return false;
-                        } else {
-                            Fluid selectedFluid = fluidByRegistryId(this.tankTypes[this.outputFluid]);
-                            FluidStack stack = new FluidStack(selectedFluid, offered);
-                            int accepted = target.fill(stack, FluidAction.SIMULATE);
-                            if (accepted <= 0) {
-                                return false;
-                            } else {
-                                int inserted = target.fill(new FluidStack(selectedFluid, accepted), FluidAction.EXECUTE);
-                                int[] var10000 = this.amounts;
-                                int var10001 = this.outputFluid;
-                                var10000[var10001] -= Math.max(0, inserted);
-                                this.clearEmptyTank(this.outputFluid);
-                                if (inserted > 0) {
-                                    this.sync();
-                                }
-
-                                return inserted > 0;
-                            }
-                        }
-                    }
-                } else {
-                    return false;
-                }
-            }
-        } else {
-            return false;
-        }
+    private int transferBudget() {
+        return 1000 * (1 + this.countUpgrade((Item)ModItems.FLUID_SPEED_UPGRADE.get()));
     }
 
     public IFluidHandler getFluidHandler(@Nullable Direction side) {
@@ -489,7 +487,8 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     }
 
     public IWandable.Result onLastConnection(GlobalPos target, @Nullable Direction face, @Nullable LivingEntity entity, Player player) {
-        if (player instanceof ServerPlayer serverPlayer) {
+        if (target != null && player instanceof ServerPlayer serverPlayer
+                && serverPlayer.getServer() != null) {
             ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
             if (targetLevel != null && (targetLevel.getBlockEntity(target.pos()) instanceof ArcaneFluidReservoirBlockEntity || targetLevel.getBlockEntity(target.pos()) instanceof AdvancedStorageLecternBlockEntity)) {
                 return Result.NONE;
@@ -500,7 +499,8 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     }
 
     private static boolean isAdvancedLectern(GlobalPos target, Player player) {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
+        if (target == null || !(player instanceof ServerPlayer serverPlayer)
+                || serverPlayer.getServer() == null) {
             return false;
         } else {
             ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
@@ -510,19 +510,30 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
 
     private IWandable.Result bindInput(GlobalPos target, @Nullable Direction face, Player player) {
         if (this.level != null && target != null && (!target.dimension().equals(this.level.dimension()) || !target.pos().equals(this.worldPosition))) {
-            if (player instanceof ServerPlayer) {
-                ServerPlayer serverPlayer = (ServerPlayer)player;
+            if (player instanceof ServerPlayer serverPlayer && serverPlayer.getServer() != null) {
                 if (!this.wirelessReachable(target)) {
                     player.displayClientMessage(Component.translatable("message.ars_arcane_matrix.arcane_fluid_reservoir.out_of_range"), true);
                     return Result.FAIL;
                 } else {
                     ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
                     if (targetLevel != null && targetLevel.hasChunkAt(target.pos()) && targetLevel.getCapability(FluidHandler.BLOCK, target.pos(), face) != null) {
-                        this.boundTarget = target;
-                        this.boundFace = face;
+                        int existing = this.findTarget(this.inputTargets, target);
+                        if (existing >= 0) {
+                            this.inputTargets.set(existing, new FluidTarget(target, face, -1));
+                        } else if (this.inputTargets.size() >= this.maxWirelessTargets()) {
+                            player.displayClientMessage(Component.translatable(
+                                    "message.ars_arcane_matrix.arcane_fluid_reservoir.target_limit",
+                                    this.maxWirelessTargets()), true);
+                            return Result.FAIL;
+                        } else {
+                            this.inputTargets.add(new FluidTarget(target, face, -1));
+                        }
                         this.mode = ArcaneFluidReservoirBlockEntity.Mode.BOUND;
                         this.sync();
-                        player.displayClientMessage(Component.translatable("message.ars_arcane_matrix.arcane_fluid_reservoir.input_bound", new Object[]{target.dimension().location().toString(), target.pos().toShortString()}), true);
+                        player.displayClientMessage(Component.translatable(
+                                "message.ars_arcane_matrix.arcane_fluid_reservoir.input_bound",
+                                target.dimension().location().toString(), target.pos().toShortString(),
+                                this.inputTargetCount(), this.maxWirelessTargets()), true);
                         return Result.SUCCESS;
                     } else {
                         player.displayClientMessage(Component.translatable("message.ars_arcane_matrix.arcane_fluid_reservoir.invalid_target"), true);
@@ -539,18 +550,30 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
 
     private IWandable.Result bindOutput(GlobalPos target, @Nullable Direction face, Player player) {
         if (this.level != null && target != null && (!target.dimension().equals(this.level.dimension()) || !target.pos().equals(this.worldPosition))) {
-            if (player instanceof ServerPlayer) {
-                ServerPlayer serverPlayer = (ServerPlayer)player;
+            if (player instanceof ServerPlayer serverPlayer && serverPlayer.getServer() != null) {
                 if (!this.wirelessReachable(target)) {
                     player.displayClientMessage(Component.translatable("message.ars_arcane_matrix.arcane_fluid_reservoir.out_of_range"), true);
                     return Result.FAIL;
                 } else {
                     ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
                     if (targetLevel != null && targetLevel.hasChunkAt(target.pos()) && targetLevel.getCapability(FluidHandler.BLOCK, target.pos(), face) != null) {
-                        this.outputTarget = target;
-                        this.outputTargetFace = face;
+                        FluidTarget link = new FluidTarget(target, face, this.outputFluid);
+                        int existing = this.findTarget(this.outputTargets, target);
+                        if (existing >= 0) {
+                            this.outputTargets.set(existing, link);
+                        } else if (this.outputTargets.size() >= this.maxWirelessTargets()) {
+                            player.displayClientMessage(Component.translatable(
+                                    "message.ars_arcane_matrix.arcane_fluid_reservoir.target_limit",
+                                    this.maxWirelessTargets()), true);
+                            return Result.FAIL;
+                        } else {
+                            this.outputTargets.add(link);
+                        }
                         this.sync();
-                        player.displayClientMessage(Component.translatable("message.ars_arcane_matrix.arcane_fluid_reservoir.output_bound", new Object[]{target.dimension().location().toString(), target.pos().toShortString()}), true);
+                        player.displayClientMessage(Component.translatable(
+                                "message.ars_arcane_matrix.arcane_fluid_reservoir.output_bound",
+                                target.dimension().location().toString(), target.pos().toShortString(),
+                                this.outputFluid + 1, this.outputTargetCount(), this.maxWirelessTargets()), true);
                         return Result.SUCCESS;
                     } else {
                         player.displayClientMessage(Component.translatable("message.ars_arcane_matrix.arcane_fluid_reservoir.invalid_target"), true);
@@ -566,20 +589,39 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     }
 
     public IWandable.Result onClearConnections(Player player) {
-        this.boundTarget = null;
-        this.boundFace = null;
-        this.outputTarget = null;
-        this.outputTargetFace = null;
+        this.inputTargets.clear();
+        this.outputTargets.clear();
+        this.inputTargetCursor = 0;
+        this.outputTargetCursor = 0;
         this.sync();
         player.displayClientMessage(Component.translatable("message.ars_arcane_matrix.arcane_fluid_reservoir.cleared"), true);
         return Result.SUCCESS;
+    }
+
+    private int findTarget(List<FluidTarget> targets, GlobalPos target) {
+        for (int index = 0; index < targets.size(); ++index) {
+            if (targets.get(index).pos().equals(target)) return index;
+        }
+        return -1;
+    }
+
+    public int maxWirelessTargets() {
+        return 1 + Math.min(3, this.countUpgrade((Item) ModItems.FLUID_RANGE_UPGRADE.get()));
+    }
+
+    public int inputTargetCount() {
+        return Math.min(this.inputTargets.size(), this.maxWirelessTargets());
+    }
+
+    public int outputTargetCount() {
+        return Math.min(this.outputTargets.size(), this.maxWirelessTargets());
     }
 
     public Component getDisplayName() {
         return Component.translatable("block.ars_arcane_matrix.arcane_fluid_reservoir");
     }
 
-    public @Nullable AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new ArcaneFluidReservoirMenu(id, inventory, this);
     }
 
@@ -587,6 +629,9 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
         tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.mode", new Object[]{Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.mode." + this.mode.name().toLowerCase())}));
         tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.tanks", new Object[]{this.unlockedTankCount(), this.capacity()}));
         tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.wireless", new Object[]{Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless_tier." + this.wirelessTier())}));
+        tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.targets",
+                this.inputTargetCount(), this.maxWirelessTargets(),
+                this.outputTargetCount(), this.maxWirelessTargets()));
         tooltip.add(Component.translatable("state.ars_arcane_matrix.arcane_fluid_reservoir." + this.state.name().toLowerCase()));
     }
 
@@ -611,8 +656,7 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     }
 
     private static Fluid fluidByRegistryId(int id) {
-        Fluid fluid = (Fluid)BuiltInRegistries.FLUID.byId(id);
-        return fluid == null ? Fluids.EMPTY : fluid;
+        return BuiltInRegistries.FLUID.byId(id);
     }
 
     private static void addFluidChoice(List<Integer> choices, Fluid fluid) {
@@ -658,21 +702,8 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
         tag.putInt("State", this.state.ordinal());
         tag.put("Upgrades", this.upgrades.serializeNBT(registries));
         tag.put("TankModules", this.tankModules.serializeNBT(registries));
-        if (this.boundTarget != null) {
-            tag.putString("TargetDimension", this.boundTarget.dimension().location().toString());
-            tag.putLong("TargetPos", this.boundTarget.pos().asLong());
-            if (this.boundFace != null) {
-                tag.putInt("TargetFace", this.boundFace.get3DDataValue());
-            }
-        }
-
-        if (this.outputTarget != null) {
-            tag.putString("OutputTargetDimension", this.outputTarget.dimension().location().toString());
-            tag.putLong("OutputTargetPos", this.outputTarget.pos().asLong());
-            if (this.outputTargetFace != null) {
-                tag.putInt("OutputTargetFace", this.outputTargetFace.get3DDataValue());
-            }
-        }
+        tag.put("InputTargets", writeTargets(this.inputTargets));
+        tag.put("OutputTargets", writeTargets(this.outputTargets));
 
     }
 
@@ -734,32 +765,76 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
         }
 
         this.outputFluid = Math.min(this.outputFluid, this.unlockedTankCount() - 1);
-        ResourceLocation dimension = ResourceLocation.tryParse(tag.getString("TargetDimension"));
-        if (dimension != null && tag.contains("TargetPos")) {
-            this.boundTarget = GlobalPos.of(ResourceKey.create(Registries.DIMENSION, dimension), BlockPos.of(tag.getLong("TargetPos")));
+        this.inputTargets.clear();
+        this.outputTargets.clear();
+        if (tag.contains("InputTargets")) {
+            readTargets(tag.getList("InputTargets", 10), this.inputTargets, false);
+        } else {
+            FluidTarget migrated = readLegacyTarget(tag, "TargetDimension", "TargetPos", "TargetFace", -1);
+            if (migrated != null) this.inputTargets.add(migrated);
         }
-
-        this.boundFace = tag.contains("TargetFace") ? Direction.from3DDataValue(tag.getInt("TargetFace")) : null;
-        ResourceLocation outputDimension = ResourceLocation.tryParse(tag.getString("OutputTargetDimension"));
-        if (outputDimension != null && tag.contains("OutputTargetPos")) {
-            this.outputTarget = GlobalPos.of(ResourceKey.create(Registries.DIMENSION, outputDimension), BlockPos.of(tag.getLong("OutputTargetPos")));
+        if (tag.contains("OutputTargets")) {
+            readTargets(tag.getList("OutputTargets", 10), this.outputTargets, true);
+        } else {
+            FluidTarget migrated = readLegacyTarget(tag, "OutputTargetDimension", "OutputTargetPos",
+                    "OutputTargetFace", this.outputFluid);
+            if (migrated != null) this.outputTargets.add(migrated);
         }
+        this.inputTargetCursor = 0;
+        this.outputTargetCursor = 0;
+    }
 
-        this.outputTargetFace = tag.contains("OutputTargetFace") ? Direction.from3DDataValue(tag.getInt("OutputTargetFace")) : null;
+    private static ListTag writeTargets(List<FluidTarget> targets) {
+        ListTag list = new ListTag();
+        for (FluidTarget target : targets) {
+            CompoundTag entry = new CompoundTag();
+            entry.putString("Dimension", target.pos().dimension().location().toString());
+            entry.putLong("Pos", target.pos().pos().asLong());
+            if (target.face() != null) entry.putInt("Face", target.face().get3DDataValue());
+            if (target.tank() >= 0) entry.putInt("Tank", target.tank());
+            list.add(entry);
+        }
+        return list;
+    }
+
+    private static void readTargets(ListTag list, List<FluidTarget> targets, boolean output) {
+        for (int index = 0; index < list.size() && targets.size() < 4; ++index) {
+            CompoundTag entry = list.getCompound(index);
+            ResourceLocation dimension = ResourceLocation.tryParse(entry.getString("Dimension"));
+            if (dimension == null || !entry.contains("Pos")) continue;
+            GlobalPos pos = GlobalPos.of(ResourceKey.create(Registries.DIMENSION, dimension),
+                    BlockPos.of(entry.getLong("Pos")));
+            Direction face = entry.contains("Face")
+                    ? Direction.from3DDataValue(entry.getInt("Face")) : null;
+            targets.add(new FluidTarget(pos, face,
+                    output ? Math.floorMod(entry.getInt("Tank"), MAX_TANKS) : -1));
+        }
+    }
+
+    @Nullable
+    private static FluidTarget readLegacyTarget(CompoundTag tag, String dimensionKey, String posKey,
+                                                String faceKey, int tank) {
+        ResourceLocation dimension = ResourceLocation.tryParse(tag.getString(dimensionKey));
+        if (dimension == null || !tag.contains(posKey)) return null;
+        GlobalPos pos = GlobalPos.of(ResourceKey.create(Registries.DIMENSION, dimension),
+                BlockPos.of(tag.getLong(posKey)));
+        Direction face = tag.contains(faceKey)
+                ? Direction.from3DDataValue(tag.getInt(faceKey)) : null;
+        return new FluidTarget(pos, face, tank);
     }
 
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
     }
 
-    public @Nullable ClientboundBlockEntityDataPacket getUpdatePacket() {
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
     private static Fluid findMilkFluid() {
         for(Fluid fluid : BuiltInRegistries.FLUID) {
             ResourceLocation id = BuiltInRegistries.FLUID.getKey(fluid);
-            if (id != null && id.getPath().equals("milk") && fluid != Fluids.EMPTY) {
+            if (id.getPath().equals("milk") && fluid != Fluids.EMPTY) {
                 return fluid;
             }
         }
@@ -774,6 +849,8 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
         }
 
     }
+
+    private record FluidTarget(GlobalPos pos, @Nullable Direction face, int tank) {}
 
     static {
         WATER = Fluids.WATER;
@@ -833,26 +910,20 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
 
         public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
             int type = BuiltInRegistries.FLUID.getId(resource.getFluid());
-            if (resource.getFluid() != Fluids.EMPTY && type >= 0) {
-                for(int tank = 0; tank < ArcaneFluidReservoirBlockEntity.this.unlockedTankCount(); ++tank) {
-                    if (ArcaneFluidReservoirBlockEntity.this.tankTypes[tank] == type && ArcaneFluidReservoirBlockEntity.this.amounts[tank] > 0) {
-                        int drained = Math.min(resource.getAmount(), ArcaneFluidReservoirBlockEntity.this.amounts[tank]);
-                        FluidStack result = new FluidStack(resource.getFluid(), drained);
-                        if (action.execute()) {
-                            int[] var10000 = ArcaneFluidReservoirBlockEntity.this.amounts;
-                            var10000[tank] -= drained;
-                            ArcaneFluidReservoirBlockEntity.this.clearEmptyTank(tank);
-                            ArcaneFluidReservoirBlockEntity.this.sync();
-                        }
-
-                        return result;
-                    }
+            if (resource.getFluid() == Fluids.EMPTY || type < 0) return FluidStack.EMPTY;
+            for (int tank = 0; tank < ArcaneFluidReservoirBlockEntity.this.unlockedTankCount(); ++tank) {
+                if (ArcaneFluidReservoirBlockEntity.this.tankTypes[tank] != type
+                        || ArcaneFluidReservoirBlockEntity.this.amounts[tank] <= 0) continue;
+                int drained = Math.min(resource.getAmount(), ArcaneFluidReservoirBlockEntity.this.amounts[tank]);
+                FluidStack result = new FluidStack(resource.getFluid(), drained);
+                if (action.execute()) {
+                    ArcaneFluidReservoirBlockEntity.this.amounts[tank] -= drained;
+                    ArcaneFluidReservoirBlockEntity.this.clearEmptyTank(tank);
+                    ArcaneFluidReservoirBlockEntity.this.sync();
                 }
-
-                return FluidStack.EMPTY;
-            } else {
-                return FluidStack.EMPTY;
+                return result;
             }
+            return FluidStack.EMPTY;
         }
 
         public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {

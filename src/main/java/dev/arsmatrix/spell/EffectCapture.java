@@ -55,7 +55,7 @@ public final class EffectCapture extends AbstractEffect {
             return;
         }
         if (!(hit.getEntity() instanceof LivingEntity hitTarget) || hitTarget instanceof Player
-                || hitTarget == shooter || hitTarget.isDeadOrDying()) {
+                || hitTarget.isDeadOrDying()) {
             notify(player, "message.ars_arcane_matrix.capture.invalid_target");
             return;
         }
@@ -69,7 +69,7 @@ public final class EffectCapture extends AbstractEffect {
 
         boolean bossMode = stats.hasBuff(AugmentAmplify.INSTANCE);
         boolean boss = target.getType().is(BOSSES);
-        boolean validMode = bossMode ? boss : !boss;
+        boolean validMode = bossMode == boss;
         if (!validMode) {
             notify(player, bossMode
                     ? "message.ars_arcane_matrix.capture.requires_boss"
@@ -168,8 +168,9 @@ public final class EffectCapture extends AbstractEffect {
         if (target instanceof Mob mob && mob.isLeashed()) {
             mob.dropLeash(true, true);
         }
-        if (target instanceof Raider raider && raider.hasActiveRaid()) {
-            raider.getCurrentRaid().removeFromRaid(raider, false);
+        if (target instanceof Raider raider) {
+            var raid = raider.getCurrentRaid();
+            if (raid != null) raid.removeFromRaid(raider, false);
         }
         if (target instanceof Villager villager) {
             villager.releasePoi(MemoryModuleType.HOME);

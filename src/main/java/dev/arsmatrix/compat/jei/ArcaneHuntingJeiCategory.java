@@ -67,8 +67,9 @@ public final class ArcaneHuntingJeiCategory implements IRecipeCategory<ArcaneHun
     @Override public void draw(ArcaneHuntingRule recipe, IRecipeSlotsView slots, GuiGraphics graphics,
                                double mouseX, double mouseY) {
         var font = Minecraft.getInstance().font;
-        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(recipe.entityId());
-        Component target = type == null ? Component.literal(recipe.entityId().toString()) : type.getDescription();
+        Component target = BuiltInRegistries.ENTITY_TYPE.getOptional(recipe.entityId())
+                .map(EntityType::getDescription)
+                .orElseGet(() -> Component.literal(recipe.entityId().toString()));
         String targetText = target.getString();
         if (font.width(targetText) > 146) {
             targetText = font.plainSubstrByWidth(targetText, 137) + "…";

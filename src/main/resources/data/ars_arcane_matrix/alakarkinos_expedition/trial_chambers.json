@@ -5,7 +5,14 @@
   "proof": "minecraft:trial_key",
   "work_ticks": 200,
   "source_cost": 10000,
-  "loot_table": "ars_arcane_matrix:chests/expedition_trial_chambers",
+  "loot_tables": [
+    { "id": "minecraft:chests/trial_chambers/corridor" },
+    { "id": "minecraft:chests/trial_chambers/entrance" },
+    { "id": "minecraft:chests/trial_chambers/intersection" },
+    { "id": "minecraft:chests/trial_chambers/intersection_barrel" },
+    { "id": "minecraft:chests/trial_chambers/supply" },
+    { "id": "minecraft:chests/trial_chambers/reward", "weight": 2 }
+  ],
   "display_outputs": [
     { "item": "minecraft:breeze_rod" },
     { "item": "minecraft:diamond" },

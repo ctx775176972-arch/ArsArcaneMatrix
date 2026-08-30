@@ -1,13 +1,12 @@
 package dev.arsmatrix.blockentity;
 
 import com.hollingsworth.arsnouveau.api.item.IWandable;
-import com.hollingsworth.arsnouveau.common.block.tile.ArcanePedestalTile;
 import dev.arsmatrix.ArsArcaneMatrix;
 import dev.arsmatrix.block.ArcaneSmelterCoreBlock;
 import dev.arsmatrix.registry.ModBlockEntities;
 import dev.arsmatrix.registry.ModItems;
 import dev.arsmatrix.util.MixedItemBuffer;
-import dev.arsmatrix.util.MultiblockClearance;
+import dev.arsmatrix.util.StructureInventoryAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -96,19 +95,18 @@ public final class ArcaneSmelterCoreBlockEntity extends BlockEntity implements I
         if (inputs.isEmpty()) { progressTicks = 0; setState(OperatingState.NO_INPUT); setLit(false); return; }
         if (recipe.isEmpty()) { progressTicks = 0; setState(OperatingState.INVALID_INPUT); setLit(false); return; }
 
-        ArcanePedestalTile pedestal = fuelPedestal();
-        ItemStack offered = pedestal == null ? ItemStack.EMPTY : pedestal.getStack();
-        boolean offeredSpecial = isEnchantedFuel(offered);
-        if (offeredSpecial && !specialMode) {
+        IItemHandler fuelContainer = fuelContainer();
+        int enchantedSlot = StructureInventoryAccess.firstSlot(fuelContainer, ArcaneSmelterCoreBlockEntity::isEnchantedFuel);
+        if (enchantedSlot >= 0 && !specialMode) {
             fuelUnits = 0;
-            consumeFuel(pedestal, offered);
+            consumeFuel(fuelContainer, enchantedSlot);
         }
         int requestedFuel = Math.min(MAX_BATCH, inputs.count()) * FUEL_PER_ITEM;
-        fillFuelForBatch(pedestal, requestedFuel);
+        fillFuelForBatch(fuelContainer, requestedFuel);
         if (fuelUnits < FUEL_PER_ITEM) {
-            offered = pedestal == null ? ItemStack.EMPTY : pedestal.getStack();
             progressTicks = 0;
-            setState(pedestal == null || offered.isEmpty() ? OperatingState.NO_FUEL : OperatingState.INVALID_FUEL);
+            setState(fuelContainer == null || !StructureInventoryAccess.hasAnyItem(fuelContainer)
+                    ? OperatingState.NO_FUEL : OperatingState.INVALID_FUEL);
             setLit(false);
             return;
         }
@@ -124,32 +122,30 @@ public final class ArcaneSmelterCoreBlockEntity extends BlockEntity implements I
         } else if (tickCounter % 20 == 0) sync();
     }
 
-    private void fillFuelForBatch(@Nullable ArcanePedestalTile pedestal, int requestedFuel) {
-        while (pedestal != null && fuelUnits < requestedFuel) {
-            ItemStack offered = pedestal.getStack();
-            if (offered.isEmpty()) return;
-            boolean offeredSpecial = isEnchantedFuel(offered);
+    private void fillFuelForBatch(@Nullable IItemHandler container, int requestedFuel) {
+        while (container != null && fuelUnits < requestedFuel) {
+            int slot = StructureInventoryAccess.firstSlot(container, stack ->
+                    stack.getBurnTime(RecipeType.SMELTING) > 0 && (!specialMode || isEnchantedFuel(stack)));
             // Finish the remaining enchanted work before accepting ordinary fuel.
-            if (specialMode && !offeredSpecial) return;
-            if (!consumeFuel(pedestal, offered)) return;
+            if (slot < 0 || !consumeFuel(container, slot)) return;
         }
     }
 
-    private boolean consumeFuel(@Nullable ArcanePedestalTile pedestal, ItemStack offered) {
-        if (pedestal == null || offered.isEmpty()) return false;
-        int burn = offered.getItem().getBurnTime(offered, RecipeType.SMELTING);
+    private boolean consumeFuel(@Nullable IItemHandler container, int slot) {
+        if (container == null || slot < 0) return false;
+        ItemStack offered = container.getStackInSlot(slot);
+        int burn = offered.getBurnTime(RecipeType.SMELTING);
         if (burn <= 0) return false;
-        specialMode = isEnchantedFuel(offered);
+        ItemStack consumed = container.extractItem(slot, 1, false);
+        if (consumed.isEmpty()) return false;
+        specialMode = isEnchantedFuel(consumed);
         fuelUnits = Math.min(Integer.MAX_VALUE - burn, fuelUnits) + burn;
-        ItemStack remainder = offered.getItem().hasCraftingRemainingItem(offered)
-                ? offered.getItem().getCraftingRemainingItem(offered) : ItemStack.EMPTY;
-        offered.shrink(1);
-        if (offered.isEmpty()) pedestal.setStack(remainder);
-        else {
-            pedestal.setStack(offered);
-            if (!remainder.isEmpty()) storeOutput(remainder);
+        ItemStack remainder = consumed.getItem().hasCraftingRemainingItem(consumed)
+                ? consumed.getItem().getCraftingRemainingItem(consumed) : ItemStack.EMPTY;
+        if (!remainder.isEmpty()) {
+            ItemStack leftover = ItemHandlerHelper.insertItemStacked(container, remainder, false);
+            if (!leftover.isEmpty()) storeOutput(leftover);
         }
-        pedestal.setChanged();
         sync();
         return true;
     }
@@ -284,26 +280,29 @@ public final class ArcaneSmelterCoreBlockEntity extends BlockEntity implements I
         return null;
     }
 
-    @Nullable private ArcanePedestalTile fuelPedestal() {
-        return level != null && level.getBlockEntity(worldPosition.above(2)) instanceof ArcanePedestalTile pedestal
-                ? pedestal : null;
+    @Nullable private IItemHandler fuelContainer() {
+        return StructureInventoryAccess.at(level, consumableContainerPosition(worldPosition));
     }
 
     public static boolean isStructureFormed(Level level, BlockPos core, Direction facing) {
         for (BlockPos pos : framePositions(core, facing)) if (!level.getBlockState(pos).is(FRAME)) return false;
-        return level.getBlockEntity(core.above(2)) instanceof ArcanePedestalTile
-                && MultiblockClearance.isOpen(level, core.above());
+        return StructureInventoryAccess.at(level, consumableContainerPosition(core)) != null;
     }
+
+    public static BlockPos consumableContainerPosition(BlockPos core) { return core.below(); }
 
     public static List<BlockPos> framePositions(BlockPos core, Direction facing) {
         Direction right = facing.getClockWise();
         Direction back = facing.getOpposite();
         List<BlockPos> result = new ArrayList<>();
-        for (int depth = 0; depth <= 1; depth++) {
-            for (int y = 0; y <= 2; y++) {
+        for (int depth = 0; depth <= 2; depth++) {
+            for (int y = -1; y <= 1; y++) {
                 for (int x = -1; x <= 1; x++) {
-                    if (depth == 0 && x == 0 && (y == 0 || y == 1 || y == 2)) continue;
-                    result.add(core.relative(right, x).relative(back, depth).above(y));
+                    if (x == 0 && depth == 0 && (y == -1 || y == 0)) continue;
+                    // The central chamber is intentionally ignored rather than
+                    // requiring air, so utility blocks never invalidate the structure.
+                    if (x == 0 && depth == 1 && y == 0) continue;
+                    result.add(core.relative(right, x).relative(back, depth).offset(0, y, 0));
                 }
             }
         }
@@ -355,6 +354,9 @@ public final class ArcaneSmelterCoreBlockEntity extends BlockEntity implements I
     public int getBufferedItemCount() { return outputs.stream().mapToInt(ItemStack::getCount).sum(); }
     public boolean hasInputContainer() { return inputContainer != null; }
     public boolean hasOutputContainer() { return outputContainer != null; }
+    public boolean hasConsumableContainer() {
+        return StructureInventoryAccess.at(level, consumableContainerPosition(worldPosition)) != null;
+    }
 
     public void dropContents() {
         if (level == null || level.isClientSide) return;

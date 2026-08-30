@@ -9,6 +9,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.*;
@@ -26,7 +27,10 @@ public final class ArcaneReactionManager extends SimpleJsonResourceReloadListene
         Map<ResourceLocation, ArcaneReactionRule> loaded = new LinkedHashMap<>();
         entries.forEach((id, json) -> {
             try {
-                ArcaneReactionRule rule = parse(id, GsonHelper.convertToJsonObject(json, id.toString()));
+                JsonObject object = GsonHelper.convertToJsonObject(json, id.toString());
+                String requiredMod = GsonHelper.getAsString(object, "required_mod", "");
+                if (!requiredMod.isEmpty() && !ModList.get().isLoaded(requiredMod)) return;
+                ArcaneReactionRule rule = parse(id, object);
                 if (rule.enabled()) loaded.put(id, rule);
             } catch (RuntimeException exception) {
                 ArsArcaneMatrix.LOGGER.error("Could not load Arcane Reaction recipe {}", id, exception);

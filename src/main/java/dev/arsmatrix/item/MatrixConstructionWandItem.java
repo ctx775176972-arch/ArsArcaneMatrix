@@ -7,11 +7,13 @@ import dev.arsmatrix.block.ArcaneSmelterCoreBlock;
 import dev.arsmatrix.blockentity.ArcaneCrusherCoreBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneProcessorCoreBlockEntity;
 import dev.arsmatrix.blockentity.ArcaneSmelterCoreBlockEntity;
+import dev.arsmatrix.blockentity.DimensionAnchorBlockEntity;
 import dev.arsmatrix.block.SuperSourceJarCoreBlock;
 import dev.arsmatrix.blockentity.SuperSourceJarCoreBlockEntity;
 import dev.arsmatrix.config.MatrixConfig;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.util.MultiblockClearance;
+import dev.arsmatrix.util.StructureInventoryAccess;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -143,6 +145,7 @@ public final class MatrixConstructionWandItem extends Item {
         else if (block == ModBlocks.ARCANE_SMELTER_CORE.get()) addSmelter(level, result, core);
         else if (block == ModBlocks.ARCANE_CRUSHER_CORE.get()) addCrusher(level, result, core);
         else if (block == ModBlocks.SUPER_SOURCE_JAR_CORE.get()) addMatrixSourceReservoir(level, result, core);
+        else if (block == ModBlocks.DIMENSION_ANCHOR.get()) addDimensionAnchor(result, core);
         result.sort(Comparator.comparingInt((Placement p) -> p.pos().getY())
                 .thenComparingDouble(p -> p.pos().distSqr(core)));
         return result;
@@ -184,27 +187,26 @@ public final class MatrixConstructionWandItem extends Item {
         Direction facing = level.getBlockState(core).getValue(ArcaneProcessorCoreBlock.FACING);
         ArcaneProcessorCoreBlockEntity.framePositions(core, facing).forEach(pos ->
                 result.add(new Placement(pos, ModBlocks.ARCANE_STRUCTURAL_FRAME.get(), Kind.PROCESSOR_FRAME)));
-        ArcaneProcessorCoreBlockEntity.pedestalPositions(core, facing).forEach(pos ->
-                result.add(new Placement(pos, ARCANE_PEDESTAL, Kind.EXACT)));
-        result.add(new Placement(core.above(2), net.minecraft.world.level.block.Blocks.AIR, Kind.CLEARANCE));
-        result.add(new Placement(core.relative(facing), net.minecraft.world.level.block.Blocks.AIR, Kind.CLEARANCE));
-        result.add(new Placement(core.relative(facing.getOpposite()), net.minecraft.world.level.block.Blocks.AIR, Kind.CLEARANCE));
+        result.add(new Placement(ArcaneProcessorCoreBlockEntity.toolPedestalPosition(core, facing),
+                ARCANE_PEDESTAL, Kind.EXACT));
+        result.add(new Placement(ArcaneProcessorCoreBlockEntity.foodContainerPosition(core, facing),
+                net.minecraft.world.level.block.Blocks.BARREL, Kind.CONSUMABLE_CONTAINER));
     }
 
     private static void addSmelter(Level level, List<Placement> result, BlockPos core) {
         Direction facing = level.getBlockState(core).getValue(ArcaneSmelterCoreBlock.FACING);
         ArcaneSmelterCoreBlockEntity.framePositions(core, facing)
                 .forEach(pos -> result.add(new Placement(pos, ModBlocks.ARCANE_STRUCTURAL_FRAME.get(), Kind.SMELTER_FRAME)));
-        result.add(new Placement(core.above(2), ARCANE_PEDESTAL, Kind.EXACT));
-        result.add(new Placement(core.above(), net.minecraft.world.level.block.Blocks.AIR, Kind.CLEARANCE));
+        result.add(new Placement(ArcaneSmelterCoreBlockEntity.consumableContainerPosition(core),
+                net.minecraft.world.level.block.Blocks.BARREL, Kind.CONSUMABLE_CONTAINER));
     }
 
     private static void addCrusher(Level level, List<Placement> result, BlockPos core) {
         Direction facing = level.getBlockState(core).getValue(ArcaneCrusherCoreBlock.FACING);
         ArcaneCrusherCoreBlockEntity.framePositions(core, facing)
                 .forEach(pos -> result.add(new Placement(pos, ModBlocks.ARCANE_STRUCTURAL_FRAME.get(), Kind.CRUSHER_FRAME)));
-        result.add(new Placement(core.above(2), ARCANE_PEDESTAL, Kind.EXACT));
-        result.add(new Placement(core.above(), net.minecraft.world.level.block.Blocks.AIR, Kind.CLEARANCE));
+        result.add(new Placement(ArcaneCrusherCoreBlockEntity.consumableContainerPosition(core, facing),
+                net.minecraft.world.level.block.Blocks.BARREL, Kind.CONSUMABLE_CONTAINER));
     }
 
     private static void addMatrixSourceReservoir(Level level, List<Placement> result, BlockPos core) {
@@ -216,6 +218,11 @@ public final class MatrixConstructionWandItem extends Item {
                     : net.minecraft.world.level.block.Blocks.TINTED_GLASS;
             result.add(new Placement(part.pos(), block, Kind.EXACT));
         }
+    }
+
+    private static void addDimensionAnchor(List<Placement> result, BlockPos anchor) {
+        DimensionAnchorBlockEntity.expansionFramePositions(anchor).forEach(pos ->
+                result.add(new Placement(pos, ModBlocks.ARCANE_STRUCTURAL_FRAME.get(), Kind.EXACT)));
     }
 
     private record Placement(BlockPos pos, Block block, Kind kind) {
@@ -232,12 +239,13 @@ public final class MatrixConstructionWandItem extends Item {
                 case PROCESSOR_FRAME -> state.is(PROCESSOR_FRAME);
                 case SMELTER_FRAME -> state.is(SMELTER_FRAME);
                 case CRUSHER_FRAME -> state.is(CRUSHER_FRAME);
+                case CONSUMABLE_CONTAINER -> StructureInventoryAccess.at(level, pos) != null;
             };
         }
     }
 
     private enum Kind { EXACT, CLEARANCE, MATRIX_FRAME, MATRIX_AMPLIFIER, MINE_FRAME, MINE_BASIC_FRAME, MINE_NODE, MINE_CENTER,
-        PROCESSOR_FRAME, SMELTER_FRAME, CRUSHER_FRAME }
+        PROCESSOR_FRAME, SMELTER_FRAME, CRUSHER_FRAME, CONSUMABLE_CONTAINER }
     private static Block arsBlock(String path) {
         return BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("ars_nouveau", path));
     }

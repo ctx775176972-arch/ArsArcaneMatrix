@@ -5,9 +5,7 @@ import dev.arsmatrix.ArsArcaneMatrix;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -23,19 +21,12 @@ public final class RareCreatureSummoningRitual extends AbstractRitual {
         if (!takeSourceNow()) return;
 
         EntityType<?> type = selectedType();
-        Entity entity = type.create(serverLevel);
+        BlockPos spawnPos = findSpawnPos(serverLevel, getPos().above());
+        var entity = type.spawn(serverLevel, spawnPos, MobSpawnType.MOB_SUMMONED);
         if (entity == null) {
             setFinished();
             return;
         }
-        BlockPos spawnPos = findSpawnPos(serverLevel, getPos().above());
-        entity.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D,
-                serverLevel.random.nextFloat() * 360.0F, 0.0F);
-        if (entity instanceof Mob mob) {
-            mob.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(spawnPos),
-                    MobSpawnType.MOB_SUMMONED, null);
-        }
-        serverLevel.addFreshEntity(entity);
         incrementProgress();
         setFinished();
     }

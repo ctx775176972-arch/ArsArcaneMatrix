@@ -17,11 +17,20 @@ profile:
 #include:
 #  - name: <SomeEnabledInspectionId>
 
-#Disable inspections
-#exclude:
-#  - name: <SomeDisabledInspectionId>
-#    paths:
-#      - <path/where/not/run/inspection>
+# Minecraft's Level implements AutoCloseable for dedicated-server lifecycle
+# management. Gameplay code borrows it and must never close it itself.
+# Mixin self-casts are resolved by the Mixin transformer and therefore cannot
+# be understood correctly by ordinary Java data-flow analysis.
+exclude:
+  - name: AutoCloseableResource
+    paths:
+      - src/main/java
+  - name: DataFlowIssue
+    paths:
+      - src/main/java/dev/arsmatrix/mixin
+  - name: ConstantValue
+    paths:
+      - src/main/java/dev/arsmatrix/mixin/BlockEntityTypeMixin.java
 
 projectJDK: "21" #(Applied in CI/CD pipeline)
 

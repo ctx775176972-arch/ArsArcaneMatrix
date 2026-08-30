@@ -1,5 +1,5 @@
 {
-  "type": "ars_nouveau:enchanting_apparatus",
+  "type": "ars_arcane_matrix:arcane_machine_upgrade",
   "keepNbtOfReagent": false,
   "pedestalItems": [
     { "item": "minecraft:gold_block" },

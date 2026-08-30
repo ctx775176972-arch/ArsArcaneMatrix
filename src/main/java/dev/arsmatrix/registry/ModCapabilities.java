@@ -101,7 +101,7 @@ public final class ModCapabilities {
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 ModBlockEntities.ARCANE_VACUUM_HOPPER.get(),
-                (blockEntity, direction) -> blockEntity.drops()
+                (blockEntity, direction) -> blockEntity.automationItems()
         );
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,

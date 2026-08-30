@@ -75,7 +75,6 @@ public final class SourceStoneGeneratorBlock extends BaseEntityBlock {
                     output.getCount(),
                     generator.getProgress(),
                     generator.getProcessingCost(),
-                    generator.getAmplifierCount(),
                     generator.getBufferedItemCount()
             ), false);
         }

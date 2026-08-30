@@ -263,7 +263,7 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
         }
         if (id >= BUTTON_SELECT_OFFSET) {
             int requestedIndex = id - BUTTON_SELECT_OFFSET;
-            if (requestedIndex >= 0 && requestedIndex < craftableOutputs.size()) {
+            if (requestedIndex < craftableOutputs.size()) {
                 selectedIndex = requestedIndex;
                 requestedCount = 1;
                 return true;
@@ -566,7 +566,7 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
         if (index == 0) {
             if (!moveItemStackTo(source, 10, 46, true)) return ItemStack.EMPTY;
             slot.onQuickCraft(source, copy);
-        } else if (index >= 1 && index < 10) {
+        } else if (index < 10) {
             if (!moveItemStackTo(source, 10, 46, false)) return ItemStack.EMPTY;
         } else if (advancedStorage && storagePageActive) {
             if (player.level().isClientSide) {

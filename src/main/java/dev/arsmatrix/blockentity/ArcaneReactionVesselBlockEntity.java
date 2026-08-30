@@ -13,6 +13,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
@@ -42,13 +43,9 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
         @Override protected void onContentsChanged(int slot) { setChanged(); }
     };
     private final IItemHandler automationItems = new AutomationItems();
-    private final FluidTank inputTank = new FluidTank(TANK_CAPACITY) {
+    private final FluidTank tank = new FluidTank(TANK_CAPACITY) {
         @Override protected void onContentsChanged() { setChanged(); sync(); }
     };
-    private final FluidTank outputTank = new FluidTank(TANK_CAPACITY) {
-        @Override protected void onContentsChanged() { setChanged(); sync(); }
-    };
-    private final IFluidHandler automationFluids = new AutomationFluids();
     private int progress;
     private int maxProgress = 100;
     private boolean sourcePaid;
@@ -57,13 +54,11 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
 
     public final ContainerData menuData = new ContainerData() {
         @Override public int get(int index) { return switch (index) {
-            case 0 -> progress; case 1 -> maxProgress; case 2 -> inputTank.getFluidAmount();
-            case 3 -> outputTank.getFluidAmount();
-            case 4 -> BuiltInRegistries.FLUID.getId(inputTank.getFluid().getFluid());
-            case 5 -> BuiltInRegistries.FLUID.getId(outputTank.getFluid().getFluid());
-            case 6 -> state.ordinal(); default -> 0; }; }
+            case 0 -> progress; case 1 -> maxProgress; case 2 -> tank.getFluidAmount();
+            case 3 -> BuiltInRegistries.FLUID.getId(tank.getFluid().getFluid());
+            case 4 -> state.ordinal(); default -> 0; }; }
         @Override public void set(int index, int value) { if (index == 0) progress = value; }
-        @Override public int getCount() { return 7; }
+        @Override public int getCount() { return 5; }
     };
 
     public ArcaneReactionVesselBlockEntity(BlockPos pos, BlockState state) {
@@ -73,7 +68,7 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
     public static void serverTick(Level level, BlockPos pos, BlockState blockState, ArcaneReactionVesselBlockEntity vessel) {
         if (level.hasNeighborSignal(pos)) { vessel.setState(State.REDSTONE_PAUSED); return; }
         List<ItemStack> inputs = List.of(vessel.items.getStackInSlot(0), vessel.items.getStackInSlot(1));
-        var match = ArcaneReactionManager.findMatch(inputs, vessel.inputTank.getFluid());
+        var match = ArcaneReactionManager.findMatch(inputs, vessel.tank.getFluid());
         if (match.isEmpty()) { vessel.reset(State.MISSING_INPUT); return; }
         ArcaneReactionRule recipe = match.get();
         if (vessel.activeRecipe != null && !vessel.activeRecipe.equals(recipe.id())) vessel.reset(State.MISSING_INPUT);
@@ -87,7 +82,7 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
         vessel.setState(State.RUNNING);
         if (++vessel.progress < vessel.maxProgress) { vessel.setChanged(); return; }
         recipe.consumeItems(inputs);
-        if (recipe.inputFluidAmount() > 0) vessel.inputTank.drain(recipe.inputFluidAmount(), IFluidHandler.FluidAction.EXECUTE);
+        if (recipe.inputFluidAmount() > 0) vessel.tank.drain(recipe.inputFluidAmount(), IFluidHandler.FluidAction.EXECUTE);
         ItemStack itemOutput = recipe.createItemOutput();
         if (!itemOutput.isEmpty()) {
             ItemStack stored = vessel.items.getStackInSlot(2);
@@ -95,7 +90,7 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
             else stored.grow(itemOutput.getCount());
         }
         FluidStack fluidOutput = recipe.createFluidOutput();
-        if (!fluidOutput.isEmpty()) vessel.outputTank.fill(fluidOutput, IFluidHandler.FluidAction.EXECUTE);
+        if (!fluidOutput.isEmpty()) vessel.tank.fill(fluidOutput, IFluidHandler.FluidAction.EXECUTE);
         vessel.progress = 0;
         vessel.sourcePaid = false;
         vessel.activeRecipe = null;
@@ -109,7 +104,13 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
                 && (!ItemStack.isSameItemSameComponents(stored, output)
                 || stored.getCount() + output.getCount() > stored.getMaxStackSize())) return false;
         FluidStack fluid = recipe.createFluidOutput();
-        return fluid.isEmpty() || outputTank.fill(fluid, IFluidHandler.FluidAction.SIMULATE) == fluid.getAmount();
+        if (fluid.isEmpty()) return true;
+        FluidStack remaining = tank.getFluid().copy();
+        if (recipe.inputFluidAmount() > 0) remaining.shrink(recipe.inputFluidAmount());
+        return remaining.isEmpty()
+                ? fluid.getAmount() <= TANK_CAPACITY
+                : FluidStack.isSameFluidSameComponents(remaining, fluid)
+                        && remaining.getAmount() + fluid.getAmount() <= TANK_CAPACITY;
     }
 
     private boolean consumeSource(int cost) {
@@ -119,7 +120,8 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
         for (ISpecialSourceProvider provider : providers) {
             ISourceTile source = provider.getSource();
             if (source != null && source.canProvideSource()) {
-                available += Math.max(0, source.removeSource(cost - Math.min(cost, available), true));
+                int needed = cost - available;
+                available += Math.max(0, Math.min(needed, source.removeSource(needed, true)));
                 if (available >= cost) break;
             }
         }
@@ -145,20 +147,23 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
 
     public ItemStackHandler items() { return items; }
     public IItemHandler itemHandler(@Nullable Direction side) { return automationItems; }
-    public IFluidHandler fluidHandler(@Nullable Direction side) { return automationFluids; }
-    public FluidTank inputTank() { return inputTank; }
-    public FluidTank outputTank() { return outputTank; }
+    public IFluidHandler fluidHandler(@Nullable Direction side) { return tank; }
+    public FluidTank tank() { return tank; }
     public State state() { return state; }
+    public void clearFluid() {
+        tank.setFluid(FluidStack.EMPTY);
+        reset(State.IDLE);
+        sync();
+    }
     public Container asContainer() { return new SimpleContainer(items.getStackInSlot(0).copy(), items.getStackInSlot(1).copy(), items.getStackInSlot(2).copy()); }
 
     @Override public Component getDisplayName() { return Component.translatable("block.ars_arcane_matrix.arcane_reaction_vessel"); }
-    @Nullable @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) { return new ArcaneReactionVesselMenu(id, inventory, this); }
+    @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) { return new ArcaneReactionVesselMenu(id, inventory, this); }
 
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Items", items.serializeNBT(registries));
-        tag.put("InputTank", inputTank.writeToNBT(registries, new CompoundTag()));
-        tag.put("OutputTank", outputTank.writeToNBT(registries, new CompoundTag()));
+        tag.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
         tag.putInt("Progress", progress); tag.putInt("MaxProgress", maxProgress);
         tag.putBoolean("SourcePaid", sourcePaid); tag.putInt("State", state.ordinal());
         if (activeRecipe != null) tag.putString("ActiveRecipe", activeRecipe.toString());
@@ -166,12 +171,36 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         if (tag.contains("Items")) items.deserializeNBT(registries, tag.getCompound("Items"));
-        if (tag.contains("InputTank")) inputTank.readFromNBT(registries, tag.getCompound("InputTank"));
-        if (tag.contains("OutputTank")) outputTank.readFromNBT(registries, tag.getCompound("OutputTank"));
+        if (tag.contains("Tank")) {
+            tank.readFromNBT(registries, tag.getCompound("Tank"));
+        } else {
+            FluidTank oldInput = new FluidTank(TANK_CAPACITY);
+            FluidTank oldOutput = new FluidTank(TANK_CAPACITY);
+            if (tag.contains("InputTank")) oldInput.readFromNBT(registries, tag.getCompound("InputTank"));
+            if (tag.contains("OutputTank")) oldOutput.readFromNBT(registries, tag.getCompound("OutputTank"));
+            FluidStack input = oldInput.getFluid();
+            FluidStack output = oldOutput.getFluid();
+            if (!output.isEmpty()) {
+                tank.setFluid(output.copy());
+                if (!input.isEmpty() && FluidStack.isSameFluidSameComponents(input, output)) {
+                    tank.getFluid().setAmount(Math.min(TANK_CAPACITY, input.getAmount() + output.getAmount()));
+                }
+            } else if (!input.isEmpty()) {
+                tank.setFluid(input.copy());
+            }
+        }
         progress = Math.max(0, tag.getInt("Progress")); maxProgress = Math.max(1, tag.getInt("MaxProgress"));
         sourcePaid = tag.getBoolean("SourcePaid");
         state = State.values()[Math.floorMod(tag.getInt("State"), State.values().length)];
         activeRecipe = ResourceLocation.tryParse(tag.getString("ActiveRecipe"));
+    }
+
+    @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @Override public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     public enum State { IDLE, RUNNING, MISSING_INPUT, MISSING_SOURCE, OUTPUT_BLOCKED, REDSTONE_PAUSED }
@@ -183,14 +212,5 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
         @Override public ItemStack extractItem(int slot, int amount, boolean simulate) { return slot == 2 ? items.extractItem(slot, amount, simulate) : ItemStack.EMPTY; }
         @Override public int getSlotLimit(int slot) { return items.getSlotLimit(slot); }
         @Override public boolean isItemValid(int slot, ItemStack stack) { return slot < 2; }
-    }
-    private final class AutomationFluids implements IFluidHandler {
-        @Override public int getTanks() { return 2; }
-        @Override public FluidStack getFluidInTank(int tank) { return tank == 0 ? inputTank.getFluid() : tank == 1 ? outputTank.getFluid() : FluidStack.EMPTY; }
-        @Override public int getTankCapacity(int tank) { return TANK_CAPACITY; }
-        @Override public boolean isFluidValid(int tank, FluidStack stack) { return tank == 0 && inputTank.isFluidValid(stack); }
-        @Override public int fill(FluidStack resource, FluidAction action) { return inputTank.fill(resource, action); }
-        @Override public FluidStack drain(FluidStack resource, FluidAction action) { return outputTank.drain(resource, action); }
-        @Override public FluidStack drain(int maxDrain, FluidAction action) { return outputTank.drain(maxDrain, action); }
     }
 }

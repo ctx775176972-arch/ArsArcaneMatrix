@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"item": "minecraft:bucket", "count": 1}
+  ],
+  "input_fluid": {"id": "minecraft:milk", "amount": 1000},
+  "output": {"item": "minecraft:milk_bucket", "amount": 1},
+  "source_cost": 0,
+  "processing_ticks": 20
+}

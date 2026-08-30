@@ -36,6 +36,7 @@ public final class ClientModEvents {
         event.registerBlockEntityRenderer(ModBlockEntities.SUPER_SOURCE_JAR_CORE.get(),
                 SuperSourceJarCoreRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.DRYGMY_ARENA.get(), DrygmyArenaRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.DIMENSION_ANCHOR.get(), DimensionAnchorRenderer::new);
         event.registerBlockEntityRenderer(
                 ModBlockEntities.ARCANE_IMBUEMENT_CORE.get(),
                 ArcaneImbuementCoreRenderer::new

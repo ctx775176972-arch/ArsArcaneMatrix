@@ -332,7 +332,7 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
     private static boolean filterAccepts(FilterProfile profile, ItemStack candidate) {
         boolean matches = profile.templates.stream().anyMatch(template ->
                 filterMatches(candidate, template, profile.matchMode));
-        return profile.allowList ? matches : !matches;
+        return profile.allowList == matches;
     }
 
     private static boolean filterMatches(ItemStack candidate, ItemStack template,

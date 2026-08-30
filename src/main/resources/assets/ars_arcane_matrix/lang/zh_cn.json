@@ -3,7 +3,7 @@
   "block.ars_arcane_matrix.arcane_mine_core": "奥术矿井核心",
   "block.ars_arcane_matrix.arcane_amplifier": "奥术增幅器",
   "block.ars_arcane_matrix.arcane_imbuement_core": "奥术灌注核心",
-  "block.ars_arcane_matrix.source_stone_generator": "魔源刷石机",
+  "block.ars_arcane_matrix.source_stone_generator": "魔源造石机",
   "block.ars_arcane_matrix.storage_grid_directory": "晶格目录",
   "item.ars_arcane_matrix.grid_expansion_warehouse": "晶格扩容仓库",
   "screen.ars_arcane_matrix.storage_grid_directory.types": "物品种类：%s / %s",
@@ -13,18 +13,18 @@
   "block.ars_arcane_matrix.drygmy_arena": "奥术猎场",
   "ars_arcane_matrix.section.ars_arcane_matrix": "奥术矩阵",
   "book.ars_arcane_matrix.category.description": "奥术矩阵的核心结构、设备与强化组件。",
-  "book.ars_arcane_matrix.matrix_core.overview": "$(item)奥术矩阵核心$()是矿物处理线的最终成果。配方要求五种魔源通道以及加工、熔炼、粉碎三阶段结晶；以核心为中心建造类似潮涌核心的三轴 5×5 奥术结构框架。$(br2)至少一个环完整且有效框架达到最低数量时自动启动；另外两个环可逐块扩建以提高产量。六个轴向顶点均可用奥术增幅器替换，每个使产量提高 25%。",
+  "book.ars_arcane_matrix.matrix_core.overview": "$(item)奥术矩阵核心$()是完成矿物处理线后解锁的终局魔源生产设备。配方要求五种魔源通道以及加工、熔炼、粉碎三阶段结晶；以核心为中心建造类似潮涌核心的三轴 5×5 奥术结构框架。$(br2)至少一个环完整且有效框架达到最低数量时自动启动；另外两个环可逐块扩建以提高产量。六个轴向顶点均可用奥术增幅器替换，每个使产量提高 25%。",
   "book.ars_arcane_matrix.arcane_mine.overview": "$(item)奥术矿井$()在核心上方连续建造 3×3、5×5、7×7 和 9×9 倒置信标层。第一层只需中心与四角的魔源宝石块以及四边中心的魔源石，作为低成本启动层；从第二层开始，其余位置必须使用奥术结构框架。四层依次解锁木镐、石镐、铁镐和钻石镐等级矿石。$(br2)矿井不缓存魔源；生产条件满足时会检查附近网络，只有能够完整支付本批费用才会一次性扣除。完整四层后取源范围扩大到32格，并可使用已加载矩阵核心。$(br2)宝石块四角标示白名单悬挂位置，魔源石边缘中心标示黑名单悬挂位置。艾瑟金属等终局稀有矿物明确要求第四层。",
   "book.ars_arcane_matrix.arcane_mine.cycle.title": "推荐材料循环",
   "book.ars_arcane_matrix.arcane_mine.cycle.text": "让矩阵为矿井和奥术灌注核心供应魔源，并用矿井生产青金石矿。使用$(thing)时运$()工具采掘矿石，再将青金石块送入灌注核心批量转换为魔源宝石。将足够补充材料点的部分送回矿井，剩余青金石无需全部灌注。$(br2)这会形成可自动化的材料循环，但产矿和灌注仍会持续消耗矩阵产生的魔源。",
   "book.ars_arcane_matrix.arcane_mine.amplifier.title": "奥术增幅器",
   "book.ars_arcane_matrix.arcane_mine.amplifier.text": "完整四层矿井每消耗 128 材料点相当于进行一次 1% 的$(item)奥术增幅器$()判定；累计消耗 12,800 材料点仍未获得时必定产出。高成本矿物会更快推进概率与保底，产出后进度清零。每个完整层中心最多放置一个，使普通矿物产量 +1，并使魔源和材料成本提高 50%。$(br2)无法输出的增幅器会在核心内单独缓冲，最多 64 个。多余增幅器可回收。",
-  "documentation.ars_arcane_matrix.matrix_core.overview": "奥术矩阵核心是矿物处理线的最终奖励。五种魔源通道证明常规魔源基础，三种加工结晶证明加工者、熔炼者和粉碎者均已完成。至少建成一个完整的 5×5 环才能启动，其他有效框架可逐块提高产量。",
+  "documentation.ars_arcane_matrix.matrix_core.overview": "奥术矩阵核心是完成矿物处理线后解锁的终局魔源生产设备。五种魔源通道证明常规魔源基础，三种加工结晶证明加工者、熔炼者和粉碎者均已完成。至少建成一个完整的 5×5 环才能启动，其他有效框架可逐块提高产量。",
   "documentation.ars_arcane_matrix.arcane_mine.overview": "奥术矿井第一层是无需合金的低成本启动层：五个魔源宝石块表示中心与白名单四角，四个魔源石表示黑名单边缘。从第二层开始，其余结构位置必须使用奥术结构框架，要求玩家先手动收集首批铜、金和紫水晶。四层依次解锁木、石、铁和钻石挖掘等级；艾瑟金属等终局稀有矿物锁定第四层。",
   "documentation.ars_arcane_matrix.arcane_amplifier.overview": "奥术增幅器是完整四层奥术矿井的稀有副产物。每消耗 128 材料点相当于一次 1% 判定，累计消耗 12,800 点仍未获得时必定产出；使用廉价矿物不会获得同等判定效率。在矩阵中，可替换最多六个轴向顶点的魔源宝石块，每个使基础魔源产量提高 25%。在矿井中，每个完整层中心可替换一个，每个使普通矿物产量 +1，并使魔源和材料成本提高 50%，最多四个。多余增幅器可回收。",
   "documentation.ars_arcane_matrix.arcane_imbuement_core.overview": "奥术灌注核心是一台独立的批量魔源宝石转换器，不需要放在灌注室下方。使用支配之杖依次绑定输出与输入容器；它会抽取附近魔源，并默认每五秒处理最多四个材料。青金石或紫水晶碎片各消耗500魔源产生一个魔源宝石；青金石块产生九个，紫水晶块产生四个。压缩模式会将每四个宝石转换为一个魔源宝石块。多余奥术增幅器也可在此回收。红石信号会暂停加工。",
-  "documentation.ars_arcane_matrix.source_stone_generator.overview": "魔源刷石机是用于批量生产石头与泥土类方块的单一控制器。没有匹配基座配方时，积累 200 点进度后产出 64 个圆石；即使没有魔源也会每秒自然增加 20 点进度。有可抽取魔源时基础周期为五秒，在刷石机正北、正南、正东和正西分别放置奥术增幅器，每个使周期减少一秒，最低一秒。它会读取周围 3×3×3 范围内所有非空奥术基座，以无序且数量精确的方式匹配数据包配方，基座物品不会消耗。九格内部缓存会优先向正下方容器输出，也可从任意面抽取。红石信号会暂停运行。",
-  "book.ars_arcane_matrix.source_stone_generator.overview": "没有匹配基座配方时，$(item)魔源刷石机$()默认产出 64 个圆石。它每秒自然增加 20 点进度；附近有可抽取魔源时，标准批次缩短为五秒。$(br2)在正北、正南、正东和正西最多放置四个$(item)奥术增幅器$()，每个使有魔源时的周期减少一秒，四个时达到每秒一批。周围 3×3×3 范围内的非空奥术基座会以无序、数量精确的方式选择数据驱动配方，且不会消耗其中物品。$(br2)产物会进入缓存并优先推送至正下方容器；管道可从任意面抽取。红石信号会暂停运行。",
+  "documentation.ars_arcane_matrix.source_stone_generator.overview": "魔源造石机是用于批量生产石头与泥土类方块的单一控制器。没有匹配基座配方时，积累 200 点进度后产出 64 个圆石；即使没有魔源也会每秒自然增加 20 点进度。有可抽取魔源时，每批固定需要五秒。它会读取周围 3×3×3 范围内所有非空奥术基座，以无序且数量精确的方式匹配数据包配方，基座物品不会消耗。九格内部缓存会优先向正下方容器输出，也可从任意面抽取。红石信号会暂停运行。",
+  "book.ars_arcane_matrix.source_stone_generator.overview": "没有匹配基座配方时，$(item)魔源造石机$()默认产出 64 个圆石。它每秒自然增加 20 点进度；附近有可抽取魔源时，每批固定需要五秒。$(br2)周围 3×3×3 范围内的非空奥术基座会以无序、数量精确的方式选择数据驱动配方，且不会消耗其中物品。$(br2)产物会进入缓存并优先推送至正下方容器；管道可从任意面抽取。红石信号会暂停运行。",
   "documentation.ars_arcane_matrix.drygmy_arena.overview": "奥术猎场只复制由Boss身份或击败事件产生的里程碑奖励。遗迹宝箱中的海洋之心、回响碎片、锻造模板与龙首已归入探宝蟹探索，不再由猎场生产。猎场不消耗魔源、不创建实体、不触发死亡事件、不产出经验，也不读取普通战利品表。",
   "book.ars_arcane_matrix.drygmy_arena.overview": "以$(item)下界合金块$()作为附魔装置试剂，配合德格米护符、召唤精华、下界之星、荒野贡物、龙息、魔源宝石块、熔铸结晶与富集矿物结晶，可制作$(item)奥术猎场$()。三种挑战材料要求玩家先亲自接触并完成对应Boss阶段，猎场只负责后续自动化。将一个收容罐直接放在猎场正上方，并在水平两格范围内放置至少两座奥术基座。$(br2)召唤精华增加10点，凝魂召唤核心增加100点。罐中生物只作为身份样本，绝不会被生成、伤害或释放。",
   "ars_arcane_matrix.glyph_name.glyph_capture": "捕获",
@@ -80,6 +80,8 @@
   "message.ars_arcane_matrix.state.unformed": "未形成",
   "message.ars_arcane_matrix.state.bound": "已绑定",
   "message.ars_arcane_matrix.state.unbound": "未绑定",
+  "message.ars_arcane_matrix.state.present": "已放置",
+  "message.ars_arcane_matrix.state.missing": "缺失",
   "message.ars_arcane_matrix.state.unlinked": "未连接灌注室",
   "message.ars_arcane_matrix.state.idle": "待机",
   "message.ars_arcane_matrix.state.processing": "加工中",
@@ -91,7 +93,7 @@
   "message.ars_arcane_matrix.state.no_hunting_rule": "该目标没有特殊产物规则",
   "message.ars_arcane_matrix.state.needs_catalyst": "正在收集催化剂点数",
   "message.ars_arcane_matrix.drygmy_arena.status": "奥术猎场：%s｜目标：%s｜进度：%s/%s 秒｜缓冲：%s 件｜催化剂：%s/%s",
-  "message.ars_arcane_matrix.source_stone_generator.status": "刷石机：%s｜产物：%s ×%s｜进度：%s/%s｜增幅器：%s/4｜缓存：%s",
+  "message.ars_arcane_matrix.source_stone_generator.status": "魔源造石机：%s｜产物：%s ×%s｜进度：%s/%s｜缓存：%s",
   "message.ars_arcane_matrix.source_stone_generator.source_missing": "缺少魔源",
   "message.ars_arcane_matrix.source_stone_generator.normal_running": "正常运行",
   "tooltip.ars_arcane_matrix.matrix_core.frame": "框架：%s / %s｜产量：%s Source/秒",
@@ -130,7 +132,7 @@
   "jei.ars_arcane_matrix.arcane_imbuement_core.amethyst": "紫水晶：单个碎片消耗500魔源并产出一个魔源宝石；紫水晶块消耗2,000魔源并产出四个。压缩模式会等待凑齐四个宝石再输出魔源宝石块。每个奥术增幅器消耗2,000魔源，并回收为十六个宝石或四个宝石块。",
   "jei.ars_arcane_matrix.arcane_imbuement_core.automation": "核心默认每秒最多抽取100,000魔源。使用支配之杖第一次绑定输出、第二次绑定输入，潜行使用清除绑定。默认最多四个材料在五秒内同时完成；红石信号会暂停加工。",
   "jei.ars_arcane_matrix.source_stone_generator.info": "用于数据驱动批量生产石头与泥土类方块的单一控制器。没有匹配基座配方时，积累 200 点进度后产出 64 个圆石；没有魔源也会每秒自然增加 20 点进度。",
-  "jei.ars_arcane_matrix.source_stone_generator.multiblock": "读取以刷石机为中心 3×3×3 范围内所有非空奥术基座，物品无序且数量精确匹配，并且不会消耗。有魔源时基础周期为五秒；正北、正南、正东、正西的奥术增幅器依次将周期缩短为四、三、二、一秒。",
+  "jei.ars_arcane_matrix.source_stone_generator.multiblock": "读取以魔源造石机为中心 3×3×3 范围内所有非空奥术基座，物品无序且数量精确匹配，并且不会消耗。有可抽取魔源时，每批固定需要五秒。",
   "jei.ars_arcane_matrix.source_stone_generator.automation": "九格缓存会向正下方容器推送，管道可从任意面抽取。输出堵塞时停止增加进度且不抽取魔源；红石信号会暂停运行。",
   "jei.ars_arcane_matrix.drygmy_arena.info": "在奥术猎场正上方放置收容罐，并在附近检测范围内任意放置至少两座奥术基座。召唤精华价值10点，凝魂召唤核心价值100点。",
   "jei.ars_arcane_matrix.drygmy_arena.drops": "只产出Boss身份或击败事件对应的里程碑物品。遗迹宝箱奖励由探宝蟹探索，普通战利品由德格米石阵处理；猎场不会生成或杀死实体、触发死亡事件、播放Boss音效或提供经验。",
@@ -150,10 +152,10 @@
   "jade.ars_arcane_matrix.imbuement.mode": "输出模式：%s",
   "jade.ars_arcane_matrix.imbuement.operation": "输入：%s · 输出：%s · 进度：%s 秒",
   "jade.ars_arcane_matrix.imbuement.links": "输入绑定：%s · 输出绑定：%s",
-  "jade.ars_arcane_matrix.source_stone_generator.status": "魔源刷石机：%s",
+  "jade.ars_arcane_matrix.source_stone_generator.status": "魔源造石机：%s",
   "jade.ars_arcane_matrix.source_stone_generator.output": "产物：%s ×%s",
   "jade.ars_arcane_matrix.source_stone_generator.progress": "进度：%s / %s · 当前效率：%s/秒",
-  "jade.ars_arcane_matrix.source_stone_generator.structure": "增幅器：%s/4 · 缓存：%s",
+  "jade.ars_arcane_matrix.source_stone_generator.structure": "缓存：%s",
   "jade.ars_arcane_matrix.drygmy_arena.status": "奥术猎场：%s",
   "jade.ars_arcane_matrix.drygmy_arena.target": "目标：%s",
   "jade.ars_arcane_matrix.drygmy_arena.operation": "进度：%s / %s 秒 · 缓冲：%s 件 · 催化剂：%s/%s",
@@ -284,7 +286,7 @@
   "message.ars_arcane_matrix.arcane_processor.status": "加工者：%s｜矿石 %s｜进度 %s/5 秒｜剩余工作时间 %s 秒｜蕴魔结晶保底 %s/8｜缓存 %s",
   "message.ars_arcane_matrix.arcane_processor.no_food": "缺少食物",
   "message.ars_arcane_matrix.arcane_processor.no_ore": "缺少完整矿石方块",
-  "message.ars_arcane_matrix.arcane_processor.no_tool": "两个对称基座中缺少工具",
+  "message.ars_arcane_matrix.arcane_processor.no_tool": "右侧基座缺少工具",
   "message.ars_arcane_matrix.arcane_processor.invalid_tool": "工具无效或带有精准采集",
   "message.ars_arcane_matrix.arcane_processor.normal": "普通食物模式运行中",
   "message.ars_arcane_matrix.arcane_processor.magic": "魔法食物模式运行中"
@@ -294,8 +296,8 @@
   ,"jade.ars_arcane_matrix.arcane_processor.status": "加工者：%s"
   ,"jade.ars_arcane_matrix.arcane_processor.operation": "矿石：%s · 进度：%s/%s秒 · 剩余工作：%s秒"
   ,"jade.ars_arcane_matrix.arcane_processor.crystal": "蕴魔结晶保底：%s/8 · 判定进度：%s/5矿石"
-  ,"jade.ars_arcane_matrix.arcane_processor.links": "输入：%s · 输出：%s · 缓存：%s"
-  ,"jei.ars_arcane_matrix.enchanted_crystal.source": "蕴魔结晶只能由加工者产生。向食物基座提供 #ars_nouveau:magic_food 标签中的魔法食物，使加工者进入魔法食物模式；普通食物模式不会产生蕴魔结晶。"
+  ,"jade.ars_arcane_matrix.arcane_processor.links": "输入：%s · 输出：%s · 食物容器：%s · 缓存：%s"
+  ,"jei.ars_arcane_matrix.enchanted_crystal.source": "蕴魔结晶只能由加工者产生。向结构中的食物容器提供新生魔艺的魔法食物，使加工者进入魔法食物模式；普通食物模式不会产生蕴魔结晶。"
   ,"jei.ars_arcane_matrix.enchanted_crystal.pity": "魔法食物模式累计处理5个矿石方块进行一次12.5%产出判定；连续7次判定未产生时，第8次必定产生，因此最迟处理40个矿石获得一枚。未满5个的判定进度与保底次数都会保存，并且只在魔法食物模式下推进。"
   ,"block.ars_arcane_matrix.arcane_smelter_core": "奥术熔炼者核心"
   ,"item.ars_arcane_matrix.enchanted_archwood_charcoal": "蕴魔至高木炭"
@@ -306,21 +308,21 @@
   ,"message.ars_arcane_matrix.arcane_smelter.bindings_cleared": "熔炼者的输入与输出绑定已清除。"
   ,"message.ars_arcane_matrix.arcane_smelter.no_input": "缺少可熔炼矿物"
   ,"message.ars_arcane_matrix.arcane_smelter.invalid_input": "输入不是矿石、粗矿或矿粉"
-  ,"message.ars_arcane_matrix.arcane_smelter.no_fuel": "顶部基座缺少燃料"
-  ,"message.ars_arcane_matrix.arcane_smelter.invalid_fuel": "顶部基座物品不是有效燃料"
+  ,"message.ars_arcane_matrix.arcane_smelter.no_fuel": "顶部容器缺少燃料"
+  ,"message.ars_arcane_matrix.arcane_smelter.invalid_fuel": "顶部容器中没有有效燃料"
   ,"message.ars_arcane_matrix.arcane_smelter.normal": "普通燃料模式运行中"
   ,"message.ars_arcane_matrix.arcane_smelter.enchanted": "蕴魔燃料模式运行中"
   ,"jade.ars_arcane_matrix.arcane_smelter.status": "奥术熔炼者：%s"
   ,"jade.ars_arcane_matrix.arcane_smelter.operation": "输入：%s · 进度：%s/5秒 · 剩余燃料：%s次 · 缓存：%s"
   ,"jade.ars_arcane_matrix.arcane_smelter.crystal": "熔铸结晶保底：%s/8 · 判定进度：%s/16矿物"
-  ,"jade.ars_arcane_matrix.arcane_smelter.links": "输入：%s · 输出：%s"
+  ,"jade.ars_arcane_matrix.arcane_smelter.links": "输入：%s · 输出：%s · 燃料容器：%s"
   ,"jei.ars_arcane_matrix.arcane_smelter.info": "处理 #c:ores、#c:raw_materials 与 #c:dusts 中带有熔炉配方的矿物，并额外支持原版粗矿块。每5秒可将多种矿物混合并行熔炼，合计最多64个；矿粉的最终收益由其配方决定。"
-  ,"jei.ars_arcane_matrix.arcane_smelter.structure": "空手右击核心查看3×3×2结构投影。核心上方留空作为炉口，再上方放奥术基座提供燃料；其余位置使用魔源石或平滑魔源石。"
+  ,"jei.ars_arcane_matrix.arcane_smelter.structure": "空手右击核心查看3×3×2结构投影。核心上方留空作为炉口，再上方放置任意具有物品栏能力的容器提供燃料；投影默认显示箱子。"
   ,"jei.ars_arcane_matrix.arcane_smelter.automation": "支配之杖第一连接绑定输出、第二连接绑定输入。红石信号暂停运行；熔岩桶会回收空桶。"
-  ,"jei.ars_arcane_matrix.enchanted_archwood_charcoal.info": "由一枚蕴魔结晶和八个至高木原木制成，可供奥术熔炼者完成128次熔炼，并开启熔铸结晶副产物模式。完成矿物线后，可在奥术反应釜中使用八份蕴魔至高木炭、一枚熔铸结晶、一桶熔岩和2,000魔源制成燃烧时间为单份10倍的蕴魔至高木炭块。放入时会立即替换尚未用完的普通燃料。"
+  ,"jei.ars_arcane_matrix.enchanted_archwood_charcoal.info": "由一枚蕴魔结晶和八个至高木原木制成，可供奥术熔炼者完成128次熔炼，并开启熔铸结晶副产物模式。进入粉碎阶段并能稳定供应火之精华后，可在奥术反应釜中使用四份蕴魔至高木炭、四份火之精华、一桶熔岩和2,000魔源制成燃烧时间为单份10倍的蕴魔至高木炭块，以精华产线替代部分至高木消耗。放入时会立即替换尚未用完的普通燃料。"
   ,"jei.ars_arcane_matrix.casting_crystal.source": "熔铸结晶只能由使用蕴魔至高木炭的奥术熔炼者产生，是下一阶段粉碎者核心的科技门槛材料。"
   ,"jei.ars_arcane_matrix.casting_crystal.pity": "蕴魔燃料模式每处理16个矿物进行一次12.5%判定；连续7次失败后第8次必定获得，因此最迟处理128个矿物获得一枚。"
-  ,"documentation.ars_arcane_matrix.arcane_smelter.overview": "奥术熔炼者是矿物加工线的第二阶段。它以原版熔炉燃料处理矿石、粗矿、粗矿块和矿粉，每5秒可将多种矿物混合并行熔炼，合计最多64个。顶部奥术基座提供燃料；使用蕴魔至高木炭时可以产出熔铸结晶。输入与输出由支配之杖绑定，空手右击核心可查看结构投影。"
+  ,"documentation.ars_arcane_matrix.arcane_smelter.overview": "奥术熔炼者是矿物加工线的第二阶段。它以原版熔炉燃料处理矿石、粗矿、粗矿块和矿粉，每5秒可将多种矿物混合并行熔炼，合计最多64个。以核心为正面中央搭建3×3×3结构，核心下方的容器提供燃料，其余外壳由24个框架组成；内部空位不参与结构检测。使用蕴魔至高木炭时可以产出熔铸结晶。空桶等剩余物会优先返回燃料容器，无法放回时进入输出缓存。输入与输出由支配之杖绑定，空手右击核心可查看结构投影。"
   ,"block.ars_arcane_matrix.arcane_crusher_core": "奥术粉碎者核心"
   ,"item.ars_arcane_matrix.enriched_mineral_crystal": "富集矿物结晶"
   ,"item.ars_arcane_matrix.ancient_grove_catalyst": "远古林地催化剂"
@@ -329,22 +331,22 @@
   ,"message.ars_arcane_matrix.whirlisprig.mode.advanced": "远古林地模式"
   ,"jade.ars_arcane_matrix.whirlisprig.mode": "风转草：%s"
   ,"jade.ars_arcane_matrix.whirlisprig.production": "产出规则：%s"
-  ,"jade.ars_arcane_matrix.whirlisprig.diversity": "生态多样性：%s/5 · 工作耗时 %s%%"
+  ,"jade.ars_arcane_matrix.whirlisprig.diversity": "生态多样性：%s/5 · 约%s次工作积累完成"
   ,"jade.ars_arcane_matrix.whirlisprig.production.none": "本体产物规则"
-  ,"jade.ars_arcane_matrix.whirlisprig.production.normal": "至高木相关产物 ×2"
-  ,"jade.ars_arcane_matrix.whirlisprig.production.advanced": "至高木原木 ×4"
-  ,"jei.ars_arcane_matrix.whirlisprig.earth_mode": "土之精华模式：从风转草三格内的普通容器抽取土之精华，只保留至高木相关产物，并将本轮完整产量提升为2倍。周围不同植物家族会提高工作速度。"
-  ,"jei.ars_arcane_matrix.whirlisprig.advanced_mode": "远古林地模式：从三格内的普通容器抽取远古林地催化剂，只产出本体及联动模组的至高木原木，并将本轮完整产量提升为4倍。周围不同植物家族会提高工作速度。"
-  ,"jei.ars_arcane_matrix.whirlisprig.consumption": "只有风转草成功支付魔源并开始一轮产出时才从容器消耗一份催化剂。同一植物的原木、树叶和树苗视为一个家族；最多计算5个家族，每级减少10%工作耗时。"
+  ,"jade.ars_arcane_matrix.whirlisprig.production.normal": "至高木相关产物 ×4"
+  ,"jade.ars_arcane_matrix.whirlisprig.production.advanced": "至高木原木 ×8"
+  ,"jei.ars_arcane_matrix.whirlisprig.earth_mode": "土之精华模式：从风转草三格内的普通容器抽取土之精华，只保留至高木相关产物，并将本轮完整产量提升为4倍。周围不同植物家族会提高工作速度。"
+  ,"jei.ars_arcane_matrix.whirlisprig.advanced_mode": "远古林地模式：从三格内的普通容器抽取远古林地催化剂，只产出本体及联动模组的至高木原木，并将本轮完整产量提升为8倍。周围不同植物家族会提高工作速度。"
+  ,"jei.ars_arcane_matrix.whirlisprig.consumption": "只有风转草成功支付魔源并开始一轮产出时才从容器消耗一份催化剂。同一植物的原木、树叶和树苗视为一个家族；最多计算5个家族。1至5级多样性分别约需5、4、3、2、1次工作积累完成一轮。"
   ,"jei.ars_arcane_matrix.arcane_machine_upgrade": "奥术机器升级"
   ,"jei.ars_arcane_matrix.arcane_machine_upgrade.tier": "机器等级：%s → %s"
-  ,"jei.ars_arcane_matrix.burn_sherd.bootstrap": "将任意合适陶片交给探宝蟹，使其佩戴后即可执行原版工作或遗迹远征。"
+  ,"jei.ars_arcane_matrix.burn_sherd.bootstrap": "在奥术反应釜中使用砖、土之精华、250 mB 熔岩与500魔源制作烈焰陶片。将任意合适陶片交给探宝蟹，使其佩戴后即可执行原版工作或遗迹远征。"
   ,"documentation.ars_arcane_matrix.whirlisprig.title": "风转草远古林地"
-  ,"documentation.ars_arcane_matrix.whirlisprig.overview": "风转草会从三格内的普通容器抽取土之精华或远古林地催化剂；没有催化剂时完全保持本体行为。两种林地模式会读取花周围5格内的生态多样性：同一植物的原木、树叶和树苗只算一个家族，最多计算5个家族，每级减少10%工作耗时。"
+  ,"documentation.ars_arcane_matrix.whirlisprig.overview": "风转草会从三格内的普通容器抽取土之精华或远古林地催化剂；没有催化剂时完全保持本体行为。两种林地模式会读取花周围5格内的生态多样性：同一植物的原木、树叶和树苗只算一个家族，最多计算5个家族。1至5级多样性分别约需5、4、3、2、1次工作积累完成一轮。"
   ,"documentation.ars_arcane_matrix.whirlisprig.earth_layout.title": "土之精华农场"
-  ,"documentation.ars_arcane_matrix.whirlisprig.earth_layout.text": "让风转草靠近林地中心，在花三格内放置储存土之精华的普通容器。可在周围混种至高木、花卉、作物、浆果或远古植物；过滤机制会排除不需要的产物。每次成功生产消耗1个土之精华，使至高木相关产物变为2倍；5个不同植物家族会将工作耗时降至50%。"
+  ,"documentation.ars_arcane_matrix.whirlisprig.earth_layout.text": "让风转草靠近林地中心，在花三格内放置储存土之精华的普通容器。可在周围混种至高木、花卉、作物、浆果或远古植物；过滤机制会排除不需要的产物。每次成功生产消耗1个土之精华，使至高木相关产物变为4倍；5级多样性约一次工作积累即可完成一轮。"
   ,"documentation.ars_arcane_matrix.whirlisprig.ancient_layout.title": "远古林地催化剂农场"
-  ,"documentation.ars_arcane_matrix.whirlisprig.ancient_layout.text": "远古林地催化剂模式使用相同的生态布局，只需将容器中的土之精华换成远古林地催化剂。每次成功生产消耗1个催化剂，只保留至高木原木并使本轮完整产量提升至4倍；缺少魔源、待机或没有有效原木时不会消耗。生态多样性只提高速度，不会再次提高产量。"
+  ,"documentation.ars_arcane_matrix.whirlisprig.ancient_layout.text": "远古林地催化剂模式使用相同的生态布局，只需将容器中的土之精华换成远古林地催化剂。每次成功生产消耗1个催化剂，只保留至高木原木并使本轮完整产量提升至8倍；缺少魔源、待机或没有有效原木时不会消耗。生态多样性只提高速度，不会再次提高产量。"
   ,"documentation.ars_arcane_matrix.whirlisprig.production_layout.title": "至高木量产与系统分工"
   ,"documentation.ars_arcane_matrix.whirlisprig.production_layout.text": "风转草林地主要服务至高木体系。特殊模式已有产物过滤，因此可以在紧凑林地中混种不同至高木和少量代表植物来取得多样性，不必扩大成巨型农场。同类植物堆放再多也不会继续加速。小麦、魔源浆果、下界疣等大宗常规作物仍建议使用本体农田催生与收获体系。"
   ,"block.ars_arcane_matrix.advanced_imbuement_chamber": "高级灌注室"
@@ -364,14 +366,14 @@
   ,"message.ars_arcane_matrix.arcane_crusher.bindings_cleared": "粉碎者的输入与输出绑定已清除。"
   ,"message.ars_arcane_matrix.arcane_crusher.no_input": "缺少可粉碎的金属矿物"
   ,"message.ars_arcane_matrix.arcane_crusher.invalid_input": "没有找到对应金属矿粉"
-  ,"message.ars_arcane_matrix.arcane_crusher.no_essence": "顶部基座缺少风之精华或水之精华"
-  ,"message.ars_arcane_matrix.arcane_crusher.invalid_essence": "顶部基座精华无效"
+  ,"message.ars_arcane_matrix.arcane_crusher.no_essence": "顶部容器缺少风之精华或水之精华"
+  ,"message.ars_arcane_matrix.arcane_crusher.invalid_essence": "顶部容器中没有有效精华"
   ,"message.ars_arcane_matrix.arcane_crusher.air": "风之精华增产模式运行中"
   ,"message.ars_arcane_matrix.arcane_crusher.water": "水之精华富集模式运行中"
   ,"jade.ars_arcane_matrix.arcane_crusher.status": "奥术粉碎者：%s"
   ,"jade.ars_arcane_matrix.arcane_crusher.operation": "输入：%s · 进度：%s/5秒 · 缓存：%s"
   ,"jade.ars_arcane_matrix.arcane_crusher.crystal": "富集结晶保底：%s/8 · 判定进度：%s/16矿物"
-  ,"jade.ars_arcane_matrix.arcane_crusher.links": "输入：%s · 输出：%s"
+  ,"jade.ars_arcane_matrix.arcane_crusher.links": "输入：%s · 输出：%s · 精华容器：%s"
   ,"jei.ars_arcane_matrix.arcane_crushing": "奥术粉碎"
   ,"jei.ars_arcane_matrix.arcane_crushing.base": "基础"
   ,"jei.ars_arcane_matrix.arcane_crushing.air": "风"
@@ -385,11 +387,11 @@
   ,"jei.ars_arcane_matrix.arcane_crushing.water_bonus.ancient_debris": "每个远古残骸计入16点进度，立即进行1次结晶判定；第8次保底"
   ,"jei.ars_arcane_matrix.arcane_crushing.mode.yield": "增产模式"
   ,"jei.ars_arcane_matrix.arcane_crushing.mode.enrichment": "富集模式"
-  ,"jei.ars_arcane_matrix.arcane_crusher.info": "粉碎者每5秒消耗顶部基座中的一份精华，驱动本批混合并行处理多种矿物，合计最多16个。粗矿基础产出2份矿粉，原矿基础产出1份；风之精华分别提高为3份与2份。"
+  ,"jei.ars_arcane_matrix.arcane_crusher.info": "粉碎者每5秒消耗顶部结构容器中的一份精华，驱动本批混合并行处理多种矿物，合计最多16个。粗矿基础产出2份矿粉，原矿基础产出1份；风之精华分别提高为3份与2份。"
   ,"jei.ars_arcane_matrix.arcane_crusher.compat": "自动识别金属原矿与粗矿，并寻找对应的兼容矿粉。铁、铜、金优先输出本模组矿粉；不处理红石、青金石、钻石、绿宝石或紫水晶簇。远古残骸属于特殊配方，并按原矿规则享受风精华增产。"
-  ,"jei.ars_arcane_matrix.arcane_crusher.automation": "支配之杖第一连接绑定输出、第二连接绑定输入。空手右击核心查看5×3×2研磨架投影；顶部基座提供精华，红石信号暂停运行。"
+  ,"jei.ars_arcane_matrix.arcane_crusher.automation": "支配之杖第一连接绑定输出、第二连接绑定输入。空手右击核心查看5×3×2研磨架投影；投影箱子可替换为任意具有物品栏能力的容器并提供精华，红石信号暂停运行。"
   ,"jei.ars_arcane_matrix.enriched_mineral_crystal.source": "水之精华模式每累计处理16个矿物进行一次12.5%判定，连续7次失败后第8次必定产生富集矿物结晶。"
-  ,"documentation.ars_arcane_matrix.arcane_crusher.overview": "奥术粉碎者是矿物加工线的第三阶段。它从通用标签自动寻找金属矿粉，每5秒消耗一份精华，并可将多种矿物混合并行处理，合计最多16个。顶部奥术基座放置风之精华可提高矿粉数量；放置水之精华则维持基础产量并产生富集矿物结晶副产物。支配之杖绑定输入与输出，空手右击核心查看结构投影。"
+  ,"documentation.ars_arcane_matrix.arcane_crusher.overview": "奥术粉碎者是矿物加工线的第三阶段。它从通用标签自动寻找金属矿粉，每5秒消耗一份精华，并可将多种矿物混合并行处理，合计最多16个。结构占据5×4×5范围，由底部3×3平台、中部5×5外圈和上部3×3粉碎平台组成，共需33个框架；核心位于外圈正面中央，精华容器紧邻核心下方，其他位置不参与结构检测。容器放置风之精华可提高矿粉数量；放置水之精华则维持基础产量并产生富集矿物结晶副产物。支配之杖绑定输入与输出，空手右击核心查看结构投影。"
   ,"item.ars_arcane_matrix.matrix_construction_wand": "矩阵构筑棒"
   ,"tooltip.ars_arcane_matrix.construction_wand.single": "右击核心：放置一个缺失的结构方块"
   ,"tooltip.ars_arcane_matrix.construction_wand.all": "潜行右击核心：尽可能补全整个结构"
@@ -404,9 +406,8 @@
   ,"item.ars_arcane_matrix.gold_dust": "金粉"
   ,"item.ars_arcane_matrix.ancient_debris_dust": "远古残骸粉"
   ,"documentation.ars_arcane_matrix.amethyst_golem_enhancement.title": "紫水晶傀儡强化"
-  ,"documentation.ars_arcane_matrix.amethyst_golem_enhancement.overview": "紫水晶傀儡每5秒重新识别家园中心各方向10格内的紫水晶块、母岩与奥术基座。在基座上放置镐不会被消耗：效率同时缩短催生与收获的冷却和动作时间，效率V时动作约为1秒；每次催生还会为每个母岩执行1加效率等级次随机刻。效率不改变紫水晶块转化母岩的5分钟冷却。时运直接影响掉落，精准采集让傀儡收获完整紫水晶簇。另一个基座放置漏斗后，产物会直接传送进家园容器；容器装满时安全留在地面。"
-  ,"jei.ars_arcane_matrix.amethyst_golem_enhancement.tool": "在傀儡家园中心各方向10格内的奥术基座上放置镐。效率缩短催生与收获的冷却和动作，并使每个母岩获得1加效率等级次催生判定；效率V动作约1秒、每个母岩6次判定。母岩转换仍保持5分钟冷却。时运提高掉落，精准采集产出完整紫水晶簇。工具不会损伤。"
-  ,"jei.ars_arcane_matrix.amethyst_golem_enhancement.hopper": "在另一个附近的奥术基座上放置漏斗，可将家园周围10格的紫水晶碎片或紫水晶簇直接送入傀儡的家园容器。容器满时不会吞物。"
+  ,"documentation.ars_arcane_matrix.amethyst_golem_enhancement.overview": "紫水晶傀儡每5秒重新识别家园中心各方向10格内的紫水晶块、母岩与奥术基座。每只傀儡每轮都独立催生最多4块母岩，并公平轮换全部目标；共享同一家园的多个傀儡会按永久UUID错开起始批次与首次冷却。母岩充足时可减少重复，母岩不足时也允许共同催生，因此增加傀儡会真实增加总催生次数，并避免所有傀儡一起工作后集体停机。UUID与轮换游标随实体存档，重启不会从头选择。在基座上放置镐即启用模拟工具模式，工具不会被消耗：效率同时缩短催生与收获的冷却和动作时间，每次催生还会执行1加效率等级次随机刻；效率不改变紫水晶块转化母岩的5分钟冷却。时运直接影响掉落，精准采集让傀儡收获完整紫水晶簇。模拟工具模式下，产物自动传送进家园容器，容器装满时安全留在地面。"
+  ,"jei.ars_arcane_matrix.amethyst_golem_enhancement.tool": "在傀儡家园中心各方向10格内的奥术基座上放置镐。效率缩短催生与收获的冷却和动作，并使每个母岩获得1加效率等级次催生判定；效率V动作约1秒、每个母岩6次判定。母岩转换仍保持5分钟冷却。时运提高掉落，精准采集产出完整紫水晶簇。工具不会损伤；使用模拟工具时，产物自动送入家园容器，容器满时留在地面。"
   ,"block.ars_arcane_matrix.starbuncle_logistics_hub": "星宝石兽物流总站"
   ,"message.ars_arcane_matrix.starbuncle_hub.not_owner": "只有放置总站的玩家可以管理它。"
   ,"message.ars_arcane_matrix.starbuncle_hub.registered_nearby": "已登记附近 %s 只星宝石兽。"
@@ -473,11 +474,11 @@
   ,"message.ars_arcane_matrix.dimension_anchor.state.active": "维度稳定中"
   ,"message.ars_arcane_matrix.dimension_anchor.state.missing_source": "缺少魔源"
   ,"message.ars_arcane_matrix.dimension_anchor.state.redstone_paused": "红石暂停"
-  ,"message.ars_arcane_matrix.dimension_anchor.status": "维度锚：%s"
+  ,"message.ars_arcane_matrix.dimension_anchor.status": "维度锚：%s｜%s×%s区块｜%s魔源/秒"
   ,"jade.ars_arcane_matrix.dimension_anchor.status": "状态：%s"
   ,"jade.ars_arcane_matrix.dimension_anchor.source_cost": "维持消耗：%s 魔源/秒"
-  ,"jade.ars_arcane_matrix.dimension_anchor.range": "加载范围：当前方块所在的1个区块"
-  ,"documentation.ars_arcane_matrix.dimension_anchor": "维度锚每秒从8格内的魔源提供者消耗100魔源，使自身所在的一个区块保持完整运行；魔源不足、收到红石信号或方块被破坏时会立即释放区块票据。前期可用钻石块、魔源宝石块和磁石制作昂贵版本；完成矿物处理线后，可用蕴魔、熔铸和富集结晶改用更便宜的配方。跨维度使用魔源或存储网络时，需要在各维度的远程节点所在区块分别放置维度锚。"
+  ,"jade.ars_arcane_matrix.dimension_anchor.range": "加载范围：%s×%s区块（%s个）"
+  ,"documentation.ars_arcane_matrix.dimension_anchor": "维度锚每秒从8格内的魔源提供者消耗100魔源，使自身所在的一个区块保持完整运行。在同一高度用8个奥术结构框架围住维度锚后，会切换为矩阵扩展模式，加载以自身为中心的3×3区块并消耗900魔源/秒。魔源不足、收到红石信号、扩展结构变化或方块被破坏时会立即释放旧区块票据。空手右击显示扩展结构投影，矩阵构筑棒可以放置缺少的框架。跨维度使用魔源或存储网络时，需要保持远程节点所在区块加载。"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition": "探宝蟹遗迹远征"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.proof": "路线凭证：放在家园附近的另一座奥术基座上，不会消耗"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.time": "耗时：%s秒"
@@ -497,7 +498,7 @@
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.layout.title": "家园与物流"
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.layout.text": "先按原版方式驯服探宝蟹、让它佩戴陶片并绑定一个容器作为家园。在家园三格内放置装有刷子的奥术基座，并将待探索方块放入同一范围内的容器。家园容器负责接收产物；材料、魔源或输出空间不足时不会提前扣除物品。"
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.routes.title": "远征路线"
-  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.routes.text": "圆石、泥土、幽匿块、下界岩与黑石、末地石和凝灰岩分别对应不同探索池。古城路线所需幽匿块可由魔源造石机在幽匿催发体基座模式下高耗魔源生产。试炼路线还会读取附近基座上的试炼钥匙或不祥试炼钥匙。完整消耗可在JEI中查询。"
+  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.routes.text": "圆石、泥土、幽匿块、下界岩与黑石、末地石和凝灰岩分别对应不同探索池。每次远征会先选择一个真实的原版宝箱战利品表，再以该表的真实ID生成奖励，因此新生魔艺及其他模组通过全局战利品修改器加入的物品也能生效；JEI中的产物仅为示例。古城路线所需幽匿块可由魔源造石机生产，试炼路线还会读取附近基座上的试炼钥匙或不祥试炼钥匙。"
   ,"ars_arcane_matrix.section.getting_started": "入门与发展路线"
   ,"ars_arcane_matrix.section.source_network": "魔源与网络"
   ,"ars_arcane_matrix.section.mineral_processing": "矿物与处理"
@@ -505,17 +506,20 @@
   ,"ars_arcane_matrix.section.storage_logistics": "存储与物流"
   ,"ars_arcane_matrix.section.magical_creatures": "魔法生物与农业"
   ,"ars_arcane_matrix.section.adventure_rituals": "冒险与仪式"
+  ,"documentation.ars_arcane_matrix.capture_glyph.title": "捕获魔符"
+  ,"documentation.ars_arcane_matrix.capture_glyph.summary": "一种位于三级魔符目录中的便携式收容手段，可将触碰到的生物直接装入物品栏中的空收容罐。"
+  ,"documentation.ars_arcane_matrix.capture_glyph.operation": "在抄写台的三级魔符目录中学习捕获魔符。施法时物品栏中必须有空收容罐，并留出一个格子存放装有生物的收容罐。普通捕获只处理非Boss生物；加入强化后会切换为仅捕获Boss，而不是同时捕获两类目标。目标存在骑乘关系时会先收容最上层乘客，再次施法即可收容其坐骑。它遵守新生魔艺收容罐的生物黑名单。"
   ,"ars_arcane_matrix.section.tools_misc": "工具与杂项"
   ,"documentation.ars_arcane_matrix.roadmap.title": "从这里开始"
-  ,"documentation.ars_arcane_matrix.roadmap.overview": "奥术矩阵将新生魔艺扩展为一套互相连接的生产系统。第一次游玩建议先制作奥术灌注核心与魔源刷石机，掌握五种魔源通道并建成奥术矩阵，再扩建矿井；矿井提供原料后，依次解锁加工者、熔炼者和粉碎者。产量扩大后再建设薇克精自动合成、晶格存储与物流网络。"
+  ,"documentation.ars_arcane_matrix.roadmap.overview": "奥术矩阵将新生魔艺扩展为一套互相连接的生产系统。取得第一枚魔源宝石后，先制作任意魔源通道与魔源罐，再使用奥术反应釜和魔源造石机补充前期材料，逐步攒出矿井。矿井提供原料后，依次解锁加工者、熔炼者和粉碎者；完成矿物处理线后再建设奥术矩阵、薇克精自动合成、晶格存储与物流网络。"
   ,"documentation.ars_arcane_matrix.roadmap.progression.title": "推荐解锁顺序"
-  ,"documentation.ars_arcane_matrix.roadmap.progression.text": "灌注核心负责把青金石或紫水晶批量转为魔源宝石；刷石机供应结构方块；矿井获取矿石。加工者的蕴魔结晶解锁熔炼者，熔炼者的熔铸结晶解锁粉碎者，粉碎者的富集矿物结晶用于高级自动化、存储和远征。无法确定下一步时，在JEI查看当前副产物的用途。"
+  ,"documentation.ars_arcane_matrix.roadmap.progression.text": "奥术反应釜使用物品、流体和魔源完成物质转换；魔源造石机供应大宗结构方块；矿井获取矿石。加工者的蕴魔结晶解锁熔炼者，熔炼者的熔铸结晶解锁粉碎者，粉碎者的富集矿物结晶用于高级灌注、矩阵与后期自动化。无法确定下一步时，优先阅读对应设备条目，再在JEI查看具体配方。"
   ,"documentation.ars_arcane_matrix.construction_wand.title": "矩阵构筑棒"
   ,"documentation.ars_arcane_matrix.construction_wand.text": "多方块核心空手右击会显示缺失方块投影；结构完整时不会继续显示。手持矩阵构筑棒右击核心会放置一个缺失方块，潜行右击会使用物品栏材料尽可能连续搭建。创造模式可无视材料一次完成。构筑棒也会检测结构必须留空的位置，但只报告阻挡，不会擅自破坏已有方块。"
   ,"documentation.ars_arcane_matrix.multiblock.building": "这是多方块设备。空手右击核心查看结构投影；使用矩阵构筑棒右击放置一个缺失方块，潜行右击尽可能连续搭建。创造模式下可无视材料完成结构。"
   ,"documentation.ars_arcane_matrix.multiblock.prototype": "当前矿物处理结构属于测试布局，未来会重新设计形状。请空手右击核心查看实时投影，并使用矩阵构筑棒搭建：普通右击放置一个缺失方块，潜行右击尽可能连续放置。不要将当前外形视为最终结构。"
   ,"documentation.ars_arcane_matrix.arcane_processor.overview": "加工者是矿物处理线的第一阶段，只处理尚未被破坏的矿石方块，并模拟基座上的工具进行挖掘。它最多并行处理五份矿石，使用食物提供工作时间；魔法食物会立即切换到特殊状态，提高蕴魔结晶的副产物进度。"
-  ,"documentation.ars_arcane_matrix.arcane_processor.operation": "使用支配之杖为核心绑定矿石输入与产物输出。核心左右上方的两个对称基座位置等价，机器会根据内容自动识别工具与食物。工具的效率、时运与精准采集会按设备规则生效；可掉落经验的矿石会把经验转换为经验宝石。红石信号暂停设备，输出堵塞时产物保存在内部缓存。"
+  ,"documentation.ars_arcane_matrix.arcane_processor.operation": "使用支配之杖为核心绑定矿石输入与产物输出。核心下方放置任意具有物品栏能力的容器提供食物；核心上方用五个框架搭成十字，并在十字中心上方的奥术基座放置工具。投影与构筑棒默认使用木桶。工具的效率、时运与精准采集会按设备规则生效；可掉落经验的矿石会把经验转换为经验宝石。红石信号暂停设备，输出堵塞时产物保存在内部缓存。"
   ,"documentation.ars_arcane_matrix.drygmy_enhancement.title": "德格米石阵强化"
   ,"documentation.ars_arcane_matrix.drygmy_enhancement.overview": "德格米石阵会读取附近奥术基座上的武器作为模拟击杀工具。锋利提高工作速度，抢夺提高战利品数量，斩首类效果可以参与模拟击杀。只有能提供大量经验的目标才会明显产生经验宝石。"
   ,"documentation.ars_arcane_matrix.drygmy_enhancement.weapon": "基座武器不会被消耗。石阵会同步提高单次魔源抽取能力；魔源不足时会明确显示等待状态。"
@@ -566,12 +570,17 @@
   ,"documentation.ars_arcane_matrix.grid_directory.operation": "基础容量为16种、4096件。打开GUI可直接放入或取出物品，并在专用升级槽安装最多四个晶格扩容仓库。高级存储讲台连接目录后可搜索、提取并用于自动合成。破坏目录时物品与升级全部保存在掉落方块中。大量不同词条、耐久或组件的装备会分别占用种类，建议存入普通仓库。"
   ,"documentation.ars_arcane_matrix.grid_expansion.summary": "晶格扩容仓库以普通仓库、四个奥术结构框架与富集矿物结晶封装额外容量，安装在晶格目录GUI中，不是需要摆放的方块。它是高级合金产线的可重复资源出口。"
   ,"documentation.ars_arcane_matrix.grid_expansion.operation": "每个扩容仓库增加64种物品类型和262144件总容量，一个晶格目录最多安装四个。扩容组件可以取出并迁移；只有目录当前物品仍满足缩减后的容量时才应拆除升级。"
-  ,"documentation.ars_arcane_matrix.dimension_anchor.summary": "维度锚持续消耗魔源，使自身所在的一个区块保持完整运行。"
+  ,"documentation.ars_arcane_matrix.dimension_anchor.summary": "维度锚持续消耗魔源加载当前区块，并可用八个奥术结构框架扩展为3×3区块。"
   ,"item.ars_arcane_matrix.sourcebound_copper_alloy": "魔源铜合金"
   ,"item.ars_arcane_matrix.sourcebound_copper_alloy_dust": "魔源铜合金粉"
   ,"block.ars_arcane_matrix.arcane_structural_frame": "奥术结构框架"
-  ,"jei.ars_arcane_matrix.sourcebound_copper_alloy.info": "前期使用3个铜锭、1个金锭、1个石英块与1枚魔源宝石制作2个魔源铜合金。石英作为稳定金属与魔源融合的奥术熔剂；铜、金与紫水晶仍需玩家手动取得首批。"
-  ,"jei.ars_arcane_matrix.sourcebound_copper_alloy.advanced": "解锁完整矿物线后，使用3份铜粉、1份金粉以及蕴魔结晶、熔铸结晶和富集矿物结晶，可制作8份合金粉；熔炼后获得8个合金，使相同金属的合金产量提高至前期路线的4倍。"
+  ,"jei.ars_arcane_matrix.sourcebound_copper_alloy.info": "前期使用3个铜锭、1个金锭与1枚魔源宝石制作2个魔源铜合金。若暂时找不到金矿，可用奥术反应釜将8个铜锭、1个下界石英、250 mB水和400魔源转化为1个粗金。"
+  ,"jei.ars_arcane_matrix.sourcebound_copper_alloy.advanced": "解锁完整矿物线后，使用3份铜粉、1份金粉、1枚魔源宝石以及蕴魔结晶、熔铸结晶和富集矿物结晶，可制作8份合金粉；熔炼后获得8个合金，使相同金属的合金产量提高至前期路线的4倍。"
+  ,"documentation.ars_arcane_matrix.metal_dusts.title": "金属矿粉"
+  ,"documentation.ars_arcane_matrix.metal_dusts.summary": "金属矿粉是奥术粉碎者与熔炼者之间的高产中间产物。本模组提供铁、铜、金与远古残骸粉，并会优先兼容其他模组注册在通用标签中的矿粉。"
+  ,"documentation.ars_arcane_matrix.metal_dusts.operation": "风之精华模式下，每份粗矿产生3份矿粉，每个原矿方块产生2份；水之精华维持2份与1份的基础产量，并提供富集矿物结晶判定。远古残骸在风模式下产生3份远古残骸粉。矿粉可在普通熔炉或奥术熔炼者中加工成对应金属，具体输入与产量请查看奥术粉碎者配方。"
+  ,"documentation.ars_arcane_matrix.sourcebound_alloy.summary": "魔源铜合金是奥术结构框架、自动化设备及其升级使用的基础魔法金属。前期配方用于解锁矿井与基础设施，完成矿物处理线后可使用矿粉和三种结晶大幅提高产量。"
+  ,"documentation.ars_arcane_matrix.sourcebound_alloy.operation": "前期使用3个铜锭、1个金锭与1枚魔源宝石制作2个魔源铜合金。完成加工者、熔炼者与粉碎者后，3份铜粉、1份金粉、1枚魔源宝石以及蕴魔结晶、熔铸结晶和富集矿物结晶可制作8份魔源铜合金粉，熔炼后得到8个合金。后续页面展示两种路线。"
   ,"tooltip.ars_arcane_matrix.starbuncle_hub.tier": "物流等级 %s｜总站共享 %s 件/秒"
   ,"screen.ars_arcane_matrix.starbuncle_hub.throughput": "Lv.%s｜%s/s"
   ,"jei.ars_arcane_matrix.starbuncle_hub.upgrades": "总站所有星宝石兽共享吞吐额度。等级0至4依次为256、1024、4096、16384与32768件/秒；增加星宝石兽不会提高总站总额度。使用附魔装置逐级升级，过滤、保护、传送与召回功能在基础等级即完整开放。"
@@ -584,9 +593,10 @@
   ,"message.ars_arcane_matrix.arcane_fluid_reservoir.mode.bound": "已切换为定点抽取模式"
   ,"message.ars_arcane_matrix.arcane_fluid_reservoir.invalid_target": "目标不提供可用的流体接口"
   ,"message.ars_arcane_matrix.arcane_fluid_reservoir.bound": "已绑定流体目标：%s %s"
-  ,"message.ars_arcane_matrix.arcane_fluid_reservoir.input_bound": "已绑定定点抽取来源：%s %s"
-  ,"message.ars_arcane_matrix.arcane_fluid_reservoir.output_bound": "已绑定流体输出目标：%s %s"
-  ,"message.ars_arcane_matrix.arcane_fluid_reservoir.cleared": "已清除流体目标"
+  ,"message.ars_arcane_matrix.arcane_fluid_reservoir.input_bound": "已绑定抽取来源：%s %s（%s/%s）"
+  ,"message.ars_arcane_matrix.arcane_fluid_reservoir.output_bound": "已绑定输出目标：%s %s｜储罐 %s（%s/%s）"
+  ,"message.ars_arcane_matrix.arcane_fluid_reservoir.target_limit": "无线目标已满（上限 %s）；安装范围升级可增加目标数量"
+  ,"message.ars_arcane_matrix.arcane_fluid_reservoir.cleared": "已清除全部流体目标"
   ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.input": "输入流体"
   ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.output": "输出流体"
   ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.mode": "模式：%s"
@@ -620,6 +630,7 @@
   ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.empty": "空"
   ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.locked": "未解锁"
   ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless": "无线：%s"
+  ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.targets": "目标 入%s/%s 出%s/%s"
   ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless_tier.0": "32 格"
   ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless_tier.1": "128 格"
   ,"screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless_tier.2": "同维不限距离"
@@ -628,6 +639,7 @@
   ,"tooltip.ars_arcane_matrix.arcane_fluid_reservoir.mode": "工作模式：%s"
   ,"tooltip.ars_arcane_matrix.arcane_fluid_reservoir.tanks": "内部储罐：%s / 3｜单槽容量 %s mB"
   ,"tooltip.ars_arcane_matrix.arcane_fluid_reservoir.wireless": "无线连接：%s"
+  ,"tooltip.ars_arcane_matrix.arcane_fluid_reservoir.targets": "无线目标：输入 %s/%s｜输出 %s/%s"
   ,"state.ars_arcane_matrix.arcane_fluid_reservoir.idle": "待机"
   ,"state.ars_arcane_matrix.arcane_fluid_reservoir.running": "正常运行"
   ,"state.ars_arcane_matrix.arcane_fluid_reservoir.renewable_source": "可再生流体源运行中"
@@ -642,6 +654,9 @@
   ,"message.ars_arcane_matrix.arcane_fluid_reservoir.out_of_range": "目标超出当前奥术储罐范围升级允许的距离"
   ,"block.ars_arcane_matrix.arcane_reaction_vessel": "奥术反应釜"
   ,"screen.ars_arcane_matrix.arcane_reaction_vessel.fluids": "输入流体 %s mB｜输出流体 %s mB"
+  ,"screen.ars_arcane_matrix.arcane_reaction_vessel.fluid": "%s：%s / %s mB"
+  ,"screen.ars_arcane_matrix.arcane_reaction_vessel.empty": "空"
+  ,"screen.ars_arcane_matrix.arcane_reaction_vessel.clear_fluid": "排空"
   ,"state.ars_arcane_matrix.arcane_reaction_vessel.idle": "待机"
   ,"state.ars_arcane_matrix.arcane_reaction_vessel.running": "反应进行中"
   ,"state.ars_arcane_matrix.arcane_reaction_vessel.missing_input": "缺少有效配方材料"
@@ -650,18 +665,19 @@
   ,"state.ars_arcane_matrix.arcane_reaction_vessel.redstone_paused": "红石暂停"
   ,"jei.ars_arcane_matrix.arcane_reaction": "奥术反应"
   ,"jei.ars_arcane_matrix.arcane_reaction.details": "%s 魔源｜%s 秒"
-  ,"documentation.ars_arcane_matrix.arcane_reaction_vessel": "奥术反应釜是初学者法术书阶段即可制作的基础物质转换设备，只需要平滑魔源石、炼药锅、普通魔源宝石、魔源罐与漏斗。它消耗最多两类物品、一种输入流体与魔源，不要求烈焰棒或炼药台。"
+  ,"documentation.ars_arcane_matrix.arcane_reaction_vessel": "奥术反应釜使用魔源与流体加工物品，是取得第一枚魔源宝石后即可制作的入门物质转换设备。具体配方与消耗请在JEI的“奥术反应”分类中查看。"
   ,"documentation.ars_arcane_matrix.arcane_source_jar.summary": "奥术魔源罐是矿井前的一百万容量魔源缓冲，可主动汇聚周围魔源通道的产出，解决普通魔源罐与通道响应过慢的问题。"
   ,"documentation.ars_arcane_matrix.arcane_source_jar.operation": "每秒汇聚一次12格内已加载的魔源通道，每个通道最多提供10000魔源，总计最多50000魔源/秒。它不会抽取其他魔源罐或工作机器，因此多个奥术魔源罐不会互相循环搬运；普通新生魔艺设备可直接从中抽取。"
-  ,"documentation.ars_arcane_matrix.arcane_reaction_vessel.operation": "物品与流体可从任意方向输入或抽取。4个玻璃、250 mB水和200魔源可在10秒内生成1个下界石英，为极限模式提供安全但较慢的替代路线。64个石头、2,000 mB水和800魔源可在5秒内转化为64个虫蚀石头，并与生死魔源通道组成初学者魔源农场。其他反应请在JEI查看。"
+  ,"documentation.ars_arcane_matrix.arcane_reaction_vessel.operation": "反应釜具有两个物品输入槽、物品输出槽、流体槽与魔源需求，物品和流体可从任意方向输入或抽取。空桶可在1秒内装入1,000 mB水、熔岩或牛奶，装桶本身不消耗魔源；桶装物不会堆叠，需要用漏斗等设备及时抽走输出。具体材料、流体用量、魔源消耗与反应时间请在JEI的“奥术反应”分类中查看。"
   ,"documentation.ars_arcane_matrix.arcane_fluid_controller.summary": "奥术流体控制器负责收集、分类、保存和无线输送任意已注册流体。它内置一个流体槽；在独立储罐槽安装奥术流体储罐后，最多可同时管理三种流体。"
-  ,"documentation.ars_arcane_matrix.arcane_fluid_controller.operation": "界面选择范围抽取目标与默认输出储罐。支配之杖先点控制器再点容器绑定输出，反向操作绑定输入。容量、范围和速度使用普通升级槽；奥术流体储罐使用独立储罐槽，槽内仍有流体时不能拆除。控制器不会自行生成熔岩。"
+  ,"documentation.ars_arcane_matrix.arcane_fluid_controller.operation": "界面选择范围抽取目标与默认输出储罐。支配之杖先点控制器再点容器绑定输出，反向操作绑定输入；输出目标会记住绑定时选中的储罐。基础支持1个输入和1个输出目标，每个范围升级各增加1个，上限4个；多个目标共享速度升级提供的传输预算。容量、范围和速度使用普通升级槽；奥术流体储罐使用独立储罐槽，槽内仍有流体时不能拆除。控制器不会自行生成熔岩。"
+  ,"documentation.ars_arcane_matrix.arcane_fluid_controller.upgrades": "控制器共有4个通用升级槽和2个储罐模块槽。容量升级提高每个已解锁储罐的容量；范围升级扩大世界流体搜索范围，并逐步提高无线距离和输入、输出目标上限；速度升级缩短工作间隔并提高所有无线目标共享的传输量。将空的奥术流体储罐装入模块槽可额外解锁一种流体，最多同时管理3种。后续页面列出了三种升级的配方。"
   ,"documentation.ars_arcane_matrix.arcane_fluid_tank.summary": "奥术流体储罐是可独立放置的单流体容器，容量为64,000 mB，也可作为扩展模块安装进奥术流体控制器。"
   ,"documentation.ars_arcane_matrix.arcane_fluid_tank.operation": "手持流体容器右击即可存入或取出，管道可从任意方向输入输出。破坏储罐会保留其中流体；将储罐单独放入合成栏可清空。只有空储罐能安装进控制器，避免扩展时隐藏或丢失流体。"
   ,"tooltip.ars_arcane_matrix.arcane_fluid_tank.empty": "空储罐｜容量：%s mB"
   ,"tooltip.ars_arcane_matrix.arcane_fluid_tank.stored": "%s：%s / %s mB"
   ,"documentation.ars_arcane_matrix.arcane_vacuum_hopper.summary": "奥术真空漏斗直接传送收纳范围内的掉落物与原版经验球，不受墙体和障碍物阻挡。范围可设为4格、8格、12格或漏斗所在的整个区块；范围越大，扫描间隔越长。红石信号会暂停收取、转换和输出。"
-  ,"documentation.ars_arcane_matrix.arcane_vacuum_hopper.operation": "空手右击打开界面，潜行空手右击存入玩家全部经验。物品与经验宝石分别拥有缓存和支配之杖输出目标。过滤样板可选不限、白名单或黑名单，并能选择忽略组件或严格匹配NBT/组件；销毁功能仅处理过滤命中的物品。经验可仅储存，或转换为普通、高等经验宝石。"
+  ,"documentation.ars_arcane_matrix.arcane_vacuum_hopper.operation": "空手右击打开界面，潜行空手右击存入玩家全部经验。物品与经验宝石分别拥有缓存和支配之杖输出目标。过滤样板可选不限、白名单或黑名单，并能选择忽略组件或严格匹配NBT/组件。“销毁匹配项”默认关闭；启用后，范围内吸取以及漏斗、管道、星宝石兽从任意面输入的匹配物都会被永久销毁，未匹配物仍进入缓存。红石信号会暂停吸取、转换、输出及外部输入销毁，可作为紧急停止。经验可仅储存，或转换为普通、高等经验宝石。"
   ,"documentation.ars_arcane_matrix.source_stone_furnace.summary": "魔源石熔炉是薇克精自动化的无燃料工作方块，同时支持熔炉与烟熏炉配方。每份物品固定加工5秒，并在开工时一次性消耗20魔源。"
   ,"documentation.ars_arcane_matrix.source_stone_furnace.operation": "熔炉只有输入与输出两格：原料默认从上方输入，成品默认从下方抽取。它可被薇克精样板供应器识别，用于包含烧炼中间产物的递归订单；真实加工时间不会被普通合成任务调度速度跳过。"
   ,"block.ars_arcane_matrix.arcane_vacuum_hopper": "奥术真空漏斗"

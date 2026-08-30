@@ -10,6 +10,7 @@ import dev.arsmatrix.registry.ModBlockEntities;
 import dev.arsmatrix.registry.ModItems;
 import dev.arsmatrix.util.MixedItemBuffer;
 import dev.arsmatrix.util.MultiblockClearance;
+import dev.arsmatrix.util.StructureInventoryAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -94,13 +95,18 @@ public final class ArcaneProcessorCoreBlockEntity extends BlockEntity implements
         if (level.hasNeighborSignal(worldPosition)) { setState(OperatingState.REDSTONE_PAUSED); return; }
 
         // Magic food always takes over immediately; unused ordinary time is intentionally discarded.
-        ArcanePedestalTile foodPedestal = foodPedestal();
-        ItemStack offeredFood = foodPedestal == null ? ItemStack.EMPTY : foodPedestal.getStack();
-        if (!specialMode && !offeredFood.isEmpty() && offeredFood.is(MAGIC_FOOD)) {
+        IItemHandler foodContainer = foodContainer();
+        int magicFoodSlot = StructureInventoryAccess.firstSlot(foodContainer, stack -> stack.is(MAGIC_FOOD));
+        if (!specialMode && magicFoodSlot >= 0) {
             workTimeTicks = 0;
-            consumeOneFood(foodPedestal);
+            consumeOneFood(foodContainer, magicFoodSlot);
         }
-        if (workTimeTicks <= 0 && !offeredFood.isEmpty()) consumeOneFood(foodPedestal);
+        if (workTimeTicks <= 0) {
+            int foodSlot = magicFoodSlot >= 0
+                    ? magicFoodSlot
+                    : StructureInventoryAccess.firstSlot(foodContainer, this::isFood);
+            if (foodSlot >= 0) consumeOneFood(foodContainer, foodSlot);
+        }
         if (workTimeTicks <= 0) { progressTicks = 0; setState(OperatingState.NO_FOOD); return; }
         if (oreInputs.isEmpty()) { progressTicks = 0; setState(OperatingState.NO_ORE); return; }
         ArcanePedestalTile toolPedestal = toolPedestal();
@@ -119,22 +125,24 @@ public final class ArcaneProcessorCoreBlockEntity extends BlockEntity implements
         } else if (tickCounter % 20 == 0) sync();
     }
 
-    private void consumeOneFood(@Nullable ArcanePedestalTile pedestal) {
-        if (pedestal == null) return;
-        ItemStack offered = pedestal.getStack();
+    private void consumeOneFood(@Nullable IItemHandler container, int slot) {
+        if (container == null || slot < 0) return;
+        ItemStack offered = container.getStackInSlot(slot);
         FoodProperties food = offered.get(DataComponents.FOOD);
         if (food == null) return;
+        ItemStack consumed = container.extractItem(slot, 1, false);
+        if (consumed.isEmpty()) return;
         boolean magic = offered.is(MAGIC_FOOD);
         int seconds = Math.max(1, food.nutrition() * 10 + Math.round(food.saturation() * 5.0F));
         if (magic) seconds = Math.max(1, Math.round(seconds * 1.5F));
         specialMode = magic;
         workTimeTicks = Math.min(20 * 60 * 60, workTimeTicks + seconds * 20);
-        ItemStack remainder = offered.getItem().hasCraftingRemainingItem(offered)
-                ? offered.getItem().getCraftingRemainingItem(offered) : ItemStack.EMPTY;
-        offered.shrink(1);
-        // A single-item pedestal exposes this stack to pipes; bowls and bottles remain for extraction.
-        pedestal.setStack(offered.isEmpty() ? remainder : offered);
-        pedestal.setChanged();
+        ItemStack remainder = consumed.getItem().hasCraftingRemainingItem(consumed)
+                ? consumed.getItem().getCraftingRemainingItem(consumed) : ItemStack.EMPTY;
+        if (!remainder.isEmpty()) {
+            ItemStack leftover = ItemHandlerHelper.insertItemStacked(container, remainder, false);
+            if (!leftover.isEmpty()) storeOutput(leftover);
+        }
         sync();
     }
 
@@ -206,23 +214,12 @@ public final class ArcaneProcessorCoreBlockEntity extends BlockEntity implements
     }
 
     @Nullable private ArcanePedestalTile toolPedestal() {
-        ArcanePedestalTile fallback = null;
-        for (BlockPos pos : pedestalPositions(worldPosition, facing())) {
-            if (!(level != null && level.getBlockEntity(pos) instanceof ArcanePedestalTile pedestal)) continue;
-            ItemStack stack = pedestal.getStack();
-            if (stack.isEmpty() || isFood(stack)) continue;
-            if (stack.get(DataComponents.TOOL) != null) return pedestal;
-            if (fallback == null) fallback = pedestal;
-        }
-        return fallback;
+        return level != null && level.getBlockEntity(toolPedestalPosition(worldPosition, facing()))
+                instanceof ArcanePedestalTile pedestal ? pedestal : null;
     }
 
-    @Nullable private ArcanePedestalTile foodPedestal() {
-        for (BlockPos pos : pedestalPositions(worldPosition, facing())) {
-            if (level != null && level.getBlockEntity(pos) instanceof ArcanePedestalTile pedestal
-                    && isFood(pedestal.getStack())) return pedestal;
-        }
-        return null;
+    @Nullable private IItemHandler foodContainer() {
+        return StructureInventoryAccess.at(level, foodContainerPosition(worldPosition, facing()));
     }
 
     private void pullBoundOres() {
@@ -286,26 +283,21 @@ public final class ArcaneProcessorCoreBlockEntity extends BlockEntity implements
         for (BlockPos pos : framePositions(core, facing)) {
             if (!level.getBlockState(pos).is(FRAME)) return false;
         }
-        for (BlockPos pos : pedestalPositions(core, facing)) {
-            if (!(level.getBlockEntity(pos) instanceof ArcanePedestalTile)) return false;
-        }
-        return MultiblockClearance.isOpen(level, core.above(2))
-                && MultiblockClearance.isOpen(level, core.relative(facing))
-                && MultiblockClearance.isOpen(level, core.relative(facing.getOpposite()));
+        if (!(level.getBlockEntity(toolPedestalPosition(core, facing)) instanceof ArcanePedestalTile)) return false;
+        return StructureInventoryAccess.at(level, foodContainerPosition(core, facing)) != null;
     }
 
     public static List<BlockPos> framePositions(BlockPos core, Direction facing) {
-        Direction right = facing.getClockWise();
-        return List.of(core.above(), core.relative(right), core.relative(right.getOpposite()),
-                core.relative(right).relative(facing), core.relative(right).relative(facing.getOpposite()),
-                core.relative(right.getOpposite()).relative(facing),
-                core.relative(right.getOpposite()).relative(facing.getOpposite()));
+        BlockPos center = core.above();
+        return List.of(center, center.north(), center.east(), center.south(), center.west());
     }
 
-    /** Both positions are equivalent; their contents decide tool/food roles. */
-    public static List<BlockPos> pedestalPositions(BlockPos core, Direction facing) {
-        Direction right = facing.getClockWise();
-        return List.of(core.relative(right).above(), core.relative(right.getOpposite()).above());
+    public static BlockPos toolPedestalPosition(BlockPos core, Direction facing) {
+        return core.above(2);
+    }
+
+    public static BlockPos foodContainerPosition(BlockPos core, Direction facing) {
+        return core.below();
     }
 
     private Direction facing() { return getBlockState().getValue(ArcaneProcessorCoreBlock.FACING); }
@@ -356,6 +348,9 @@ public final class ArcaneProcessorCoreBlockEntity extends BlockEntity implements
     public int getBufferedItemCount() { return outputs.stream().mapToInt(ItemStack::getCount).sum(); }
     public boolean hasInputContainer() { return inputContainer != null; }
     public boolean hasOutputContainer() { return outputContainer != null; }
+    public boolean hasConsumableContainer() {
+        return StructureInventoryAccess.at(level, foodContainerPosition(worldPosition, facing())) != null;
+    }
     private void setState(OperatingState next) { if (state != next) { state = next; sync(); } }
     private void sync() { setChanged(); if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS); }
 

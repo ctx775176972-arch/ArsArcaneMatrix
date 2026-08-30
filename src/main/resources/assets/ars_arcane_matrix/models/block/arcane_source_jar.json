@@ -1,7 +1,9 @@
 {
   "parent": "ars_nouveau:block/source_jar/source_jar0",
+  "ambientocclusion": false,
+  "render_type": "cutout",
   "textures": {
     "2": "ars_arcane_matrix:block/arcane_source_jar",
-    "particle": "ars_arcane_matrix:block/arcane_source_jar"
+    "particle": "ars_nouveau:block/mana_still"
   }
 }
