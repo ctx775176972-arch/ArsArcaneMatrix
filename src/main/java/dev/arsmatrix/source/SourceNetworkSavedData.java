@@ -32,6 +32,9 @@ public final class SourceNetworkSavedData extends SavedData {
         SourceNetworkSavedData data = new SourceNetworkSavedData();
         readLinks(tag.getList("JarTargets", CompoundTag.TAG_COMPOUND), data.jarTargets);
         readLinks(tag.getList("RelaySources", CompoundTag.TAG_COMPOUND), data.relaySources);
+        // Before 0.5.1, direct jar-to-relay links were stored in both maps. Keeping the
+        // reverse relay mapping is sufficient and allows several relays to share a jar.
+        if (data.removeLegacyDirectRelayTargets()) data.setDirty();
         return data;
     }
 
@@ -43,21 +46,18 @@ public final class SourceNetworkSavedData extends SavedData {
     }
 
     public void connectJarToRelay(GlobalPos jar, GlobalPos relay) {
-        unlinkNode(jar);
-        unlinkNode(relay);
-        jarTargets.put(jar, relay);
+        unlinkRelay(relay);
         relaySources.put(relay, jar);
         setDirty();
     }
 
     public void connectJarToGateway(GlobalPos jar, GlobalPos gateway) {
-        unlinkNode(jar);
         jarTargets.put(jar, gateway);
         setDirty();
     }
 
     public void connectRelayToGateway(GlobalPos relay, GlobalPos gateway) {
-        unlinkNode(relay);
+        unlinkRelay(relay);
         relaySources.put(relay, gateway);
         setDirty();
     }
@@ -67,7 +67,13 @@ public final class SourceNetworkSavedData extends SavedData {
     }
 
     public GlobalPos targetForJar(GlobalPos jar) {
-        return jarTargets.get(jar);
+        GlobalPos gateway = jarTargets.get(jar);
+        if (gateway != null) return gateway;
+        return relaySources.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(jar))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
     }
 
     public List<GlobalPos> jarsForGateway(GlobalPos gateway) {
@@ -86,6 +92,14 @@ public final class SourceNetworkSavedData extends SavedData {
         boolean changed = jarTargets.remove(node) != null || relaySources.remove(node) != null;
         changed |= jarTargets.entrySet().removeIf(entry -> entry.getValue().equals(node));
         changed |= relaySources.entrySet().removeIf(entry -> entry.getValue().equals(node));
+        if (changed) setDirty();
+    }
+
+    /** Rebinds one relay without disturbing any sibling relays that share its source. */
+    private void unlinkRelay(GlobalPos relay) {
+        boolean changed = relaySources.remove(relay) != null;
+        // Clean up the redundant direct-link representation written before 0.5.1.
+        changed |= jarTargets.entrySet().removeIf(entry -> entry.getValue().equals(relay));
         if (changed) setDirty();
     }
 
@@ -113,6 +127,11 @@ public final class SourceNetworkSavedData extends SavedData {
             GlobalPos to = loadGlobalPos(entry.getCompound("To"));
             if (from != null && to != null) output.put(from, to);
         }
+    }
+
+    private boolean removeLegacyDirectRelayTargets() {
+        return jarTargets.entrySet().removeIf(entry ->
+                entry.getKey().equals(relaySources.get(entry.getValue())));
     }
 
     private static CompoundTag saveGlobalPos(GlobalPos pos) {
