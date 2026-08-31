@@ -33,7 +33,7 @@ public final class ModDocumentation {
         DocCategory crafting = sub(root, "crafting_automation", ModItems.WIXIE_ORDER_TERMINAL.get(), 30);
         DocCategory storage = sub(root, "storage_logistics", ModItems.STORAGE_GRID_DIRECTORY.get(), 40);
         DocCategory creatures = sub(root, "magical_creatures", ItemsRegistry.AMETHYST_GOLEM_CHARM.get(), 50);
-        DocCategory adventure = sub(root, "adventure_rituals", ModItems.RARE_CREATURE_SUMMONING_TABLET.get(), 60);
+        DocCategory adventure = sub(root, "adventure_rituals", EffectCapture.INSTANCE.getGlyph(), 60);
         DocCategory misc = sub(root, "tools_misc", ModItems.ARCANE_AMPLIFIER.get(), 70);
         DocumentationRegistry.registerMainCategory(root);
 
@@ -612,18 +612,6 @@ public final class ModDocumentation {
                 .withCraftingPages()
                 .addConnectedSearch(ModItems.DIMENSION_ANCHOR.get());
         DocumentationRegistry.registerEntry(source, anchorBuilder.build());
-
-        DocEntryBuilder ritualBuilder = new DocEntryBuilder(
-                ArsArcaneMatrix.MOD_ID, adventure, ModItems.RARE_CREATURE_SUMMONING_TABLET.get())
-                .withSortNum(10)
-                .withIntroPageNoIncrement(
-                        Component.translatable("documentation.ars_arcane_matrix.rare_ritual.overview"),
-                        Component.translatable("item.ars_arcane_matrix.rare_creature_summoning_tablet"),
-                        ModItems.RARE_CREATURE_SUMMONING_TABLET.get().getDefaultInstance())
-                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.rare_ritual.operation"))
-                .withCraftingPages()
-                .addConnectedSearch(ModItems.RARE_CREATURE_SUMMONING_TABLET.get());
-        DocumentationRegistry.registerEntry(adventure, ritualBuilder.build());
 
         Item captureGlyph = EffectCapture.INSTANCE.getGlyph();
         DocEntryBuilder captureGlyphBuilder = new DocEntryBuilder(

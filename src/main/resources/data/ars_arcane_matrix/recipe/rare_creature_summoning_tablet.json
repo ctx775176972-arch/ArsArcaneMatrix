@@ -9,7 +9,7 @@
     { "item": "ars_arcane_matrix:enriched_mineral_crystal" }
   ],
   "result": {
-    "id": "ars_arcane_matrix:rare_creature_summoning_tablet",
+    "id": "ars_arcane_matrix:rare_creature_summoning",
     "count": 1
   }
 }
