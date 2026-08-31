@@ -86,13 +86,19 @@ public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements I
         if (recipe.isEmpty()) { progressTicks = 0; setState(OperatingState.INVALID_INPUT); return; }
 
         IItemHandler essenceContainer = essenceContainer();
+        if (essenceContainer == null) {
+            mode = Mode.NONE;
+            progressTicks = 0;
+            setState(OperatingState.NO_ESSENCE);
+            return;
+        }
         int essenceSlot = StructureInventoryAccess.firstSlot(essenceContainer,
                 stack -> modeOf(stack) != Mode.NONE);
         ItemStack catalyst = essenceSlot < 0 ? ItemStack.EMPTY : essenceContainer.getStackInSlot(essenceSlot);
         mode = modeOf(catalyst);
         if (mode == Mode.NONE) {
             progressTicks = 0;
-            setState(essenceContainer == null || !StructureInventoryAccess.hasAnyItem(essenceContainer)
+            setState(!StructureInventoryAccess.hasAnyItem(essenceContainer)
                     ? OperatingState.NO_ESSENCE : OperatingState.INVALID_ESSENCE);
             return;
         }

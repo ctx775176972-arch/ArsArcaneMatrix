@@ -52,13 +52,13 @@ public final class ArcaneReactionVesselScreen extends AbstractContainerScreen<Ar
     }
     private static Component fluidName(int registryId){
         Fluid fluid=BuiltInRegistries.FLUID.byId(registryId);
-        return fluid==null||fluid==Fluids.EMPTY
+        return fluid==Fluids.EMPTY
                 ? Component.translatable("screen.ars_arcane_matrix.arcane_reaction_vessel.empty")
                 : new FluidStack(fluid,1).getHoverName();
     }
     private static void drawFluid(GuiGraphics graphics,int registryId,int x,int y,int width,int height){
         Fluid fluid=BuiltInRegistries.FLUID.byId(registryId);
-        if(fluid==null||fluid==Fluids.EMPTY||height<=0)return;
+        if(fluid==Fluids.EMPTY||height<=0)return;
         FluidStack stack=new FluidStack(fluid,1);
         IClientFluidTypeExtensions properties=IClientFluidTypeExtensions.of(fluid);
         ResourceLocation texture=properties.getStillTexture(stack);
