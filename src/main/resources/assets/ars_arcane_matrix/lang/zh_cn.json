@@ -14,13 +14,13 @@
   "ars_arcane_matrix.section.ars_arcane_matrix": "奥术矩阵",
   "book.ars_arcane_matrix.category.description": "奥术矩阵的核心结构、设备与强化组件。",
   "book.ars_arcane_matrix.matrix_core.overview": "$(item)奥术矩阵核心$()是完成矿物处理线后解锁的终局魔源生产设备。配方要求五种魔源通道以及加工、熔炼、粉碎三阶段结晶；以核心为中心建造类似潮涌核心的三轴 5×5 奥术结构框架。$(br2)至少一个环完整且有效框架达到最低数量时自动启动；另外两个环可逐块扩建以提高产量。六个轴向顶点均可用奥术增幅器替换，每个使产量提高 25%。",
-  "book.ars_arcane_matrix.arcane_mine.overview": "$(item)奥术矿井$()在核心上方连续建造 3×3、5×5、7×7 和 9×9 倒置信标层。第一层只需中心与四角的魔源宝石块以及四边中心的魔源石，作为低成本启动层；从第二层开始，其余位置必须使用奥术结构框架。四层依次解锁木镐、石镐、铁镐和钻石镐等级矿石。$(br2)矿井不缓存魔源；生产条件满足时会检查附近网络，只有能够完整支付本批费用才会一次性扣除。完整四层后取源范围扩大到32格，并可使用已加载矩阵核心。$(br2)宝石块四角标示白名单悬挂位置，魔源石边缘中心标示黑名单悬挂位置。艾瑟金属等终局稀有矿物明确要求第四层。",
+  "book.ars_arcane_matrix.arcane_mine.overview": "$(item)奥术矿井$()在核心上方连续建造 3×3、5×5、7×7 和 9×9 倒置信标层。第一层只需中心与四角的魔源宝石块以及四边中心的魔源石，作为低成本启动层；从第二层开始，其余位置必须使用奥术结构框架。四层依次解锁木镐、石镐、铁镐和钻石镐等级矿石。$(br2)矿井不缓存魔源；生产条件满足时会检查附近网络，只有能够完整支付本批费用才会一次性扣除。完整四层后取源范围扩大到32格，并可使用已加载矩阵核心。$(br2)宝石块四角标示白名单悬挂位置，魔源石边缘中心标示黑名单悬挂位置。终局稀有矿物要求第四层。",
   "book.ars_arcane_matrix.arcane_mine.cycle.title": "推荐材料循环",
   "book.ars_arcane_matrix.arcane_mine.cycle.text": "让矩阵为矿井和奥术灌注核心供应魔源，并用矿井生产青金石矿。使用$(thing)时运$()工具采掘矿石，再将青金石块送入灌注核心批量转换为魔源宝石。将足够补充材料点的部分送回矿井，剩余青金石无需全部灌注。$(br2)这会形成可自动化的材料循环，但产矿和灌注仍会持续消耗矩阵产生的魔源。",
   "book.ars_arcane_matrix.arcane_mine.amplifier.title": "奥术增幅器",
   "book.ars_arcane_matrix.arcane_mine.amplifier.text": "完整四层矿井每消耗 128 材料点相当于进行一次 1% 的$(item)奥术增幅器$()判定；累计消耗 12,800 材料点仍未获得时必定产出。高成本矿物会更快推进概率与保底，产出后进度清零。每个完整层中心最多放置一个，使普通矿物产量 +1，并使魔源和材料成本提高 50%。$(br2)无法输出的增幅器会在核心内单独缓冲，最多 64 个。多余增幅器可回收。",
   "documentation.ars_arcane_matrix.matrix_core.overview": "奥术矩阵核心是完成矿物处理线后解锁的终局魔源生产设备。五种魔源通道证明常规魔源基础，三种加工结晶证明加工者、熔炼者和粉碎者均已完成。至少建成一个完整的 5×5 环才能启动，其他有效框架可逐块提高产量。",
-  "documentation.ars_arcane_matrix.arcane_mine.overview": "奥术矿井第一层是无需合金的低成本启动层：五个魔源宝石块表示中心与白名单四角，四个魔源石表示黑名单边缘。从第二层开始，其余结构位置必须使用奥术结构框架，要求玩家先手动收集首批铜、金和紫水晶。四层依次解锁木、石、铁和钻石挖掘等级；艾瑟金属等终局稀有矿物锁定第四层。",
+  "documentation.ars_arcane_matrix.arcane_mine.overview": "奥术矿井第一层是无需合金的低成本启动层：五个魔源宝石块表示中心与白名单四角，四个魔源石表示黑名单边缘。从第二层开始，其余结构位置必须使用奥术结构框架，要求玩家先手动收集首批铜、金和紫水晶。四层依次解锁木、石、铁和钻石挖掘等级；终局稀有矿物锁定第四层。",
   "documentation.ars_arcane_matrix.arcane_amplifier.overview": "奥术增幅器是完整四层奥术矿井的稀有副产物。每消耗 128 材料点相当于一次 1% 判定，累计消耗 12,800 点仍未获得时必定产出；使用廉价矿物不会获得同等判定效率。在矩阵中，可替换最多六个轴向顶点的魔源宝石块，每个使基础魔源产量提高 25%。在矿井中，每个完整层中心可替换一个，每个使普通矿物产量 +1，并使魔源和材料成本提高 50%，最多四个。多余增幅器可回收。",
   "documentation.ars_arcane_matrix.arcane_imbuement_core.overview": "奥术灌注核心是一台独立的批量魔源宝石转换器，不需要放在灌注室下方。使用支配之杖依次绑定输出与输入容器；它会抽取附近魔源，并默认每五秒处理最多四个材料。青金石或紫水晶碎片各消耗500魔源产生一个魔源宝石；青金石块产生九个，紫水晶块产生四个。压缩模式会将每四个宝石转换为一个魔源宝石块。多余奥术增幅器也可在此回收。红石信号会暂停加工。",
   "documentation.ars_arcane_matrix.source_stone_generator.overview": "魔源造石机是用于批量生产石头与泥土类方块的单一控制器。没有匹配基座配方时，积累 200 点进度后产出 64 个圆石；即使没有魔源也会每秒自然增加 20 点进度。有可抽取魔源时，每批固定需要五秒。它会读取周围 3×3×3 范围内所有非空奥术基座，以无序且数量精确的方式匹配数据包配方，基座物品不会消耗。九格内部缓存会优先向正下方容器输出，也可从任意面抽取。红石信号会暂停运行。",
@@ -28,6 +28,7 @@
   "documentation.ars_arcane_matrix.drygmy_arena.overview": "奥术猎场只复制由Boss身份或击败事件产生的里程碑奖励。遗迹宝箱中的海洋之心、回响碎片、锻造模板与龙首已归入探宝蟹探索，不再由猎场生产。猎场不消耗魔源、不创建实体、不触发死亡事件、不产出经验，也不读取普通战利品表。",
   "book.ars_arcane_matrix.drygmy_arena.overview": "以$(item)下界合金块$()作为附魔装置试剂，配合德格米护符、召唤精华、下界之星、荒野贡物、龙息、魔源宝石块、熔铸结晶与富集矿物结晶，可制作$(item)奥术猎场$()。三种挑战材料要求玩家先亲自接触并完成对应Boss阶段，猎场只负责后续自动化。将一个收容罐直接放在猎场正上方，并在水平两格范围内放置至少两座奥术基座。$(br2)召唤精华增加10点，凝魂召唤核心增加100点。罐中生物只作为身份样本，绝不会被生成、伤害或释放。",
   "ars_arcane_matrix.glyph_name.glyph_capture": "捕获",
+  "item.ars_arcane_matrix.glyph_capture": "捕获魔符",
   "ars_arcane_matrix.glyph_desc.glyph_capture": "将触碰到的非Boss生物收入施法者物品栏中的空收容罐。加入强化后切换为仅收容Boss的模式。",
   "ars_nouveau.augment_desc.glyph_capture_glyph_amplify": "切换为仅收容Boss的模式。",
   "message.ars_arcane_matrix.capture.invalid_target": "捕获失败：目标不是可收容的生物",
@@ -354,11 +355,10 @@
   ,"jei.ars_arcane_matrix.advanced_imbuement_chamber.info": "高级灌注室使用与普通灌注室相同的配方、基座判定、输入输出和旋转结构，并显示在同一个灌注室JEI分类中。有外部魔源时每秒最多抽取2,000魔源，配方准备时间缩短为1秒。"
   ,"jei.ars_arcane_matrix.advanced_imbuement_chamber.passive": "找不到外部魔源时仍沿用本体每秒10点的缓慢自然灌注，不随高级速度提升；高速运行必须建设魔源供应。普通灌注室的速度与行为完全不变。"
   ,"jei.ars_arcane_matrix.formless_essence.info": "在普通或高级灌注室周围八个基座分别放置本体七种精华与荒野贡物，中心输入紫水晶簇并消耗2,000魔源，产出4个无相精华。基座物品仅作为灌注催化条件，不会被消耗。"
-  ,"jei.ars_arcane_matrix.formless_essence.compat": "将无相精华与任意一种受支持精华无序合成，得到两份该精华。支持新生魔艺本体七种精华，并兼容元素魔艺的生命精华。"
+  ,"jei.ars_arcane_matrix.formless_essence.compat": "将无相精华与任意一种受支持精华无序合成，得到两份该精华。支持新生魔艺本体七种精华，并会识别已注册的兼容精华。"
   ,"documentation.ars_arcane_matrix.advanced_imbuement_chamber.overview": "高级灌注室继承普通灌注室的全部配方、八基座判定、自动输入输出与旋转动画。完成熔炼者阶段后，使用普通灌注室作为附魔装置试剂，在八个基座放置两份蕴魔结晶、四份熔铸结晶和两块魔源宝石块，消耗25,000魔源完成升级。它在粉碎者之前解锁，用于批量供应粉碎所需的元素精华。有外部魔源时它每秒最多抽取2,000魔源，并将配方准备时间缩短到1秒；没有外部魔源时仍仅以本体每秒10点的速度缓慢积累。"
   ,"documentation.ars_arcane_matrix.advanced_imbuement_chamber.formless": "无相精华配方可在普通或高级灌注室运行。周围八个基座分别放置本体七种精华与荒野贡物，中心输入紫水晶簇并供应2,000魔源，即可产出4份无相精华；基座催化物不会消耗。无相精华与任意一种本体精华无序合成可得到两份对应精华。"
   ,"item.ars_arcane_matrix.condensed_summoning_catalyst": "凝魂召唤核心"
-  ,"item.ars_arcane_matrix.rare_creature_summoning_tablet": "遗世呼唤仪式板"
   ,"item.ars_arcane_matrix.rare_creature_summoning": "遗世呼唤"
   ,"ars_arcane_matrix.ritual_desc.rare_creature_summoning": "消耗一罐魔源并召唤一个旋风人。强化深板岩、海晶石砖、镶金黑石与紫珀块分别召唤监守者、远古守卫者、猪灵蛮兵与潜影贝。每次只召唤一个样本，随后仪式结束。"
   ,"message.ars_arcane_matrix.arcane_crusher.input_bound": "粉碎者已绑定矿物输入容器。"
@@ -505,7 +505,7 @@
   ,"ars_arcane_matrix.section.crafting_automation": "自动合成"
   ,"ars_arcane_matrix.section.storage_logistics": "存储与物流"
   ,"ars_arcane_matrix.section.magical_creatures": "魔法生物与农业"
-  ,"ars_arcane_matrix.section.adventure_rituals": "冒险与仪式"
+  ,"ars_arcane_matrix.section.adventure_rituals": "冒险"
   ,"documentation.ars_arcane_matrix.capture_glyph.title": "捕获魔符"
   ,"documentation.ars_arcane_matrix.capture_glyph.summary": "一种位于三级魔符目录中的便携式收容手段，可将触碰到的生物直接装入物品栏中的空收容罐。"
   ,"documentation.ars_arcane_matrix.capture_glyph.operation": "在抄写台的三级魔符目录中学习捕获魔符。施法时物品栏中必须有空收容罐，并留出一个格子存放装有生物的收容罐。普通捕获只处理非Boss生物；加入强化后会切换为仅捕获Boss，而不是同时捕获两类目标。目标存在骑乘关系时会先收容最上层乘客，再次施法即可收容其坐骑。它遵守新生魔艺收容罐的生物黑名单。"
@@ -538,8 +538,6 @@
   ,"documentation.ars_arcane_matrix.source_network.nodes.text": "奥术魔源罐是矿井前的一百万容量缓冲，主动汇聚12格内魔源通道的产出并直接供设备抽取。矩阵魔源罐是矿物处理线后的大型升级，结构不完整时不会输入或输出。集成型中继器从绑定网络取源并供应周围设备；高级存储讲台负责跨维度中转；维度锚负责保持远程区块加载。"
   ,"documentation.ars_arcane_matrix.integrated_source_relay.summary": "集成型魔源中继器是大型魔源网络面向机器的输出端。它可从绑定的矩阵核心、完整的矩阵魔源罐或高级存储讲台提取魔源，并作为新生魔艺兼容的魔源提供者供附近设备抽取。前期可使用四个普通中继器与魔源宝石块制作；完成粉碎者后也可使用四个富集矿物结晶替代。"
   ,"documentation.ars_arcane_matrix.integrated_source_relay.operation": "手持支配之杖依次点击中继器与供源节点完成绑定，点击顺序可以互换；手持支配之杖潜行右击可清除连接。中继器参考维度魔源通道按需访问已绑定网络，不再要求先填满本地缓存。矩阵核心可在同维度直接供源；跨维度传输仍需高级存储讲台，并使用维度锚保持远程区块加载。"
-  ,"documentation.ars_arcane_matrix.rare_ritual.overview": "遗世呼唤仪式只负责取得难以再生或难以稳定寻找的生物样本。将仪式板和一种强化物投入仪式火盆并启动；仪式消耗一罐魔源，生成一个目标后立即结束。请准备收容魔符与空收容罐，仪式不会替你收容或持续生产。"
-  ,"documentation.ars_arcane_matrix.rare_ritual.operation": "无强化物召唤旋风人；强化深板岩、海晶石砖、镶金黑石与紫珀块分别对应监守者、远古守卫者、猪灵蛮兵与潜影贝。凋灵与末影龙拥有正规的召唤或复活方式，不属于本仪式。收容样本后，Boss里程碑奖励使用奥术猎场，遗迹奖励使用探宝蟹，普通掉落使用德格米石阵。"
   ,"documentation.ars_arcane_matrix.troubleshooting.title": "常见问题"
   ,"documentation.ars_arcane_matrix.troubleshooting.overview": "设备不工作时依次检查：结构是否完整、是否收到红石信号、魔源是否足够、输入输出是否正确绑定、输出容器是否有空间、当前物品是否属于支持配方。空手查看结构投影，查看Jade状态，并在JEI中确认配方和运行模式。"
   ,"documentation.ars_arcane_matrix.troubleshooting.links.title": "绑定与容器"

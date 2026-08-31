@@ -11,8 +11,8 @@ import dev.arsmatrix.item.HubFilterScrollItem;
 import dev.arsmatrix.item.StarbuncleLogisticsHubItem;
 import dev.arsmatrix.item.ArcaneOrderPedestalItem;
 import dev.arsmatrix.item.AutomaticStockRequesterItem;
-import dev.arsmatrix.ritual.ModRituals;
-import com.hollingsworth.arsnouveau.common.items.RitualTablet;
+import dev.arsmatrix.ritual.RareCreatureSummoningRitual;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
@@ -78,10 +78,6 @@ public final class ModItems {
 
     public static final DeferredItem<Item> CONDENSED_SUMMONING_CATALYST = ITEMS.registerSimpleItem(
             "condensed_summoning_catalyst", new Item.Properties());
-
-    public static final DeferredItem<RitualTablet> RARE_CREATURE_SUMMONING_TABLET = ITEMS.register(
-            "rare_creature_summoning_tablet",
-            () -> new RitualTablet(ModRituals.RARE_CREATURE_SUMMONING));
 
     public static final DeferredItem<Item> IRON_DUST = ITEMS.registerSimpleItem(
             "iron_dust", new Item.Properties());
@@ -206,6 +202,12 @@ public final class ModItems {
     );
 
     public static void register(IEventBus eventBus) {
+        // Ars Nouveau automatically creates the ritual tablet at the ritual registry id.
+        // Keep the old, manually registered id as an alias so existing saves migrate safely.
+        ITEMS.addAlias(
+                ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "rare_creature_summoning_tablet"),
+                RareCreatureSummoningRitual.ID
+        );
         ITEMS.register(eventBus);
     }
 }

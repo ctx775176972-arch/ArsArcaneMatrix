@@ -39,7 +39,6 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.ANCIENT_GROVE_CATALYST.get());
                         output.accept(ModItems.FORMLESS_ESSENCE.get());
                         output.accept(ModItems.CONDENSED_SUMMONING_CATALYST.get());
-                        output.accept(ModItems.RARE_CREATURE_SUMMONING_TABLET.get());
                         output.accept(ModItems.IRON_DUST.get());
                         output.accept(ModItems.COPPER_DUST.get());
                         output.accept(ModItems.GOLD_DUST.get());
