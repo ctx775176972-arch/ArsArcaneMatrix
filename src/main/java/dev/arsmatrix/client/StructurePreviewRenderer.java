@@ -155,7 +155,8 @@ public final class StructurePreviewRenderer {
                                              MultiBufferSource bufferSource) {
         if (previewType != PreviewType.DIMENSION_ANCHOR || !pos.equals(previewPos)) return;
         Level level = Minecraft.getInstance().level;
-        if (level == null) return;
+        if (level == null || !hasPreviewCore(level, pos, PreviewType.DIMENSION_ANCHOR,
+                ModBlocks.DIMENSION_ANCHOR.get())) return;
         MultiBufferSource previewBuffers = translucentBuffers(bufferSource);
         boolean missing = false;
         for (BlockPos frame : DimensionAnchorBlockEntity.expansionFramePositions(pos)) {
@@ -180,8 +181,14 @@ public final class StructurePreviewRenderer {
     public static void renderSmelter(BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource) {
         if (!isSmelterPreviewActive(pos)) return;
         Level level = Minecraft.getInstance().level;
-        if (level == null) return;
-        net.minecraft.core.Direction facing = level.getBlockState(pos).getValue(ArcaneSmelterCoreBlock.FACING);
+        if (level == null || !hasPreviewCore(level, pos, PreviewType.SMELTER,
+                ModBlocks.ARCANE_SMELTER_CORE.get())) return;
+        BlockState coreState = level.getBlockState(pos);
+        if (!coreState.hasProperty(ArcaneSmelterCoreBlock.FACING)) {
+            clearPreview(pos, PreviewType.SMELTER);
+            return;
+        }
+        net.minecraft.core.Direction facing = coreState.getValue(ArcaneSmelterCoreBlock.FACING);
         MultiBufferSource previewBuffers = translucentBuffers(bufferSource);
         TagKey<Block> frameTag = blockTag("arcane_smelter_frame_blocks");
         boolean missing = false;
@@ -210,7 +217,8 @@ public final class StructurePreviewRenderer {
     public static void renderHuntingGrounds(BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource) {
         if (previewType != PreviewType.HUNTING_GROUNDS || !pos.equals(previewPos)) return;
         Level level = Minecraft.getInstance().level;
-        if (level == null) return;
+        if (level == null || !hasPreviewCore(level, pos, PreviewType.HUNTING_GROUNDS,
+                ModBlocks.DRYGMY_ARENA.get())) return;
         if (DrygmyArenaBlockEntity.isStructureFormed(level, pos)) {
             closeCompletedPreview(pos, PreviewType.HUNTING_GROUNDS);
             return;
@@ -230,8 +238,14 @@ public final class StructurePreviewRenderer {
     public static void renderCrusher(BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource) {
         if (!isCrusherPreviewActive(pos)) return;
         Level level = Minecraft.getInstance().level;
-        if (level == null) return;
-        net.minecraft.core.Direction facing = level.getBlockState(pos).getValue(ArcaneCrusherCoreBlock.FACING);
+        if (level == null || !hasPreviewCore(level, pos, PreviewType.CRUSHER,
+                ModBlocks.ARCANE_CRUSHER_CORE.get())) return;
+        BlockState coreState = level.getBlockState(pos);
+        if (!coreState.hasProperty(ArcaneCrusherCoreBlock.FACING)) {
+            clearPreview(pos, PreviewType.CRUSHER);
+            return;
+        }
+        net.minecraft.core.Direction facing = coreState.getValue(ArcaneCrusherCoreBlock.FACING);
         MultiBufferSource previewBuffers = translucentBuffers(bufferSource);
         TagKey<Block> frameTag = blockTag("arcane_crusher_frame_blocks");
         boolean missing = false;
@@ -256,8 +270,14 @@ public final class StructurePreviewRenderer {
     public static void renderProcessor(BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource) {
         if (!isProcessorPreviewActive(pos)) return;
         Level level = Minecraft.getInstance().level;
-        if (level == null) return;
-        net.minecraft.core.Direction facing = level.getBlockState(pos).getValue(ArcaneProcessorCoreBlock.FACING);
+        if (level == null || !hasPreviewCore(level, pos, PreviewType.PROCESSOR,
+                ModBlocks.ARCANE_PROCESSOR_CORE.get())) return;
+        BlockState coreState = level.getBlockState(pos);
+        if (!coreState.hasProperty(ArcaneProcessorCoreBlock.FACING)) {
+            clearPreview(pos, PreviewType.PROCESSOR);
+            return;
+        }
+        net.minecraft.core.Direction facing = coreState.getValue(ArcaneProcessorCoreBlock.FACING);
         MultiBufferSource previewBuffers = translucentBuffers(bufferSource);
         boolean missing = false;
         for (BlockPos frame : ArcaneProcessorCoreBlockEntity.framePositions(pos, facing)) {
@@ -293,7 +313,8 @@ public final class StructurePreviewRenderer {
             return;
         }
         Level level = Minecraft.getInstance().level;
-        if (level == null) {
+        if (level == null || !hasPreviewCore(level, pos, PreviewType.MATRIX,
+                ModBlocks.MATRIX_CORE.get())) {
             return;
         }
         MultiBufferSource previewBuffers = translucentBuffers(bufferSource);
@@ -323,7 +344,8 @@ public final class StructurePreviewRenderer {
             return;
         }
         Level level = Minecraft.getInstance().level;
-        if (level == null) {
+        if (level == null || !hasPreviewCore(level, pos, PreviewType.MINE,
+                ModBlocks.ARCANE_MINE_CORE.get())) {
             return;
         }
         MultiBufferSource previewBuffers = translucentBuffers(bufferSource);
@@ -494,6 +516,23 @@ public final class StructurePreviewRenderer {
         previewPos = null;
         previewType = null;
         displayMessage("message.ars_arcane_matrix.structure_preview.complete");
+    }
+
+    /**
+     * A removed block entity may receive one final render call. Clear the client-only
+     * projection before any renderer reads properties from the replacement block state.
+     */
+    private static boolean hasPreviewCore(Level level, BlockPos pos, PreviewType type, Block expected) {
+        if (level.getBlockState(pos).is(expected)) return true;
+        clearPreview(pos, type);
+        return false;
+    }
+
+    private static void clearPreview(BlockPos pos, PreviewType type) {
+        if (pos.equals(previewPos) && type == previewType) {
+            previewPos = null;
+            previewType = null;
+        }
     }
 
     private static void displayMessage(String translationKey) {
