@@ -177,10 +177,11 @@
   "jei.ars_arcane_matrix.source_stone_furnace.info": "同时处理熔炉与烟熏炉配方。每份物品固定耗时5秒，并在开始时消耗20魔源。",
   "jei.ars_arcane_matrix.source_stone_furnace.io": "顶部输入原料，底部抽取成品；不需要燃料槽。",
   "item.ars_arcane_matrix.crafting_guide": "薇克精合成指南",
+  "jei.ars_arcane_matrix.unbreakable_refinement": "不可破坏改造",
   "message.ars_arcane_matrix.crafting_guide.need_sample": "请在副手持有要记录的成品样本。",
   "message.ars_arcane_matrix.crafting_guide.no_recipe": "没有找到 %s 的普通工作台配方。",
   "message.ars_arcane_matrix.crafting_guide.recorded": "已记录 %s 的合成方式。",
-  "tooltip.ars_arcane_matrix.crafting_guide.blank": "空白：可在终端打开 JEI 配方并点击传输按钮写入",
+  "tooltip.ars_arcane_matrix.crafting_guide.blank": "空白：需打开薇克精下单终端或高级存储讲台，再通过 JEI 配方传输按钮写入",
   "tooltip.ars_arcane_matrix.crafting_guide.recipe": "合成物品：%s",
   "tooltip.ars_arcane_matrix.crafting_guide.mode": "匹配模式：%s",
   "tooltip.ars_arcane_matrix.crafting_guide.mode.fuzzy": "标签优选",
@@ -272,13 +273,13 @@
   "message.ars_arcane_matrix.advanced_storage_lectern.bound": "高级存储讲台已连接容器，当前共 %s 个。",
   "message.ars_arcane_matrix.advanced_lectern.fluid_linked": "已连接奥术储罐：%s %s",
   "message.ars_arcane_matrix.advanced_lectern.fluid_out_of_range": "奥术储罐超出无线范围，或所在区块未加载",
-  "jei.ars_arcane_matrix.crafting_guide.need_blank": "需要一份空白薇克精合成指南",
+  "jei.ars_arcane_matrix.crafting_guide.need_blank": "需要一份空白薇克精合成指南，并打开薇克精下单终端或高级存储讲台",
   "jei.ars_arcane_matrix.crafting_guide.special_unsupported": "特殊或动态工作台配方暂不支持写入",
   "jei.ars_arcane_matrix.crafting_guide.advanced_required": "熔炼类合成指南只能通过高级存储讲台写入",
   "message.ars_arcane_matrix.crafting_guide.jei_recorded_distributed": "已记录 %s，并发送至空闲样板供应器",
   "message.ars_arcane_matrix.crafting_guide.jei_provider_full": "网络内的样板供应器没有空位",
   "message.ars_arcane_matrix.crafting_guide.jei_already_encoded": "网络中已经存在这份合成指南",
-  "jei.ars_arcane_matrix.crafting_guide.info": "打开薇克精下单终端后，在 JEI 查看普通工作台配方并点击配方传输按钮，可消耗物品栏中的一份空白指南并准确记录当前配方。仍可使用副手成品对工作台写入，但存在多个配方时 JEI 写入更加准确。",
+  "jei.ars_arcane_matrix.crafting_guide.info": "先打开薇克精下单终端，或打开高级存储讲台的合成页面；随后在 JEI 查看普通工作台配方并点击配方传输按钮，即可消耗物品栏中的一份空白指南并记录配方。直接打开物品栏时不能写入。仍可使用副手成品对工作台写入，但存在多个配方时 JEI 写入更加准确。",
   "jei.ars_arcane_matrix.crafting_guide.fuzzy": "标签优选模式会从原配方 Ingredient 明确允许的物品中选择当前库存充足的成员，最终仍须通过原配方验证；严格模式固定使用 Ingredient 的首选成员。潜行右键已编码指南可切换模式。带非默认组件的材料会默认使用严格模式。",
   "documentation.ars_arcane_matrix.crafting_network.overview": "前期的薇克精合成网络与仓库管理彼此独立：下单终端、虚拟下单基座、样板供应器与薇克精工作站只负责合成订单，原版存储讲台与书龙网络只负责仓库。后期使用存储讲台和下单终端制作高级存储讲台，才会在同一个界面中合并存储、搜索、取物与合成下单；样板供应器、下单基座和薇克精工作站仍作为网络基础设施。自动请求展示盒使用支配之杖分别绑定目标容器和普通下单终端或高级存储讲台；当展示物品低于设定下限时，它会从自身催化剂槽消耗一份操纵之精华并提交一次指定数量的订单。内部槽为空时会自动从下单终端连接的共享库存领取一份操纵之精华，也可从任意面使用漏斗、管道或星宝石兽补充；不读取周围基座。通过JEI传输按钮或副手成品样本写入合成指南。样板供应器基础保存27份指南，并可在附魔装置中依次扩容至54、81和108格。潜行空手右击网络设备可显示工作范围。薇克精从支配之杖绑定的共享容器取料，中间产物返回输入池，最终成品进入输出容器。当前支持普通、非特殊的工作台配方。",
   "documentation.ars_arcane_matrix.crafting_network.summary": "下单终端负责选择成品、计算材料并把虚拟订单发送给薇克精网络。",
@@ -471,7 +472,7 @@
   ,"tooltip.ars_arcane_matrix.integrated_source_relay.on_demand": "按需访问已绑定的魔源网络"
   ,"jade.ars_arcane_matrix.source_network.storage": "魔源缓存：%s / %s"
   ,"jade.ars_arcane_matrix.source_network.gateway": "魔源网络：%s 个罐 · %s 个中继器 · %s / %s"
-  ,"documentation.ars_arcane_matrix.source_network": "矩阵魔源罐核心必须位于7×7×7空心结构底层任意外边的中心。顶层与底层铺满奥术结构框架，五层侧壁使用遮光玻璃；内部可以放置矩阵或其他方块。结构完整后保存一亿魔源，并主动汇聚24格内魔源通道与矩阵核心的产出。它不会从其他储罐或机器抽取。集成型中继器负责向设备供给；跨维度连接需要高级存储讲台，远程区块必须保持加载。"
+  ,"documentation.ars_arcane_matrix.source_network": "矩阵魔源罐核心必须位于7×7×7空心结构底层任意外边的中心。顶层与底层铺满奥术结构框架，五层侧壁使用遮光玻璃；内部可以放置矩阵或其他方块。结构完整后可保存一亿魔源，并主动汇聚24格内魔源通道与矩阵核心的产出：每个生产者最多抽取20000魔源，主动汇聚总计最多1000000魔源/秒。矩阵核心主动输送的魔源不计入这项抽取预算。它不会主动抽取其他储罐或工作机器。集成型中继器负责向设备供给；跨维度连接需要高级存储讲台，远程区块必须保持加载。"
   ,"screen.ars_arcane_matrix.advanced_storage_lectern.source_network": "魔源：%s / %s｜魔源罐：%s｜中继器：%s"
   ,"block.ars_arcane_matrix.dimension_anchor": "维度锚"
   ,"message.ars_arcane_matrix.dimension_anchor.state.active": "维度稳定中"
@@ -559,7 +560,7 @@
   ,"documentation.ars_arcane_matrix.order_pedestal.upgrades": "基础基座每0.5秒派发一次任务且仅允许1个并行任务。以基座为附魔装置试剂，依次使用金块、钻石块和下界合金块，搭配操纵之精华、对应阶段结晶以及1、2、4个魔源铜合金升级。三个等级分别达到2、4和所有可用薇克精并行；最终等级每0.05秒派发一次。升级不会缩短真实工作方块的加工时间。"
   ,"documentation.ars_arcane_matrix.crafting_guide.summary": "合成指南保存一份普通工作台配方，供样板供应器和下单终端规划订单。互为逆配方的1与4/9份单一材料压缩、解压配方会被识别为库存整理操作，不消耗魔源。"
   ,"documentation.ars_arcane_matrix.crafting_guide.encoding.title": "记录与清空"
-  ,"documentation.ars_arcane_matrix.crafting_guide.encoding.text": "最方便的写入方式是在JEI打开目标工作台配方，物品栏携带空白合成指南并点击配方传输加号。也可副手拿成品样本、主手拿空白指南右击工作台。将已记录的指南单独放入无序合成格，会得到清空后的空白指南。"
+  ,"documentation.ars_arcane_matrix.crafting_guide.encoding.text": "最方便的写入方式是先打开薇克精下单终端，或打开高级存储讲台的合成页面，再在JEI打开目标工作台配方并点击配方传输加号；直接打开物品栏时无法写入。物品栏中需要携带空白合成指南。也可副手拿成品样本、主手拿空白指南右击工作台。将已记录的指南单独放入无序合成格，会得到清空后的空白指南。"
   ,"documentation.ars_arcane_matrix.crafting_guide.matching.title": "材料匹配模式"
   ,"documentation.ars_arcane_matrix.crafting_guide.matching.text": "手持已记录指南潜行右击，可在标签优选和严格配方之间切换。标签优选允许网络从兼容标签中选择现有材料；严格配方只接受记录配方要求的具体材料。记录后的图标前方显示目标物品，后方的小工作台图标表示普通工作台配方。"
   ,"documentation.ars_arcane_matrix.pattern_provider.summary": "样板供应器保存合成指南，并把这些配方提供给附近的下单终端与薇克精工作站。"
@@ -668,7 +669,7 @@
   ,"jei.ars_arcane_matrix.arcane_reaction.details": "%s 魔源｜%s 秒"
   ,"documentation.ars_arcane_matrix.arcane_reaction_vessel": "奥术反应釜使用魔源与流体加工物品，是取得第一枚魔源宝石后即可制作的入门物质转换设备。具体配方与消耗请在JEI的“奥术反应”分类中查看。"
   ,"documentation.ars_arcane_matrix.arcane_source_jar.summary": "奥术魔源罐是矿井前的一百万容量魔源缓冲，可主动汇聚周围魔源通道的产出，解决普通魔源罐与通道响应过慢的问题。"
-  ,"documentation.ars_arcane_matrix.arcane_source_jar.operation": "每秒汇聚一次12格内已加载的魔源通道，每个通道最多提供10000魔源，总计最多50000魔源/秒。它不会抽取其他魔源罐或工作机器，因此多个奥术魔源罐不会互相循环搬运；普通新生魔艺设备可直接从中抽取。"
+  ,"documentation.ars_arcane_matrix.arcane_source_jar.operation": "每秒主动扫描并汇聚一次12格内已加载的魔源生产者：每个目标最多抽取10000魔源，主动汇聚总计最多50000魔源/秒。矩阵核心还会按自身输出速率主动向罐体输送魔源，这部分不受上述主动抽取预算限制，因此单个满增幅矩阵可以输入约18750魔源/秒。它不会主动抽取其他魔源罐或工作机器，因此多个奥术魔源罐不会互相循环搬运；普通新生魔艺设备可直接从中抽取。"
   ,"documentation.ars_arcane_matrix.arcane_reaction_vessel.operation": "反应釜具有两个物品输入槽、物品输出槽、流体槽与魔源需求，物品和流体可从任意方向输入或抽取。空桶可在1秒内装入1,000 mB水、熔岩或牛奶，装桶本身不消耗魔源；桶装物不会堆叠，需要用漏斗等设备及时抽走输出。具体材料、流体用量、魔源消耗与反应时间请在JEI的“奥术反应”分类中查看。"
   ,"documentation.ars_arcane_matrix.arcane_fluid_controller.summary": "奥术流体控制器负责收集、分类、保存和无线输送任意已注册流体。它内置一个流体槽；在独立储罐槽安装奥术流体储罐后，最多可同时管理三种流体。"
   ,"documentation.ars_arcane_matrix.arcane_fluid_controller.operation": "界面选择范围抽取目标与默认输出储罐。支配之杖先点控制器再点容器绑定输出，反向操作绑定输入；输出目标会记住绑定时选中的储罐。基础支持1个输入和1个输出目标，每个范围升级各增加1个，上限4个；多个目标共享速度升级提供的传输预算。容量、范围和速度使用普通升级槽；奥术流体储罐使用独立储罐槽，槽内仍有流体时不能拆除。控制器不会自行生成熔岩。"

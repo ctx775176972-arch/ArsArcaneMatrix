@@ -28,7 +28,6 @@ import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +65,8 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
                 registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new ArcaneReactionJeiCategory(
                 registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new UnbreakableRefinementJeiCategory(
+                registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -93,6 +94,18 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
         registration.addRecipes(AlakarkinosExpeditionJeiCategory.TYPE,
                 AlakarkinosExpeditionManager.allRules());
         registration.addRecipes(ArcaneReactionJeiCategory.TYPE, ArcaneReactionManager.allRecipes());
+        List<net.minecraft.world.item.crafting.RecipeHolder<dev.arsmatrix.recipe.UnbreakableApparatusRecipe>>
+                unbreakableRecipes = List.of();
+        if (Minecraft.getInstance().level != null) {
+            var holder = Minecraft.getInstance().level.getRecipeManager().byKey(
+                    ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "unbreakable_item"));
+            if (holder.isPresent()
+                    && holder.get().value() instanceof dev.arsmatrix.recipe.UnbreakableApparatusRecipe recipe) {
+                unbreakableRecipes = List.of(new net.minecraft.world.item.crafting.RecipeHolder<>(
+                        holder.get().id(), recipe));
+            }
+        }
+        registration.addRecipes(UnbreakableRefinementJeiCategory.TYPE, unbreakableRecipes);
         registration.addIngredientInfo(
                 ModItems.ENCHANTED_CRYSTAL.get(),
                 Component.translatable("jei.ars_arcane_matrix.enchanted_crystal.source"),
@@ -113,6 +126,8 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(BlockRegistry.ENCHANTING_APP_BLOCK.get(),
                 ArcaneMachineUpgradeJeiCategory.TYPE);
+        registration.addRecipeCatalyst(BlockRegistry.ENCHANTING_APP_BLOCK.get(),
+                UnbreakableRefinementJeiCategory.TYPE);
         registration.addRecipeCatalyst(ModItems.CRAFTING_GUIDE.get(), RecipeTypes.CRAFTING);
         registration.addRecipeCatalyst(ModBlocks.ARCANE_SMELTER_CORE.get(), RecipeTypes.SMELTING);
         registration.addRecipeCatalyst(ModBlocks.SOURCE_STONE_FURNACE.get(), RecipeTypes.SMELTING);

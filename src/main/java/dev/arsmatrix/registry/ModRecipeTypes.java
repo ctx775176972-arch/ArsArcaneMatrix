@@ -3,6 +3,7 @@ package dev.arsmatrix.registry;
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import dev.arsmatrix.ArsArcaneMatrix;
 import dev.arsmatrix.recipe.ArcaneMachineUpgradeRecipe;
+import dev.arsmatrix.recipe.UnbreakableApparatusRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -23,6 +24,10 @@ public final class ModRecipeTypes {
     public static final DeferredHolder<RecipeSerializer<?>, ArcaneMachineUpgradeRecipe.Serializer>
             ARCANE_MACHINE_UPGRADE_SERIALIZER = SERIALIZERS.register(
                     "arcane_machine_upgrade", ArcaneMachineUpgradeRecipe.Serializer::new);
+
+    public static final DeferredHolder<RecipeSerializer<?>, UnbreakableApparatusRecipe.Serializer>
+            UNBREAKABLE_APPARATUS_SERIALIZER = SERIALIZERS.register(
+                    "unbreakable_apparatus", UnbreakableApparatusRecipe.Serializer::new);
 
     public static final DeferredHolder<RecipeType<?>, RecipeType<ArcaneMachineUpgradeRecipe>>
             ARCANE_MACHINE_UPGRADE_TYPE = TYPES.register(

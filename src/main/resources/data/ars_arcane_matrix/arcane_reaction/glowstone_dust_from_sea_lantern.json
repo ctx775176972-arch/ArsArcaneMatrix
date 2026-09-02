@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    { "item": "minecraft:sea_lantern", "count": 1 }
+  ],
+  "input_fluid": { "id": "minecraft:lava", "amount": 500 },
+  "output": { "item": "minecraft:glowstone_dust", "amount": 4 },
+  "source_cost": 400,
+  "processing_ticks": 100
+}

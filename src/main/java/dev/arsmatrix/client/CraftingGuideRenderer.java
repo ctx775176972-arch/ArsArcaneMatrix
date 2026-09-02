@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.resources.ResourceLocation;
 
-/** Renders an encoded guide as workstation in back and requested output in front. */
+/** Uses a simple parchment in-world and the recorded result as the inventory icon. */
 public final class CraftingGuideRenderer extends BlockEntityWithoutLevelRenderer {
 
     public CraftingGuideRenderer() {
@@ -34,27 +34,36 @@ public final class CraftingGuideRenderer extends BlockEntityWithoutLevelRenderer
         Minecraft minecraft = Minecraft.getInstance();
         var renderer = minecraft.getItemRenderer();
         boolean gui = displayContext == ItemDisplayContext.GUI;
-        // Child stacks must use the GUI transform while the guide is rendered in a slot.
-        // NONE renders the raw baked model, which made both layers look like pieces of a
-        // block texture instead of the same item icons shown by a normal inventory slot.
-        // The parent guide owns the hand transform. Reapplying each child item's
-        // first/third-person transform pushed the composed guide to the bottom of the hand.
-        ItemDisplayContext nestedContext = gui ? ItemDisplayContext.GUI : ItemDisplayContext.FIXED;
+        ItemDisplayContext nestedContext = gui ? ItemDisplayContext.GUI : ItemDisplayContext.NONE;
         int childLight = gui ? LightTexture.FULL_BRIGHT : packedLight;
+        ItemStack parchment = BuiltInRegistries.ITEM.getOptional(
+                        ResourceLocation.fromNamespaceAndPath("ars_nouveau", "blank_parchment"))
+                .map(ItemStack::new).orElseGet(() -> new ItemStack(Items.PAPER));
+
+        // The guide is intentionally a single flat parchment in every world/hand context.
+        // Its encoded result is useful as a slot icon, but a floating block/item composite
+        // is distracting and receives nested display transforms when held.
+        if (!gui) {
+            poseStack.pushPose();
+            poseStack.translate(0.5F, 0.5F, 0.5F);
+            poseStack.scale(0.86F, 0.86F, 0.86F);
+            renderChild(renderer, parchment, nestedContext, false, packedLight, packedOverlay,
+                    poseStack, buffer, minecraft, 0);
+            poseStack.popPose();
+            return;
+        }
+
         var recipeId = CraftingGuideItem.getRecipeId(stack);
         if (recipeId == null) {
-            ItemStack parchment = BuiltInRegistries.ITEM.getOptional(
-                            ResourceLocation.fromNamespaceAndPath("ars_nouveau", "blank_parchment"))
-                    .map(ItemStack::new).orElseGet(() -> new ItemStack(Items.PAPER));
             poseStack.pushPose();
-            if (gui) poseStack.translate(0.5F, 0.5F, 0.5F);
+            poseStack.translate(0.5F, 0.5F, 0.5F);
             poseStack.scale(0.86F, 0.86F, 0.86F);
             renderChild(renderer, parchment, nestedContext, gui, childLight, packedOverlay,
                     poseStack, buffer, minecraft, 0);
             poseStack.popPose();
 
             poseStack.pushPose();
-            if (gui) poseStack.translate(0.5F, 0.5F, 0.5F);
+            poseStack.translate(0.5F, 0.5F, 0.5F);
             poseStack.translate(0.18F, -0.18F, 0.38F);
             poseStack.scale(0.42F, 0.42F, 0.42F);
             renderChild(renderer, new ItemStack(Items.CRAFTING_TABLE), nestedContext, gui,
@@ -63,10 +72,6 @@ public final class CraftingGuideRenderer extends BlockEntityWithoutLevelRenderer
             return;
         }
 
-        ItemStack workstation = BuiltInRegistries.ITEM.getOptional(
-                        CraftingGuideItem.getWorkstationId(stack))
-                .map(ItemStack::new)
-                .orElseGet(() -> new ItemStack(Items.CRAFTING_TABLE));
         ItemStack output = CraftingGuideItem.getRecordedResult(stack);
         if (output.isEmpty() && minecraft.level != null) {
             output = minecraft.level.getRecipeManager().byKey(recipeId)
@@ -74,20 +79,10 @@ public final class CraftingGuideRenderer extends BlockEntityWithoutLevelRenderer
                     .orElse(ItemStack.EMPTY);
         }
 
-        // Compose both GUI-transformed child item models inside the guide's local slot space.
-        // The conservative scales keep even isometric block-item icons inside the slot.
-        poseStack.pushPose();
-        if (gui) poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.scale(0.92F, 0.92F, 0.92F);
-        renderChild(renderer, workstation, nestedContext, gui, childLight, packedOverlay,
-                poseStack, buffer, minecraft, 1);
-        poseStack.popPose();
-
         if (!output.isEmpty()) {
             poseStack.pushPose();
-            if (gui) poseStack.translate(0.5F, 0.5F, 0.5F);
-            poseStack.translate(0.18F, -0.18F, 0.35F);
-            poseStack.scale(0.62F, 0.62F, 0.62F);
+            poseStack.translate(0.5F, 0.5F, 0.5F);
+            poseStack.scale(0.92F, 0.92F, 0.92F);
             renderChild(renderer, output, nestedContext, gui, childLight, packedOverlay,
                     poseStack, buffer, minecraft, 2);
             poseStack.popPose();

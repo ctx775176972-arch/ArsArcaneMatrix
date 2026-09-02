@@ -1,0 +1,17 @@
+{
+  "type": "ars_nouveau:enchanting_apparatus",
+  "keepNbtOfReagent": false,
+  "pedestalItems": [
+    { "item": "ars_nouveau:earth_essence" },
+    { "item": "ars_nouveau:water_essence" },
+    { "item": "ars_nouveau:fire_essence" },
+    { "item": "ars_nouveau:air_essence" },
+    { "item": "ars_nouveau:manipulation_essence" },
+    { "item": "ars_nouveau:conjuration_essence" },
+    { "item": "ars_nouveau:abjuration_essence" },
+    { "item": "ars_arcane_matrix:enriched_mineral_crystal" }
+  ],
+  "reagent": { "item": "minecraft:golden_apple" },
+  "result": { "count": 1, "id": "minecraft:enchanted_golden_apple" },
+  "sourceCost": 8000
+}
