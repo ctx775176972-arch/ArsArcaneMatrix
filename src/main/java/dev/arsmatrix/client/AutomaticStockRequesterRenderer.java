@@ -23,10 +23,12 @@ public final class AutomaticStockRequesterRenderer
         ItemStack target = requester.getTarget();
         if (target.isEmpty()) return;
         poseStack.pushPose();
-        poseStack.translate(0.5D, 1.05D, 0.5D);
+        // Item models are centered around their origin. Keep even full block models
+        // entirely above the request display instead of burying their lower half.
+        poseStack.translate(0.5D, 1.28D, 0.5D);
         poseStack.mulPose(Axis.YP.rotationDegrees(
                 (requester.getLevel() == null ? 0L : requester.getLevel().getGameTime()) * 2.0F));
-        poseStack.scale(0.45F, 0.45F, 0.45F);
+        poseStack.scale(0.40F, 0.40F, 0.40F);
         Minecraft.getInstance().getItemRenderer().renderStatic(
                 target, ItemDisplayContext.FIXED, packedLight, packedOverlay,
                 poseStack, buffers, requester.getLevel(), 0);

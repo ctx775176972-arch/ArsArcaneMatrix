@@ -88,18 +88,8 @@ public final class AutomaticStockRequesterBlock extends BaseEntityBlock {
         if (stack.is(ItemsRegistry.DOMINION_ROD.get())) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        if (stack.isEmpty()) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        }
-        if (level.getBlockEntity(pos) instanceof AutomaticStockRequesterBlockEntity requester) {
-            if (!level.isClientSide) {
-                requester.setTarget(stack, player);
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-                        "message.ars_arcane_matrix.stock_requester.target_set",
-                        stack.getHoverName()), true);
-            }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        }
+        // The monitored item is a virtual GUI slot. Do not capture arbitrary held
+        // items here: doing so makes normal tool and item interactions error-prone.
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 

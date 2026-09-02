@@ -16,6 +16,7 @@ import dev.arsmatrix.data.ArcaneReactionManager;
 import dev.arsmatrix.ritual.ModRituals;
 import dev.arsmatrix.event.StarbuncleLogisticsProtectionEvents;
 import dev.arsmatrix.event.SpellBookPedestalInteractionEvents;
+import dev.arsmatrix.event.DeviceTierDebugInteractionEvents;
 import dev.arsmatrix.registry.ModBlockEntities;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModCapabilities;
@@ -69,6 +70,7 @@ public class ArsArcaneMatrix {
         NeoForge.EVENT_BUS.addListener(StarbuncleLogisticsProtectionEvents::onIncomingDamage);
         NeoForge.EVENT_BUS.addListener(StarbuncleLogisticsProtectionEvents::onLevelSound);
         NeoForge.EVENT_BUS.addListener(SpellBookPedestalInteractionEvents::onRightClickBlock);
+        NeoForge.EVENT_BUS.addListener(DeviceTierDebugInteractionEvents::onRightClickBlock);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modBus.addListener(ClientModEvents::clientSetup);
             modBus.addListener(ClientModEvents::registerLayerDefinitions);

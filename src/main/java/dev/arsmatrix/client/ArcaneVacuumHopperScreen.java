@@ -11,6 +11,10 @@ import net.minecraft.world.entity.player.Inventory;
 public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<ArcaneVacuumHopperMenu> {
     private Button itemToggle, xpToggle, filterMode, gemMode, nbtMode, rangeMode;
     private Button itemOutput, gemOutput, bindChannel, destroyMatches;
+    private Button collectionTab, outputTab, experienceTab, depositPreset, depositButton;
+    private Tab selectedTab = Tab.COLLECTION;
+    private int depositPresetIndex;
+    private static final int[] DEPOSIT_VALUES = {3, 12, 120, 768, -1};
     public ArcaneVacuumHopperScreen(ArcaneVacuumHopperMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         imageWidth = 244;
@@ -23,22 +27,63 @@ public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<Arca
         itemToggle = addButton(8, 20, 70, 16, 0);
         xpToggle = addButton(82, 20, 70, 16, 1);
         filterMode = addButton(156, 20, 80, 16, 2);
-        gemMode = addButton(8, 37, 70, 16, 3);
-        nbtMode = addButton(82, 37, 70, 16, 8);
-        rangeMode = addButton(156, 37, 80, 16, 9);
-        itemOutput = addButton(8, 54, 70, 16, 4);
-        gemOutput = addButton(82, 54, 70, 16, 5);
-        destroyMatches = addButton(156, 54, 80, 16, 7);
-        bindChannel = addButton(8, 139, 95, 16, 6);
-        int[] values = {3, 12, 120, 768};
-        for (int i = 0; i < values.length; i++) {
-            int value = values[i];
-            int id = 20 + i;
-            addRenderableWidget(Button.builder(Component.literal("+" + value), button -> click(id))
-                    .bounds(leftPos + 106 + i * 28, topPos + 139, 26, 16).build());
-        }
-        addRenderableWidget(Button.builder(Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.all"),
-                button -> click(24)).bounds(leftPos + 218, topPos + 139, 20, 16).build());
+        nbtMode = addButton(8, 37, 70, 16, 8);
+        rangeMode = addButton(82, 37, 70, 16, 9);
+        destroyMatches = addButton(156, 37, 80, 16, 7);
+
+        itemOutput = addButton(8, 20, 70, 16, 4);
+        gemOutput = addButton(82, 20, 70, 16, 5);
+        bindChannel = addButton(156, 20, 80, 16, 6);
+
+        gemMode = addButton(8, 20, 70, 16, 3);
+        depositPreset = addRenderableWidget(Button.builder(Component.empty(), button -> {
+                    depositPresetIndex = (depositPresetIndex + 1) % DEPOSIT_VALUES.length;
+                    updateButtons();
+                }).bounds(leftPos + 82, topPos + 20, 70, 16).build());
+        depositButton = addRenderableWidget(Button.builder(Component.translatable(
+                        "screen.ars_arcane_matrix.arcane_vacuum_hopper.deposit"), button ->
+                        click(depositPresetIndex == DEPOSIT_VALUES.length - 1
+                                ? 24 : 20 + depositPresetIndex))
+                .bounds(leftPos + 156, topPos + 20, 80, 16).build());
+
+        collectionTab = addTabButton(0,
+                "screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.collection.button", Tab.COLLECTION);
+        outputTab = addTabButton(1,
+                "screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.output.button", Tab.OUTPUT);
+        experienceTab = addTabButton(2,
+                "screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.experience.button", Tab.EXPERIENCE);
+        updateTabVisibility();
+    }
+
+    private Button addTabButton(int row, String translationKey, Tab tab) {
+        return addRenderableWidget(Button.builder(Component.translatable(translationKey), button -> {
+                    selectedTab = tab;
+                    updateTabVisibility();
+                }).bounds(leftPos - 36, topPos + 20 + row * 21, 34, 19).build());
+    }
+
+    private void updateTabVisibility() {
+        boolean collection = selectedTab == Tab.COLLECTION;
+        itemToggle.visible = collection;
+        xpToggle.visible = collection;
+        filterMode.visible = collection;
+        nbtMode.visible = collection;
+        rangeMode.visible = collection;
+        destroyMatches.visible = collection;
+
+        boolean output = selectedTab == Tab.OUTPUT;
+        itemOutput.visible = output;
+        gemOutput.visible = output;
+        bindChannel.visible = output;
+
+        boolean experience = selectedTab == Tab.EXPERIENCE;
+        gemMode.visible = experience;
+        depositPreset.visible = experience;
+        depositButton.visible = experience;
+
+        collectionTab.active = !collection;
+        outputTab.active = !output;
+        experienceTab.active = !experience;
     }
     private Button addButton(int x, int y, int width, int height, int id) {
         return addRenderableWidget(Button.builder(Component.empty(), button -> click(id))
@@ -96,6 +141,12 @@ public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<Arca
                 Math.floorMod(menu.bindChannel(), ArcaneVacuumHopperBlockEntity.BindChannel.values().length)];
         bindChannel.setMessage(Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.bind",
                 Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.channel." + channel.name().toLowerCase())));
+        int deposit = DEPOSIT_VALUES[depositPresetIndex];
+        depositPreset.setMessage(Component.translatable(
+                "screen.ars_arcane_matrix.arcane_vacuum_hopper.deposit_amount",
+                deposit < 0
+                        ? Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.all")
+                        : Component.literal(Integer.toString(deposit))));
     }
     private static Component toggle(String key, boolean active) {
         return Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper." + key,
@@ -113,4 +164,21 @@ public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<Arca
         graphics.drawString(font, Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.buffer"), 8, 107, 0xCBBCE3, false);
         graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xCBBCE3, false);
     }
+
+    @Override
+    protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+        super.renderTooltip(graphics, mouseX, mouseY);
+        if (collectionTab != null && collectionTab.isHovered()) {
+            graphics.renderTooltip(font, Component.translatable(
+                    "screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.collection"), mouseX, mouseY);
+        } else if (outputTab != null && outputTab.isHovered()) {
+            graphics.renderTooltip(font, Component.translatable(
+                    "screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.output"), mouseX, mouseY);
+        } else if (experienceTab != null && experienceTab.isHovered()) {
+            graphics.renderTooltip(font, Component.translatable(
+                    "screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.experience"), mouseX, mouseY);
+        }
+    }
+
+    private enum Tab { COLLECTION, OUTPUT, EXPERIENCE }
 }

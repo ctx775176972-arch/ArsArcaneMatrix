@@ -36,10 +36,10 @@ public final class WixiePatternProviderScreen extends AbstractContainerScreen<Wi
                 .bounds(leftPos + 154, topPos + 4, 14, 11).build());
         sortName = addRenderableWidget(Button.builder(Component.literal("A"), button ->
                         sendPageButton(WixiePatternProviderMenu.BUTTON_SORT_NAME))
-                .bounds(leftPos + 103, topPos + 4, 14, 11).build());
+                .bounds(leftPos + imageWidth + 3, topPos + 17, 16, 14).build());
         sortWorkstation = addRenderableWidget(Button.builder(Component.literal("▣"), button ->
                         sendPageButton(WixiePatternProviderMenu.BUTTON_SORT_WORKSTATION))
-                .bounds(leftPos + 120, topPos + 4, 14, 11).build());
+                .bounds(leftPos + imageWidth + 3, topPos + 34, 16, 14).build());
         updatePageButtons();
     }
 
@@ -107,9 +107,10 @@ public final class WixiePatternProviderScreen extends AbstractContainerScreen<Wi
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, titleLabelX, titleLabelY, 0xE8D9FF, false);
         if (menu.getPageCount() > 1) {
-            graphics.drawString(font, Component.literal(
-                            (menu.getPage() + 1) + "/" + menu.getPageCount()),
-                    112, titleLabelY, 0xCBBCE3, false);
+            Component pageText = Component.literal(
+                    (menu.getPage() + 1) + "/" + menu.getPageCount());
+            graphics.drawString(font, pageText,
+                    134 - font.width(pageText), titleLabelY, 0xCBBCE3, false);
         }
         graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY,
                 0xCBBCE3, false);

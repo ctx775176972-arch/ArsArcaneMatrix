@@ -25,6 +25,8 @@ public final class AutomaticStockRequesterMenu extends AbstractContainerMenu {
     public static final int PLUS_REQUEST_1 = 6;
     public static final int PLUS_REQUEST_16 = 7;
     public static final int TOGGLE_NOTIFICATIONS = 8;
+    public static final int SET_TARGET_FROM_CARRIED = 9;
+    public static final int CLEAR_TARGET = 10;
 
     private final AutomaticStockRequesterBlockEntity requester;
     private final BlockPos requesterPos;
@@ -131,6 +133,11 @@ public final class AutomaticStockRequesterMenu extends AbstractContainerMenu {
             case PLUS_REQUEST_1 -> requester.adjustRequestAmount(1);
             case PLUS_REQUEST_16 -> requester.adjustRequestAmount(16);
             case TOGGLE_NOTIFICATIONS -> requester.toggleNotifications();
+            case SET_TARGET_FROM_CARRIED -> {
+                if (getCarried().isEmpty()) return false;
+                requester.setTarget(getCarried(), player);
+            }
+            case CLEAR_TARGET -> requester.clearTarget();
             default -> { return false; }
         }
         return true;

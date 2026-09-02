@@ -28,6 +28,7 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.ARCANE_AMPLIFIER.get());
                         output.accept(ModItems.ARCANE_STRUCTURAL_FRAME.get());
                         output.accept(ModItems.MATRIX_CONSTRUCTION_WAND.get());
+                        output.accept(ModItems.DEVICE_TIER_DEBUG_TOOL.get());
                         output.accept(ModItems.ARCANE_PROCESSOR_CORE.get());
                         output.accept(ModItems.ENCHANTED_CRYSTAL.get());
                         output.accept(ModItems.ARCANE_SMELTER_CORE.get());
