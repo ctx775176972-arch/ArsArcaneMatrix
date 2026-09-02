@@ -8,7 +8,7 @@
     "particle": "ars_nouveau:block/smooth_sourcestone_mosaic"
   },
   "elements": [
-    {"from":[1,12,1],"to":[15,16,15],"faces":{"down":{"texture":"#stone"},"up":{"texture":"#dark"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},
+    {"from":[2,12,2],"to":[14,16,14],"faces":{"down":{"texture":"#stone"},"up":{"texture":"#dark"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},
     {"from":[2,10,2],"to":[14,12,14],"faces":{"down":{"texture":"#stone"},"up":{"texture":"#dark"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},
     {"from":[4,6,4],"to":[12,10,12],"faces":{"down":{"texture":"#stone"},"up":{"texture":"#dark"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},
     {"from":[6,3,6],"to":[10,6,10],"faces":{"down":{"texture":"#gilded"},"up":{"texture":"#dark"},"north":{"texture":"#stone"},"south":{"texture":"#stone"},"west":{"texture":"#stone"},"east":{"texture":"#stone"}}},

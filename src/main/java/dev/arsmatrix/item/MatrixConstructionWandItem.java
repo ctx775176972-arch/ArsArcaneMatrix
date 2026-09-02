@@ -31,6 +31,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
@@ -67,6 +68,9 @@ public final class MatrixConstructionWandItem extends Item {
     @Override public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
         if (player == null) return InteractionResult.PASS;
+        if (context.getLevel().getBlockState(context.getClickedPos()).is(Blocks.OBSIDIAN)) {
+            return buildNetherPortal(context, player);
+        }
         List<Placement> structure = structureFor(context.getLevel(), context.getClickedPos());
         if (structure.isEmpty()) {
             if (!context.getLevel().isClientSide) player.displayClientMessage(Component.translatable(
@@ -111,6 +115,85 @@ public final class MatrixConstructionWandItem extends Item {
         if (blocked > 0) player.displayClientMessage(Component.translatable(
                 "message.ars_arcane_matrix.construction_wand.blocked", blocked).withStyle(ChatFormatting.RED), false);
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * Hidden convenience action: the clicked obsidian is the left block of the
+     * portal's two-block bottom edge. The frame extends to the player's right
+     * and uses the vanilla ten-obsidian, cornerless shape.
+     */
+    private static InteractionResult buildNetherPortal(UseOnContext context, Player player) {
+        Level level = context.getLevel();
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+
+        BlockPos anchor = context.getClickedPos();
+        Direction right = player.getDirection().getClockWise();
+        List<BlockPos> frame = new ArrayList<>(10);
+        frame.add(anchor);
+        frame.add(anchor.relative(right));
+        for (int y = 1; y <= 3; y++) {
+            frame.add(anchor.relative(right.getOpposite()).above(y));
+            frame.add(anchor.relative(right, 2).above(y));
+        }
+        frame.add(anchor.above(4));
+        frame.add(anchor.relative(right).above(4));
+
+        List<BlockPos> interior = new ArrayList<>(6);
+        for (int y = 1; y <= 3; y++) {
+            interior.add(anchor.above(y));
+            interior.add(anchor.relative(right).above(y));
+        }
+
+        int required = 0;
+        for (BlockPos pos : frame) {
+            if (!level.isInWorldBounds(pos)) {
+                player.displayClientMessage(Component.translatable(
+                        "message.ars_arcane_matrix.construction_wand.portal_blocked"), true);
+                return InteractionResult.SUCCESS;
+            }
+            BlockState state = level.getBlockState(pos);
+            if (state.is(Blocks.OBSIDIAN)) continue;
+            if (!state.canBeReplaced()) {
+                player.displayClientMessage(Component.translatable(
+                        "message.ars_arcane_matrix.construction_wand.portal_blocked"), true);
+                return InteractionResult.SUCCESS;
+            }
+            required++;
+        }
+        for (BlockPos pos : interior) {
+            if (!level.isInWorldBounds(pos) || !level.getBlockState(pos).canBeReplaced()) {
+                player.displayClientMessage(Component.translatable(
+                        "message.ars_arcane_matrix.construction_wand.portal_blocked"), true);
+                return InteractionResult.SUCCESS;
+            }
+        }
+
+        if (!player.getAbilities().instabuild
+                && countItem(player.getInventory(), Blocks.OBSIDIAN.asItem()) < required) {
+            player.displayClientMessage(Component.translatable(
+                    "message.ars_arcane_matrix.construction_wand.portal_missing", required), true);
+            return InteractionResult.SUCCESS;
+        }
+
+        for (BlockPos pos : frame) {
+            if (level.getBlockState(pos).is(Blocks.OBSIDIAN)) continue;
+            if (!player.getAbilities().instabuild) {
+                consumeOne(player.getInventory(), Blocks.OBSIDIAN.asItem());
+            }
+            level.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
+        }
+        player.displayClientMessage(Component.translatable(
+                "message.ars_arcane_matrix.construction_wand.portal_built"), true);
+        return InteractionResult.SUCCESS;
+    }
+
+    private static int countItem(Inventory inventory, Item required) {
+        int count = 0;
+        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            ItemStack stack = inventory.getItem(slot);
+            if (stack.is(required)) count += stack.getCount();
+        }
+        return count;
     }
 
     private static boolean consumeOne(Inventory inventory, Item required) {

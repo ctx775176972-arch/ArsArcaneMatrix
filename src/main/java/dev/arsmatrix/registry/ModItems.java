@@ -11,6 +11,7 @@ import dev.arsmatrix.item.HubFilterScrollItem;
 import dev.arsmatrix.item.StarbuncleLogisticsHubItem;
 import dev.arsmatrix.item.ArcaneOrderPedestalItem;
 import dev.arsmatrix.item.AutomaticStockRequesterItem;
+import dev.arsmatrix.item.DeviceTierDebugToolItem;
 import dev.arsmatrix.ritual.RareCreatureSummoningRitual;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -42,6 +43,9 @@ public final class ModItems {
 
     public static final DeferredItem<MatrixConstructionWandItem> MATRIX_CONSTRUCTION_WAND = ITEMS.register(
             "matrix_construction_wand", () -> new MatrixConstructionWandItem(new Item.Properties()));
+
+    public static final DeferredItem<DeviceTierDebugToolItem> DEVICE_TIER_DEBUG_TOOL = ITEMS.register(
+            "device_tier_debug_tool", () -> new DeviceTierDebugToolItem(new Item.Properties()));
 
     public static final DeferredItem<BlockItem> ARCANE_PROCESSOR_CORE = ITEMS.registerSimpleBlockItem(
             "arcane_processor_core", ModBlocks.ARCANE_PROCESSOR_CORE, new Item.Properties());

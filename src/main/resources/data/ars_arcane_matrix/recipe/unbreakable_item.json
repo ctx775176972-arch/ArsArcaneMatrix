@@ -1,0 +1,17 @@
+{
+  "type": "ars_arcane_matrix:unbreakable_apparatus",
+  "keepNbtOfReagent": true,
+  "pedestalItems": [
+    { "item": "ars_nouveau:abjuration_essence" },
+    { "item": "ars_nouveau:abjuration_essence" },
+    { "item": "ars_arcane_matrix:sourcebound_copper_alloy" },
+    { "item": "ars_arcane_matrix:sourcebound_copper_alloy" },
+    { "item": "minecraft:netherite_block" },
+    { "item": "minecraft:netherite_block" },
+    { "item": "minecraft:enchanted_golden_apple" },
+    { "item": "minecraft:nether_star" }
+  ],
+  "reagent": { "tag": "minecraft:enchantable/durability" },
+  "result": { "count": 1, "id": "minecraft:netherite_sword" },
+  "sourceCost": 10000
+}

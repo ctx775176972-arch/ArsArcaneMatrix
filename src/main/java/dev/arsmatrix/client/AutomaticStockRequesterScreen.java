@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 public final class AutomaticStockRequesterScreen
         extends AbstractContainerScreen<AutomaticStockRequesterMenu> {
     private Button notificationsButton;
+    private Button clearTargetButton;
     public AutomaticStockRequesterScreen(
             AutomaticStockRequesterMenu menu, Inventory inventory, Component title
     ) {
@@ -29,6 +30,9 @@ public final class AutomaticStockRequesterScreen
         notificationsButton = addRenderableWidget(Button.builder(notificationLabel(), button ->
                         send(AutomaticStockRequesterMenu.TOGGLE_NOTIFICATIONS))
                 .bounds(leftPos + 142, topPos + 5, 80, 16).build());
+        clearTargetButton = addRenderableWidget(Button.builder(Component.literal("×"), button ->
+                        send(AutomaticStockRequesterMenu.CLEAR_TARGET))
+                .bounds(leftPos + 183, topPos + 27, 17, 18).build());
     }
 
     @Override
@@ -62,6 +66,22 @@ public final class AutomaticStockRequesterScreen
     }
 
     @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (mouseX >= leftPos + 12 && mouseX < leftPos + 30
+                && mouseY >= topPos + 27 && mouseY < topPos + 45) {
+            if (button == 1) {
+                send(AutomaticStockRequesterMenu.CLEAR_TARGET);
+                return true;
+            }
+            if (button == 0 && !menu.getCarried().isEmpty()) {
+                send(AutomaticStockRequesterMenu.SET_TARGET_FROM_CARRIED);
+                return true;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xED181027);
         graphics.fill(leftPos + 5, topPos + 24, leftPos + 225, topPos + 127, 0xD02A1D42);
@@ -92,6 +112,18 @@ public final class AutomaticStockRequesterScreen
         renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
+        if (mouseX >= leftPos + 12 && mouseX < leftPos + 30
+                && mouseY >= topPos + 27 && mouseY < topPos + 45) {
+            graphics.renderTooltip(font, Component.translatable(
+                    "screen.ars_arcane_matrix.stock_requester.target_slot.tooltip"), mouseX, mouseY);
+        } else if (mouseX >= leftPos + 204 && mouseX < leftPos + 222
+                && mouseY >= topPos + 27 && mouseY < topPos + 45) {
+            graphics.renderTooltip(font, Component.translatable(
+                    "screen.ars_arcane_matrix.stock_requester.catalyst_slot.tooltip"), mouseX, mouseY);
+        } else if (clearTargetButton != null && clearTargetButton.isHovered()) {
+            graphics.renderTooltip(font, Component.translatable(
+                    "screen.ars_arcane_matrix.stock_requester.clear_target.tooltip"), mouseX, mouseY);
+        }
     }
 
     @Override
