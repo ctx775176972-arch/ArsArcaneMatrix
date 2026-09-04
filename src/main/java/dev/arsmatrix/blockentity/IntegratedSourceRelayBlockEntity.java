@@ -73,10 +73,16 @@ public final class IntegratedSourceRelayBlockEntity extends BlockEntity
     }
 
     @Nullable
+    GlobalPos linkedSourcePosition() {
+        if (!(level instanceof ServerLevel serverLevel)) return null;
+        return SourceNetworkSavedData.get(serverLevel.getServer())
+                .sourceForRelay(globalPos(serverLevel));
+    }
+
+    @Nullable
     private BlockEntity linkedSource() {
         if (!(level instanceof ServerLevel serverLevel)) return null;
-        GlobalPos source = SourceNetworkSavedData.get(serverLevel.getServer())
-                .sourceForRelay(globalPos(serverLevel));
+        GlobalPos source = linkedSourcePosition();
         if (source == null) return null;
         ServerLevel sourceLevel = serverLevel.getServer().getLevel(source.dimension());
         if (sourceLevel == null || !sourceLevel.hasChunkAt(source.pos())) return null;

@@ -1,9 +1,11 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:source_stone_generator",
-  "name": "block.ars_arcane_matrix.source_stone_generator",
+  "name": "魔源造石机",
   "pages": [
-    {"type":"patchouli:text","title":"block.ars_arcane_matrix.source_stone_generator","text":"book.ars_arcane_matrix.source_stone_generator.overview"},
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.source_stone_generator","text":"没有匹配配方时，魔源造石机默认每轮产生64个圆石。没有魔源时也会缓慢工作；周围3×3×3范围内有魔源可用时，每轮固定耗时5秒。"},
+    {"type":"patchouli:text","text":"同一范围内的奥术基座用于选择产物。基座物品按种类和数量组合识别，但不会被消耗；没有匹配的组合时仍会生产圆石。"},
+    {"type":"patchouli:text","text":"产物先进入内部九格空间，并优先送入正下方容器，管道也可从任意面取出。输出装满后会停止工作，红石信号也可暂停机器。"},
     {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:source_stone_generator"}
   ]
 }

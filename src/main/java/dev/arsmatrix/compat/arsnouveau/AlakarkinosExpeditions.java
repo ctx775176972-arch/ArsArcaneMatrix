@@ -148,6 +148,7 @@ public final class AlakarkinosExpeditions {
     private static ExplorationTask findCandidate(ServerLevel level, Set<Item> pedestalItems,
             List<IItemHandler> inputs) {
         for (AlakarkinosExpeditionRule rule : AlakarkinosExpeditionManager.allRules()) {
+            if (!dev.arsmatrix.config.MatrixConfig.ENABLE_ALAKARKINOS_EXPEDITIONS.get()) break;
             if (rule.requiresProof()
                     && !pedestalItems.contains(BuiltInRegistries.ITEM.get(rule.proof()))) continue;
             if (hasAllInputs(inputs, rule)) return ExplorationTask.custom(rule);
@@ -163,6 +164,7 @@ public final class AlakarkinosExpeditions {
     private static boolean isValid(ExplorationTask task, Set<Item> pedestalItems,
             List<IItemHandler> inputs) {
         if (task.rule != null) {
+            if (!dev.arsmatrix.config.MatrixConfig.ENABLE_ALAKARKINOS_EXPEDITIONS.get()) return false;
             return (!task.rule.requiresProof()
                     || pedestalItems.contains(BuiltInRegistries.ITEM.get(task.rule.proof())))
                     && hasAllInputs(inputs, task.rule);

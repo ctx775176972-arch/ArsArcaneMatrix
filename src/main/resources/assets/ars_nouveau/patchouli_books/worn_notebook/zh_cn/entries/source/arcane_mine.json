@@ -1,13 +1,19 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:arcane_mine_core",
-  "name": "block.ars_arcane_matrix.arcane_mine_core",
+  "name": "奥术矿井核心",
   "sortnum": 21,
   "pages": [
-    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_mine_core","text":"book.ars_arcane_matrix.arcane_mine.overview"},
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_mine_core","text":"在矿井核心上方依次建造3×3、5×5、7×7和9×9平台。第一层由中心与四角的魔源宝石块、四边中央的魔源石组成。"},
+    {"type":"patchouli:text","text":"从第二层开始，其余位置使用奥术结构框架。四层依次解锁木、石、铁和钻石挖掘等级；最珍贵的矿物只会在第四层出现。"},
+    {"type":"patchouli:text","text":"矿井不会储存魔源。只有能够一次付清本轮消耗时才会开始运行。完整四层后，取用魔源的距离扩大到32格，并可直接使用已加载的矩阵核心。"},
+    {"type":"patchouli:text","text":"第一层四角的魔源宝石块标出白名单样品位置，四边中央的魔源石标出黑名单样品位置。放置样品即可限制矿井允许或禁止生产的矿物。"},
     {"type":"ars_nouveau:apparatus_recipe","recipe":"ars_arcane_matrix:arcane_mine_core"},
-    {"type":"patchouli:text","title":"book.ars_arcane_matrix.arcane_mine.cycle.title","text":"book.ars_arcane_matrix.arcane_mine.cycle.text"},
-    {"type":"patchouli:text","title":"book.ars_arcane_matrix.arcane_mine.amplifier.title","text":"book.ars_arcane_matrix.arcane_mine.amplifier.text"},
+    {"type":"patchouli:text","text":"documentation.ars_arcane_matrix.arcane_mine.operation"},
+    {"type":"patchouli:text","title":"book.ars_arcane_matrix.arcane_mine.cycle.title","text":"可让矿井生产青金石矿，再用带有时运的工具采掘。把青金石块送入奥术灌注核心，批量转换为魔源宝石。"},
+    {"type":"patchouli:text","text":"只需将足够补充矿井材料的魔源宝石送回矿井，其余青金石可以留作其他用途。矿井和灌注需要持续供给魔源，但不要求先制作矩阵核心。"},
+    {"type":"patchouli:text","title":"book.ars_arcane_matrix.arcane_mine.amplifier.title","text":"完整四层矿井会按照实际消耗的材料判定奥术增幅器。材料越珍贵，获得机会增长越快；连续消耗足量材料后必定获得。"},
+    {"type":"patchouli:text","text":"每层中心最多安装一个增幅器，使普通矿物增加1份，同时使本轮魔源和材料消耗提高50%。无法输出的增幅器会暂存在核心中。"},
     {"type":"patchouli:text","title":"documentation.ars_arcane_matrix.construction_wand.title","text":"documentation.ars_arcane_matrix.multiblock.building"}
   ]
 }

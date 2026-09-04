@@ -3,6 +3,7 @@ package dev.arsmatrix.client;
 import dev.arsmatrix.registry.ModBlockEntities;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModItems;
+import dev.arsmatrix.registry.ModMenus;
 import dev.arsmatrix.blockentity.ArcaneFluidReservoirBlockEntity;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.level.material.Fluids;
@@ -86,6 +87,7 @@ public final class ClientModEvents {
     }
 
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+        event.register(ModMenus.WIZARDS_POCKET_WATCH.get(), WizardsPocketWatchScreen::new);
         event.register(dev.arsmatrix.registry.ModMenus.WIXIE_ORDER_TERMINAL.get(),
                 WixieOrderTerminalScreen::new);
         event.register(dev.arsmatrix.registry.ModMenus.WIXIE_PATTERN_PROVIDER.get(),

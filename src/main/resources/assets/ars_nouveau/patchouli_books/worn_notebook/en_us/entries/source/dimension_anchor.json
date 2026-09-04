@@ -3,8 +3,10 @@
   "icon": "ars_arcane_matrix:dimension_anchor",
   "category": "ars_nouveau:ars_arcane_matrix",
   "pages": [
-    { "type": "patchouli:text", "text": "The Dimensional Anchor consumes Earth Essence to fully tick its own chunk. Each essence lasts 30 minutes. Use it with an empty hand to inspect remaining time, or automate its single fuel slot with a hopper or pipe." },
-    { "type": "patchouli:text", "text": "A redstone signal immediately pauses the anchor, stops fuel use, and releases the chunk. Fuel exhaustion and block removal also release it safely. Cross-dimensional Source and storage networks need one anchor in every remote node's chunk." },
+    { "type": "patchouli:text", "text": "The Dimensional Anchor draws 100 Source per second from providers within 8 blocks. While powered, it keeps its own chunk loaded and running." },
+    { "type": "patchouli:text", "text": "Surround it at the same height with eight Arcane Structural Frames to enable expansion mode. This keeps a centered 3×3 chunk area loaded and costs 900 Source per second." },
+    { "type": "patchouli:text", "text": "If Source runs out, redstone pauses it, its expansion frame changes, or it is broken, the Anchor immediately unloads chunks it no longer maintains." },
+    { "type": "patchouli:text", "text": "Empty-hand use previews the expansion frame, and the Matrix Construction Wand places missing blocks. Cross-dimensional Source and storage links require their remote nodes to remain loaded." },
     { "type": "patchouli:crafting", "recipe": "ars_arcane_matrix:dimension_anchor" }
   ]
 }

@@ -20,6 +20,15 @@ public final class ModRecipeTypes {
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, ArsArcaneMatrix.MOD_ID);
     private static final DeferredRegister<RecipeType<?>> TYPES =
             DeferredRegister.create(Registries.RECIPE_TYPE, ArsArcaneMatrix.MOD_ID);
+    private static final DeferredRegister<com.mojang.serialization.MapCodec<? extends
+            net.neoforged.neoforge.common.conditions.ICondition>> CONDITIONS = DeferredRegister.create(
+                    net.neoforged.neoforge.registries.NeoForgeRegistries.Keys.CONDITION_CODECS,
+                    ArsArcaneMatrix.MOD_ID);
+
+    static {
+        CONDITIONS.register("unbreakable_enabled", () -> dev.arsmatrix.recipe.UnbreakableEnabledCondition.CODEC);
+        CONDITIONS.register("optional_recipe", () -> dev.arsmatrix.recipe.OptionalRecipeCondition.CODEC);
+    }
 
     public static final DeferredHolder<RecipeSerializer<?>, ArcaneMachineUpgradeRecipe.Serializer>
             ARCANE_MACHINE_UPGRADE_SERIALIZER = SERIALIZERS.register(
@@ -41,10 +50,13 @@ public final class ModRecipeTypes {
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);
         TYPES.register(eventBus);
+        CONDITIONS.register(eventBus);
         eventBus.addListener(ModRecipeTypes::commonSetup);
     }
 
     private static void commonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> com.hollingsworth.arsnouveau.api.registry.SpellCasterRegistry.register(
+                ModItems.WIZARDS_POCKET_WATCH.get(), ModItems.WIZARDS_POCKET_WATCH.get()));
         event.enqueueWork(() -> ArsNouveauAPI.getInstance().getEnchantingRecipeTypes()
                 .add(ARCANE_MACHINE_UPGRADE_TYPE.get()));
     }

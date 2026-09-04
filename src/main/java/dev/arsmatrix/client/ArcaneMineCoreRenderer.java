@@ -3,6 +3,7 @@ package dev.arsmatrix.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.arsmatrix.blockentity.ArcaneMineCoreBlockEntity;
 import dev.arsmatrix.config.MatrixConfig;
+import dev.arsmatrix.config.MatrixClientConfig;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -29,6 +30,7 @@ public final class ArcaneMineCoreRenderer implements BlockEntityRenderer<ArcaneM
             int packedOverlay
     ) {
         StructurePreviewRenderer.renderMine(core.getBlockPos(), poseStack, bufferSource);
+        if (!MatrixClientConfig.MINE_BEAM.get()) return;
 
         int completedLayers = core.getCompletedLayers();
         if (!core.isActive() || completedLayers <= 0 || core.getLevel() == null) {

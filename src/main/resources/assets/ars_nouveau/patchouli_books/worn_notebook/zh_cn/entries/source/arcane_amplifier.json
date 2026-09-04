@@ -1,12 +1,13 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:arcane_amplifier",
-  "name": "block.ars_arcane_matrix.arcane_amplifier",
+  "name": "奥术增幅器",
   "sortnum": 22,
   "pages": [
-    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_amplifier","text":"book.ars_arcane_matrix.arcane_amplifier.overview"},
-    {"type":"patchouli:text","title":"block.ars_arcane_matrix.matrix_core","text":"book.ars_arcane_matrix.arcane_amplifier.matrix"},
-    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_mine_core","text":"book.ars_arcane_matrix.arcane_amplifier.mine"},
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_amplifier","text":"完整四层矿井会根据实际消耗的材料判定奥术增幅器。消耗的材料越珍贵，获得机会增长得越快；连续消耗足量材料后必定获得一个。"},
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.matrix_core","text":"在矩阵框架的六个轴向顶点安装增幅器，每个使基础魔源产量提高25%，最多安装六个。"},
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_mine_core","text":"每个完整矿井层的中心最多安装一个增幅器。每个增幅器使普通矿物产量增加1份，同时使本次运行所需魔源与材料增加50%。"},
+    {"type":"patchouli:text","text":"四层全部安装后，普通矿物产量为原来的5倍，成本为原来的3倍。无法输出的增幅器会暂存在矿井核心中；多余增幅器可以回收为魔源宝石。"},
     {"type":"ars_nouveau:imbuement_recipe","recipe":"ars_arcane_matrix:arcane_amplifier_recycling"}
   ]
 }

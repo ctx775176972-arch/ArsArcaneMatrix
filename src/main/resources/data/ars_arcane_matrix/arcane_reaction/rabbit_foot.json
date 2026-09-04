@@ -1,0 +1,10 @@
+{
+  "ingredients": [
+    {"item": "minecraft:rabbit_hide", "count": 1},
+    {"item": "minecraft:rabbit", "count": 1}
+  ],
+  "input_fluid": {"id": "minecraft:water", "amount": 250},
+  "output": {"item": "minecraft:rabbit_foot", "amount": 1},
+  "source_cost": 250,
+  "processing_ticks": 100
+}

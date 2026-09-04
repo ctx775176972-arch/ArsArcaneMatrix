@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.arsmatrix.blockentity.WixieOrderTerminalBlockEntity;
 import dev.arsmatrix.blockentity.WixiePatternProviderBlockEntity;
 import dev.arsmatrix.registry.ModBlocks;
+import dev.arsmatrix.config.MatrixClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
@@ -67,7 +68,14 @@ public final class WixieRangeRenderer {
             clear();
             return;
         }
-        if (level.getGameTime() - lastScanTime >= 20) refreshDetected(level);
+        if (MatrixClientConfig.WIXIE_HIGHLIGHT_DEVICES.get()) {
+            if (lastScanTime == Long.MIN_VALUE || level.getGameTime() - lastScanTime >= 20) {
+                refreshDetected(level);
+            }
+        } else {
+            detected = List.of();
+            lastScanTime = Long.MIN_VALUE;
+        }
         int horizontal = horizontalRadius();
         int vertical = verticalRadius();
         float[] color = activeType == RangeType.PROVIDER
@@ -86,7 +94,8 @@ public final class WixieRangeRenderer {
                 activePos.getX() - horizontal, activePos.getY() - vertical, activePos.getZ() - horizontal,
                 activePos.getX() + horizontal + 1, activePos.getY() + vertical + 1,
                 activePos.getZ() + horizontal + 1);
-        LevelRenderer.renderLineBox(poseStack, lines, range, color[0], color[1], color[2], 0.9F);
+        LevelRenderer.renderLineBox(poseStack, lines, range, color[0], color[1], color[2],
+                MatrixClientConfig.WIXIE_RANGE_OPACITY.get().floatValue());
         LevelRenderer.renderLineBox(poseStack, lines, new AABB(activePos), 1.0F, 1.0F, 1.0F, 1.0F);
         for (BlockPos pos : detected) {
             LevelRenderer.renderLineBox(poseStack, lines, new AABB(pos).inflate(0.03D),
@@ -98,6 +107,11 @@ public final class WixieRangeRenderer {
 
     private static void refreshDetected(Level level) {
         if (activePos == null || activeType == null) return;
+        if (!MatrixClientConfig.WIXIE_HIGHLIGHT_DEVICES.get()) {
+            detected = List.of();
+            lastScanTime = Long.MIN_VALUE;
+            return;
+        }
         int horizontal = horizontalRadius();
         int vertical = verticalRadius();
         List<BlockPos> found = new ArrayList<>();

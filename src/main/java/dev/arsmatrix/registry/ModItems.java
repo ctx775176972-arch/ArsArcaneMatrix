@@ -28,6 +28,9 @@ public final class ModItems {
 
     public static final DeferredRegister.Items ITEMS =
             DeferredRegister.createItems(ArsArcaneMatrix.MOD_ID);
+    // Unreleased prototype: intentionally absent from recipes and the creative tab.
+    public static final DeferredItem<dev.arsmatrix.item.WizardsPocketWatchItem> WIZARDS_POCKET_WATCH =
+            ITEMS.register("wizards_pocket_watch", dev.arsmatrix.item.WizardsPocketWatchItem::new);
 
     public static final DeferredItem<BlockItem> MATRIX_CORE =
             ITEMS.registerSimpleBlockItem("matrix_core", ModBlocks.MATRIX_CORE, new Item.Properties());
