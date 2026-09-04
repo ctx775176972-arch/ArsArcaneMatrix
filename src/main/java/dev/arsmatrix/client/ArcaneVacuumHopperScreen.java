@@ -10,11 +10,9 @@ import net.minecraft.world.entity.player.Inventory;
 
 public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<ArcaneVacuumHopperMenu> {
     private Button itemToggle, xpToggle, filterMode, gemMode, nbtMode, rangeMode;
-    private Button itemOutput, gemOutput, bindChannel, destroyMatches;
-    private Button collectionTab, outputTab, experienceTab, depositPreset, depositButton;
+    private Button itemOutput, destroyMatches;
+    private Button collectionTab, outputTab, experienceTab;
     private Tab selectedTab = Tab.COLLECTION;
-    private int depositPresetIndex;
-    private static final int[] DEPOSIT_VALUES = {3, 12, 120, 768, -1};
     public ArcaneVacuumHopperScreen(ArcaneVacuumHopperMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         imageWidth = 244;
@@ -31,20 +29,9 @@ public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<Arca
         rangeMode = addButton(82, 37, 70, 16, 9);
         destroyMatches = addButton(156, 37, 80, 16, 7);
 
-        itemOutput = addButton(8, 20, 70, 16, 4);
-        gemOutput = addButton(82, 20, 70, 16, 5);
-        bindChannel = addButton(156, 20, 80, 16, 6);
+        itemOutput = addButton(8, 20, 228, 16, 4);
 
-        gemMode = addButton(8, 20, 70, 16, 3);
-        depositPreset = addRenderableWidget(Button.builder(Component.empty(), button -> {
-                    depositPresetIndex = (depositPresetIndex + 1) % DEPOSIT_VALUES.length;
-                    updateButtons();
-                }).bounds(leftPos + 82, topPos + 20, 70, 16).build());
-        depositButton = addRenderableWidget(Button.builder(Component.translatable(
-                        "screen.ars_arcane_matrix.arcane_vacuum_hopper.deposit"), button ->
-                        click(depositPresetIndex == DEPOSIT_VALUES.length - 1
-                                ? 24 : 20 + depositPresetIndex))
-                .bounds(leftPos + 156, topPos + 20, 80, 16).build());
+        gemMode = addButton(8, 20, 228, 16, 3);
 
         collectionTab = addTabButton(0,
                 "screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.collection.button", Tab.COLLECTION);
@@ -73,13 +60,9 @@ public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<Arca
 
         boolean output = selectedTab == Tab.OUTPUT;
         itemOutput.visible = output;
-        gemOutput.visible = output;
-        bindChannel.visible = output;
 
         boolean experience = selectedTab == Tab.EXPERIENCE;
         gemMode.visible = experience;
-        depositPreset.visible = experience;
-        depositButton.visible = experience;
 
         collectionTab.active = !collection;
         outputTab.active = !output;
@@ -100,7 +83,6 @@ public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<Arca
         for (int column = 0; column < 9; column++) drawSlot(graphics, leftPos + 37 + column * 18, topPos + 70);
         for (int row = 0; row < 2; row++) for (int column = 0; column < 9; column++)
             drawSlot(graphics, leftPos + 37 + column * 18, topPos + 103 + row * 18);
-        for (int slot = 0; slot < 2; slot++) drawSlot(graphics, leftPos + 208, topPos + 103 + slot * 18);
         for (int row = 0; row < 3; row++) for (int column = 0; column < 9; column++)
             drawSlot(graphics, leftPos + 37 + column * 18, topPos + 167 + row * 18);
         for (int column = 0; column < 9; column++) drawSlot(graphics, leftPos + 37 + column * 18, topPos + 225);
@@ -132,21 +114,9 @@ public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<Arca
                 Component.translatable(selectedRange.translationKey())));
         itemOutput.setMessage(mode("item_output", ArcaneVacuumHopperBlockEntity.OutputMode.values()[
                 Math.floorMod(menu.itemOutputMode(), ArcaneVacuumHopperBlockEntity.OutputMode.values().length)].name()));
-        gemOutput.setMessage(mode("gem_output", ArcaneVacuumHopperBlockEntity.OutputMode.values()[
-                Math.floorMod(menu.gemOutputMode(), ArcaneVacuumHopperBlockEntity.OutputMode.values().length)].name()));
         destroyMatches.setMessage(Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.destroy",
                 Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper."
                         + (menu.destroysMatches() ? "on" : "off"))));
-        ArcaneVacuumHopperBlockEntity.BindChannel channel = ArcaneVacuumHopperBlockEntity.BindChannel.values()[
-                Math.floorMod(menu.bindChannel(), ArcaneVacuumHopperBlockEntity.BindChannel.values().length)];
-        bindChannel.setMessage(Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.bind",
-                Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.channel." + channel.name().toLowerCase())));
-        int deposit = DEPOSIT_VALUES[depositPresetIndex];
-        depositPreset.setMessage(Component.translatable(
-                "screen.ars_arcane_matrix.arcane_vacuum_hopper.deposit_amount",
-                deposit < 0
-                        ? Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.all")
-                        : Component.literal(Integer.toString(deposit))));
     }
     private static Component toggle(String key, boolean active) {
         return Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper." + key,

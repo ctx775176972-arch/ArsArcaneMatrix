@@ -24,6 +24,9 @@ public final class ModMenus {
 
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(Registries.MENU, ArsArcaneMatrix.MOD_ID);
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.arsmatrix.menu.WizardsPocketWatchMenu>>
+            WIZARDS_POCKET_WATCH = MENUS.register("wizards_pocket_watch",
+                    () -> IMenuTypeExtension.create(dev.arsmatrix.menu.WizardsPocketWatchMenu::new));
 
     public static final DeferredHolder<MenuType<?>, MenuType<WixieOrderTerminalMenu>> WIXIE_ORDER_TERMINAL =
             MENUS.register("wixie_order_terminal",

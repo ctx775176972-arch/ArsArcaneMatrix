@@ -1,17 +1,21 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:matrix_core",
-  "name": "block.ars_arcane_matrix.matrix_core",
+  "name": "Arcane Matrix Core",
   "sortnum": 20,
   "pages": [
     {
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.matrix_core",
-      "text": "book.ars_arcane_matrix.matrix_core.overview"
+      "text": "The Arcane Matrix Core is a late-game Source generator unlocked after completing the Processor, Smelter, and Crusher. Its recipe requires all five Sourcelinks and the three processing crystals."
     },
     {
       "type": "ars_nouveau:apparatus_recipe",
       "recipe": "ars_arcane_matrix:matrix_core"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Build three intersecting 5×5 frame rings around the Core. One complete ring starts the Matrix; extending the other two increases Source production. Arcane Amplifiers may replace the six axial vertices."
     },
     {
       "type": "patchouli:text",

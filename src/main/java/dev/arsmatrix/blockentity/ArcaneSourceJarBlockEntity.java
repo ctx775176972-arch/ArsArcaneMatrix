@@ -155,7 +155,17 @@ public final class ArcaneSourceJarBlockEntity extends BlockEntity
     public int getLastPulled() { return lastPulled; }
 
     public int extractForNetwork(int amount, boolean simulate) {
-        return amount <= 0 ? 0 : storage.extractSource(amount, simulate);
+        // Network consumers such as the Integrated Source Relay pay for one
+        // complete machine operation at a time.  Do not apply the jar's
+        // ordinary 50k/t transfer cap here: amplified mine recipes can cost
+        // more than that in a single operation (for example Ancient Debris).
+        // The jar's active gathering and normal Ars transfer rates remain
+        // capped by TOTAL_PULL_PER_SECOND.
+        int extracted = Math.max(0, Math.min(amount, getSource()));
+        if (!simulate && extracted > 0) {
+            setSource(getSource() - extracted);
+        }
+        return extracted;
     }
 
     public boolean isLinked() {

@@ -1,23 +1,27 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:arcane_amplifier",
-  "name": "block.ars_arcane_matrix.arcane_amplifier",
+  "name": "Arcane Amplifier",
   "sortnum": 22,
   "pages": [
     {
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.arcane_amplifier",
-      "text": "book.ars_arcane_matrix.arcane_amplifier.overview"
+      "text": "A complete four-layer Mine checks for an Arcane Amplifier according to the materials it actually consumes. Valuable materials increase the chance faster, and consuming enough material without success guarantees one."
     },
     {
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.matrix_core",
-      "text": "book.ars_arcane_matrix.arcane_amplifier.matrix"
+      "text": "Install Amplifiers at the six axial vertices of a Matrix frame. Each adds 25% of the base Source output, and up to six may be installed."
     },
     {
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.arcane_mine_core",
-      "text": "book.ars_arcane_matrix.arcane_amplifier.mine"
+      "text": "Install at most one Amplifier at the center of each complete Mine layer. Each adds one ordinary ore while increasing that operation's Source and material costs by 50%."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "With all four installed, ordinary ore output is five times normal and costs are three times normal. Blocked Amplifiers wait inside the Mine Core, and surplus Amplifiers may be recycled into Source Gems."
     },
     {
       "type": "ars_nouveau:imbuement_recipe",

@@ -3,9 +3,12 @@
   "pages":[
     {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_fluid_reservoir"},
     {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_fluid_tank"},
-    {"type":"patchouli:text","text":"The Arcane Fluid Controller includes one fluid tank. Install standalone Arcane Fluid Reservoirs in its expansion slots to unlock up to three tanks. Each reservoir holds one fluid type. Input first enters a matching reservoir, then an empty one; a nonempty reservoir cannot be removed."},
-    {"type":"patchouli:text","text":"Range Collection selects a world fluid while Output Tank controls pipe extraction and wireless output. The front window takes that tank's fluid color. Range choices include water, lava, and fluids already identified in a tank: insert one sample bucket, then select it to collect its world sources. Non-placeable fluids still require a container or pipe."},
-    {"type":"patchouli:text","text":"Use a Dominion Wand on the controller then a container to bind output; reverse the order to bind input. The base controller stores one input and one output target; each Range Upgrade adds one of each, up to four. An output remembers the selected tank at binding time, so different fluids can feed different machines. Tiers 0/1 reach 32/128 blocks, tier 2 is unlimited within one dimension, and tier 3 crosses dimensions. Target chunks must remain loaded."},
-    {"type":"patchouli:text","text":"Capacity, Range, and Speed Upgrades use the ordinary upgrade slots; Arcane Fluid Reservoirs use the separate expansion slots. The controller stores, collects, and transports fluids but no longer creates lava. Use an Arcane Reaction Vessel for fluid processing."}
+    {"type":"patchouli:text","text":"The Arcane Fluid Controller includes one tank. Install Arcane Fluid Reservoirs in its expansion slots to unlock up to three tanks. Each tank holds one fluid type."},
+    {"type":"patchouli:text","text":"Input first enters a tank holding the same fluid, then an empty tank. A Reservoir module cannot be removed while its tank contains fluid."},
+    {"type":"patchouli:text","text":"Range Collection chooses a fluid to collect from the world. Output Tank chooses the fluid used by pipes and wireless outputs. The front window shows the selected output fluid."},
+    {"type":"patchouli:text","text":"Water, lava, and identified placeable fluids may be collected. Insert one sample bucket to make its fluid selectable. Fluids that cannot exist in the world must enter through a container or pipe."},
+    {"type":"patchouli:text","text":"Use a Dominion Wand on the Controller and then a container to bind output; reverse the order to bind input. The base tier holds one input and one output target. Each Range Upgrade adds one of each, up to four."},
+    {"type":"patchouli:text","text":"An output remembers the selected tank when linked, so different fluids may feed different machines. Wireless reach progresses through 32 blocks, 128 blocks, unlimited same-dimension reach, and cross-dimensional reach."},
+    {"type":"patchouli:text","text":"Remote target chunks must remain loaded. Capacity, Range, and Speed Upgrades use ordinary upgrade slots; Reservoir modules use separate slots. Use an Arcane Reaction Vessel to process fluids."}
   ]
 }
