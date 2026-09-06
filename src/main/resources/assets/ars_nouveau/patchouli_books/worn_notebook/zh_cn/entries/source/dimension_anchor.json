@@ -3,8 +3,10 @@
   "icon": "ars_arcane_matrix:dimension_anchor",
   "category": "ars_nouveau:ars_arcane_matrix",
   "pages": [
-    { "type": "patchouli:text", "text": "维度锚消耗土之精华，使自身所在的一个区块保持完整运转。每个土之精华可维持30分钟；可空手右击检查剩余时间，也可使用漏斗或管道自动补充。" },
-    { "type": "patchouli:text", "text": "红石信号会立即暂停维度锚、停止燃料消耗并释放区块。燃料耗尽或方块被破坏时也会安全释放。跨维度魔源与存储网络需要在每个远程节点所在区块分别放置维度锚。" },
+    { "type": "patchouli:text", "text": "维度锚每秒从8格范围内的魔源提供者抽取100魔源，使自身所在区块保持加载并正常运行。" },
+    { "type": "patchouli:text", "text": "在同一高度用8个奥术结构框架围住维度锚后，会启用扩展模式，加载以自身为中心的3×3区块，并消耗900魔源/秒。" },
+    { "type": "patchouli:text", "text": "魔源不足、收到红石信号、扩展框架发生变化或维度锚被破坏时，它会立即卸载不再维持的区块。" },
+    { "type": "patchouli:text", "text": "空手右击可显示扩展结构投影，矩阵构筑棒可以放置缺少的框架。跨维度使用魔源或存储网络时，必须让远程节点所在区块保持加载。" },
     { "type": "patchouli:crafting", "recipe": "ars_arcane_matrix:dimension_anchor" }
   ]
 }

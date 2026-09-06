@@ -1,13 +1,25 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:arcane_mine_core",
-  "name": "block.ars_arcane_matrix.arcane_mine_core",
+  "name": "Arcane Mine Core",
   "sortnum": 21,
   "pages": [
     {
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.arcane_mine_core",
-      "text": "book.ars_arcane_matrix.arcane_mine.overview"
+      "text": "Build 3×3, 5×5, 7×7, and 9×9 platforms above the Mine Core. The first layer uses Source Gem Blocks at its center and corners, with Sourcestone at the center of each edge."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "From layer two onward, fill the remaining positions with Arcane Structural Frames. The four layers unlock wood, stone, iron, and diamond mining tiers. The rarest ores require layer four."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The Mine does not store Source. It begins only when the complete cost of an operation can be paid at once. Four layers increase its Source reach to 32 blocks and allow it to use loaded Matrix Cores directly."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The Source Gem Block corners mark whitelist sample positions, while the Sourcestone edge centers mark blacklist positions. Place samples there to choose which ores the Mine may or may not produce."
     },
     {
       "type": "ars_nouveau:apparatus_recipe",
@@ -15,13 +27,25 @@
     },
     {
       "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_mine.operation"
+    },
+    {
+      "type": "patchouli:text",
       "title": "book.ars_arcane_matrix.arcane_mine.cycle.title",
-      "text": "book.ars_arcane_matrix.arcane_mine.cycle.text"
+      "text": "Let the Mine produce Lapis Ore, then break it with Fortune. Send Lapis Blocks into the Arcane Imbuement Core to convert them into Source Gems in bulk."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Return enough Source Gems to keep the Mine supplied; the remaining Lapis can serve other uses. Mining and imbuement need ongoing Source, but neither requires a Matrix Core."
     },
     {
       "type": "patchouli:text",
       "title": "book.ars_arcane_matrix.arcane_mine.amplifier.title",
-      "text": "book.ars_arcane_matrix.arcane_mine.amplifier.text"
+      "text": "A complete four-layer Mine checks for an Arcane Amplifier according to the materials consumed. Valuable materials increase the chance faster, and enough material without success guarantees one."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Install at most one Amplifier at each layer center. Each adds one ordinary ore and raises Source and material costs by 50%. Amplifiers that cannot be exported wait inside the Core."
     },
     {
       "type": "patchouli:text",

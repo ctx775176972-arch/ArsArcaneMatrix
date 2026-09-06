@@ -1,9 +1,11 @@
 {
   "name":"Arcane Vacuum Hopper","icon":"ars_arcane_matrix:arcane_vacuum_hopper","category":"ars_nouveau:ars_arcane_matrix",
   "pages":[
-    {"type":"patchouli:text","text":"The Arcane Vacuum Hopper directly collects dropped items and vanilla experience orbs within 12 blocks through walls and obstacles. It deliberately ignores point entities from other mods. A redstone signal pauses collection, conversion, and output. Use an empty hand to open the menu; sneak-use with an empty hand to deposit all player experience."},
-    {"type":"patchouli:text","text":"Stored experience converts into Experience Gems: normal gems cost 3 XP and Greater Experience Gems cost 12 XP. Items and gems have separate buffers, output modes, and Dominion Wand targets. The Binding Channel button selects which output the next wand binding controls. An unbound output can fall back to a container below."},
-    {"type":"patchouli:text","text":"Nine filter templates support disabled, whitelist, and blacklist modes with optional strict component matching. Void Matches is off by default. When enabled, matching world drops and items inserted from any side by hoppers, pipes, or Starbuncles are permanently destroyed before collection filtering; nonmatches still enter the buffer."},
+    {"type":"patchouli:text","text":"The Arcane Vacuum Hopper collects dropped items and experience orbs through walls. Its range can be set to 4, 8, or 12 blocks, or the entire current chunk. Larger ranges are checked less often."},
+    {"type":"patchouli:text","text":"Stored experience can become Experience Gems: normal gems cost 3 XP and Greater Experience Gems cost 12 XP. Use an empty hand to open the menu; sneak-use with an empty hand to deposit all player experience."},
+    {"type":"patchouli:text","text":"Created gems enter the shared item buffer and use the same output mode and Dominion Wand target as other items. If the buffer is full, experience remains stored and conversion pauses. An unbound output may use a container below."},
+    {"type":"patchouli:text","text":"Nine filter templates support disabled, whitelist, and blacklist modes. Matching can use only the item type or also compare enchantments, durability, and other stored details."},
+    {"type":"patchouli:text","text":"Void Matches is off by default. When enabled, matching items are permanently destroyed. A redstone signal pauses collection, conversion, output, and voiding."},
     {"type":"ars_nouveau:apparatus_recipe","recipe":"ars_arcane_matrix:arcane_vacuum_hopper"}
   ]
 }

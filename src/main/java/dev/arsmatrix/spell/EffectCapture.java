@@ -32,6 +32,7 @@ import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.Map;
 import java.util.Set;
@@ -187,6 +188,25 @@ public final class EffectCapture extends AbstractEffect {
     @Override
     public SpellTier defaultTier() {
         return SpellTier.THREE;
+    }
+
+    @Override
+    public void buildConfig(ModConfigSpec.Builder builder) {
+        super.buildConfig(builder);
+        // Keep Ars Nouveau's definitions and validators; only annotate their shared section.
+        builder.pop();
+        builder.comment(
+                "Capture glyph settings / 捕获魔符设置（保留新生魔艺原有配置键）。",
+                "enabled：是否启用；true为开启，false为关闭。",
+                "cost：基础施法魔力消耗，默认250；不是魔源罐中的魔源。",
+                "starter：是否列入初始魔符，默认false；不保证给已有玩家补发。",
+                "per_spell_limit：单个法术中允许出现的次数，默认2147483647表示基本不限。",
+                "glyph_tier：魔符等级，默认3；常规法术书使用1至3级。",
+                "augment_limits：修饰魔符数量上限，例如[\"glyph_amplify=1\"]。",
+                "augment_cost_overrides：覆盖修饰魔符的魔力费用，例如[\"glyph_amplify=50\"]。",
+                "invalid_combos：禁止同时使用的魔符，例如[\"glyph_burst\"]。",
+                "空列表[]表示不添加额外限制；配置不会使不支持的修饰魔符获得新效果。"
+        ).push("general");
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.arsmatrix.ArsArcaneMatrix;
 import dev.arsmatrix.config.MatrixConfig;
+import dev.arsmatrix.config.MatrixClientConfig;
 import dev.arsmatrix.registry.ModBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
@@ -53,7 +54,6 @@ public final class StructurePreviewRenderer {
     private static final TagKey<Block> MINE_FRAME_BLOCKS = blockTag("arcane_mine_frame_blocks");
     private static final TagKey<Block> MINE_BASIC_FRAME_BLOCKS = blockTag("arcane_mine_basic_frame_blocks");
     private static final TagKey<Block> MINE_NODE_BLOCKS = blockTag("arcane_mine_node_blocks");
-    private static final float PREVIEW_ALPHA = 0.42F;
     private static final float PREVIEW_SCALE = 0.98F;
     private static final float PREVIEW_INSET = (1.0F - PREVIEW_SCALE) / 2.0F;
 
@@ -384,7 +384,7 @@ public final class StructurePreviewRenderer {
     private static MultiBufferSource translucentBuffers(MultiBufferSource buffers) {
         VertexConsumer translucent = new AlphaVertexConsumer(
                 buffers.getBuffer(RenderType.translucent()),
-                PREVIEW_ALPHA
+                MatrixClientConfig.STRUCTURE_PREVIEW_OPACITY.get().floatValue()
         );
         return ignored -> translucent;
     }

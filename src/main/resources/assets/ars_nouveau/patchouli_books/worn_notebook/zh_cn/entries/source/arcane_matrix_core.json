@@ -1,11 +1,12 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:matrix_core",
-  "name": "block.ars_arcane_matrix.matrix_core",
+  "name": "奥术矩阵核心",
   "sortnum": 20,
   "pages": [
-    {"type":"patchouli:text","title":"block.ars_arcane_matrix.matrix_core","text":"book.ars_arcane_matrix.matrix_core.overview"},
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.matrix_core","text":"奥术矩阵核心是完成加工、熔炼和粉碎三段矿物处理后解锁的后期魔源生产设备。配方需要五种魔源通道以及三种加工结晶。"},
     {"type":"ars_nouveau:apparatus_recipe","recipe":"ars_arcane_matrix:matrix_core"},
+    {"type":"patchouli:text","text":"以核心为中心建造三轴交叉的5×5框架。至少一个环完整时矩阵即可启动，另外两个环可以继续扩建以提高魔源产量。六个轴向顶点可以安装奥术增幅器。"},
     {"type":"patchouli:text","title":"documentation.ars_arcane_matrix.construction_wand.title","text":"documentation.ars_arcane_matrix.multiblock.building"}
   ]
 }

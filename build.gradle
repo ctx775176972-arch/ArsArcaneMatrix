@@ -14,6 +14,8 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    maven { url = 'https://maven.theillusivec4.top/' }
+    maven { url = 'https://maven.shedaniel.me/' }
 
     maven {
         name = 'BlameJared'
@@ -102,6 +104,8 @@ configurations {
 }
 
 dependencies {
+    compileOnly('top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1') { transitive = false }
+    compileOnly('me.shedaniel.cloth:cloth-config-neoforge:15.0.140') { transitive = false }
     implementation "net.neoforged:neoforge:${neo_version}"
     compileOnly files(arsNouveauJar)
     compileOnly files(extractedNuggetsJar)

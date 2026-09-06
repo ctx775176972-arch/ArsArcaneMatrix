@@ -1,8 +1,9 @@
 {
   "name":"Arcane Reaction Vessel","icon":"ars_arcane_matrix:arcane_reaction_vessel","category":"ars_nouveau:ars_arcane_matrix",
   "pages":[
-    {"type":"patchouli:text","text":"$(l)Novice material conversion$()$(br2)After obtaining the first Source Gem, craft the vessel from Smooth Sourcestone, a Cauldron, ordinary Source Gems, a Source Jar, and a Hopper. It combines fluids, materials, and a small amount of Source to bridge quartz, raw gold, Sourceberries, Archwood fruits, and pottery sherds."},
-    {"type":"patchouli:text","text":"The vessel reduces biome and random-exploration bottlenecks in both Ars Nouveau and Matrix progression. It can also mass-produce Infested Stone for a Novice Vitalic Sourcelink farm. See the Arcane Reaction JEI category for exact ingredients, fluid amounts, Source costs, and times."},
+    {"type":"patchouli:text","text":"documentation.ars_arcane_matrix.arcane_reaction_vessel"},
+    {"type":"patchouli:text","text":"The vessel has two item inputs, one item output, and one fluid tank. Required items, fluid, and Source are reserved when a recipe starts and consumed together when it finishes. Items and fluids may enter or leave from any side."},
+    {"type":"patchouli:text","text":"An empty bucket can package 1,000 mB of water, lava, or milk in one second without Source. Filled buckets do not stack, so remove them with a hopper or similar device. See Arcane Reaction in JEI for exact recipes and costs."},
     {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_reaction_vessel"}
   ]
 }

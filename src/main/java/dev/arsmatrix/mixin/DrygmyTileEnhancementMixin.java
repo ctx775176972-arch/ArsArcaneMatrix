@@ -37,6 +37,7 @@ public abstract class DrygmyTileEnhancementMixin {
 
     @Inject(method = "giveProgress", at = @At("TAIL"), remap = false)
     private void arsMatrix$applySharpnessProgress(CallbackInfo callback) {
+        if (!dev.arsmatrix.config.MatrixConfig.ENABLE_DRYGMY_TOOL_ENHANCEMENTS.get()) return;
         DrygmyTile tile = (DrygmyTile) (Object) this;
         if (!(tile.getLevel() instanceof ServerLevel level)
                 || progress <= arsMatrix$progressBeforeChannel) {
@@ -65,6 +66,7 @@ public abstract class DrygmyTileEnhancementMixin {
 
     @Inject(method = "generateItems", at = @At("HEAD"), remap = false)
     private void arsMatrix$equipLootingTool(CallbackInfo callback) {
+        if (!dev.arsmatrix.config.MatrixConfig.ENABLE_DRYGMY_TOOL_ENHANCEMENTS.get()) return;
         DrygmyTile tile = (DrygmyTile) (Object) this;
         if (!(tile.getLevel() instanceof ServerLevel level)) return;
 
@@ -77,6 +79,7 @@ public abstract class DrygmyTileEnhancementMixin {
 
     @Inject(method = "generateItems", at = @At("TAIL"), remap = false)
     private void arsMatrix$clearLootingTool(CallbackInfo callback) {
+        if (!dev.arsmatrix.config.MatrixConfig.ENABLE_DRYGMY_TOOL_ENHANCEMENTS.get()) return;
         DrygmyTile tile = (DrygmyTile) (Object) this;
         if (tile.getLevel() instanceof ServerLevel level) {
             ANFakePlayer.getPlayer(level).setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);

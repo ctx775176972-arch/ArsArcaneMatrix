@@ -1,10 +1,13 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:drygmy_arena",
-  "name": "block.ars_arcane_matrix.drygmy_arena",
+  "name": "奥术猎场",
   "sortnum": 24,
   "pages": [
-    {"type":"patchouli:text","title":"block.ars_arcane_matrix.drygmy_arena","text":"book.ars_arcane_matrix.drygmy_arena.overview"},
-    {"type":"patchouli:text","title":"book.ars_arcane_matrix.drygmy_arena.automation.title","text":"book.ars_arcane_matrix.drygmy_arena.automation"}
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.drygmy_arena","text":"奥术猎场根据正上方收容罐中的Boss，自动生成该Boss的独特掉落物。制作材料包含下界之星、荒野供物和龙息，因此玩家必须先正常完成对应挑战。"},
+    {"type":"ars_nouveau:apparatus_recipe","recipe":"ars_arcane_matrix:drygmy_arena"},
+    {"type":"patchouli:text","text":"将一个收容罐直接放在猎场上方，并在水平两格内放置至少两座奥术基座。召唤之精华提供10点，凝魂召唤核心提供100点；罐中生物只用于确定目标。"},
+    {"type":"patchouli:text","title":"book.ars_arcane_matrix.drygmy_arena.automation.title","text":"默认目标包括凋灵、荒野奇美拉和末影龙，分别产生下界之星、荒野供物和龙蛋。点数足够后默认工作5分钟，产物进入相邻容器。"},
+    {"type":"patchouli:text","text":"猎场不会生成或杀死生物，也不会产生经验、Boss死亡音效或凋灵玫瑰。普通生物掉落请使用德格米石阵，遗迹宝物请使用探宝蟹。红石信号可暂停猎场。"}
   ]
 }

@@ -37,18 +37,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/** Direct area collector with separate item and XP-gem routing. Touhou P-point entities are never queried. */
+/** Direct area collector with unified item and XP-gem routing. Touhou P-point entities are never queried. */
 public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         implements MenuProvider, IWandable, ITooltipProvider {
     public static final int DROP_SLOTS = 18;
-    public static final int GEM_SLOTS = 2;
+    private static final int LEGACY_GEM_SLOTS = 2;
     public static final int FILTER_SLOTS = 9;
     public static final int MAX_EXPERIENCE = 10_000_000;
 
     private final ItemStackHandler drops = new ItemStackHandler(DROP_SLOTS) {
         @Override protected void onContentsChanged(int slot) { sync(); }
     };
-    private final ItemStackHandler gems = new ItemStackHandler(GEM_SLOTS) {
+    /** Upgrade-only holding area used to migrate the removed two-slot gem cache without item loss. */
+    private final ItemStackHandler legacyGems = new ItemStackHandler(LEGACY_GEM_SLOTS) {
         @Override protected void onContentsChanged(int slot) { sync(); }
     };
     private final ItemStackHandler filters = new ItemStackHandler(FILTER_SLOTS) {
@@ -87,12 +88,8 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     private GemMode gemMode = GemMode.PAUSED;
     private RangeMode rangeMode = RangeMode.R12;
     private OutputMode itemOutputMode = OutputMode.AUTO;
-    private OutputMode gemOutputMode = OutputMode.AUTO;
-    private BindChannel bindChannel = BindChannel.ITEMS;
     private GlobalPos itemTarget;
     private Direction itemTargetFace;
-    private GlobalPos gemTarget;
-    private Direction gemTargetFace;
     private int tickCounter;
 
     public ArcaneVacuumHopperBlockEntity(BlockPos pos, BlockState state) {
@@ -108,7 +105,7 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         }
         if (tickCounter % 5 == 0) {
             pushBuffer(drops, itemTarget, itemTargetFace, itemOutputMode);
-            pushBuffer(gems, gemTarget, gemTargetFace, gemOutputMode);
+            migrateLegacyGems();
         }
         if (tickCounter % 10 == 0) convertExperience();
     }
@@ -209,8 +206,19 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         int remaining = Math.min(requested, template.getMaxStackSize());
         if (remaining <= 0) return 0;
         ItemStack stack = template.copyWithCount(remaining);
-        ItemStack remainder = ItemHandlerHelper.insertItemStacked(gems, stack, false);
+        ItemStack remainder = ItemHandlerHelper.insertItemStacked(drops, stack, false);
         return remaining - remainder.getCount();
+    }
+
+    private void migrateLegacyGems() {
+        for (int slot = 0; slot < legacyGems.getSlots(); slot++) {
+            ItemStack oldStack = legacyGems.getStackInSlot(slot);
+            if (oldStack.isEmpty()) continue;
+            ItemStack remainder = ItemHandlerHelper.insertItemStacked(drops, oldStack.copy(), false);
+            if (remainder.getCount() != oldStack.getCount()) {
+                legacyGems.setStackInSlot(slot, remainder);
+            }
+        }
     }
 
     private void pushBuffer(ItemStackHandler buffer, @Nullable GlobalPos target,
@@ -247,16 +255,6 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         return accepted;
     }
 
-    public int depositExperience(Player player, int requested) {
-        int accepted = Math.min(Math.max(0, requested),
-                Math.min(Math.max(0, player.totalExperience), MAX_EXPERIENCE - experience));
-        if (accepted <= 0) return 0;
-        player.giveExperiencePoints(-accepted);
-        experience += accepted;
-        sync();
-        return accepted;
-    }
-
     @Override public Result onFirstConnection(GlobalPos target, @Nullable Direction face,
                                                @Nullable LivingEntity entity, Player player) {
         return bind(target, face, player);
@@ -275,17 +273,18 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
                     "message.ars_arcane_matrix.arcane_vacuum_hopper.invalid_target"), true);
             return Result.FAIL;
         }
-        if (bindChannel == BindChannel.ITEMS) { itemTarget = target; itemTargetFace = face; }
-        else { gemTarget = target; gemTargetFace = face; }
+        itemTarget = target;
+        itemTargetFace = face;
         sync();
         player.displayClientMessage(Component.translatable(
                 "message.ars_arcane_matrix.arcane_vacuum_hopper.bound",
-                Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.channel."
-                        + bindChannel.name().toLowerCase())), true);
+                Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.channel.items")), true);
         return Result.SUCCESS;
     }
     @Override public Result onClearConnections(Player player) {
-        itemTarget = null; itemTargetFace = null; gemTarget = null; gemTargetFace = null; sync();
+        itemTarget = null;
+        itemTargetFace = null;
+        sync();
         player.displayClientMessage(Component.translatable(
                 "message.ars_arcane_matrix.arcane_vacuum_hopper.cleared"), true);
         return Result.SUCCESS;
@@ -294,17 +293,14 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     public void cycleGemMode() { gemMode = gemMode.next(); sync(); }
     public void cycleFilterMode() { filterMode = filterMode.next(); sync(); }
     public void cycleItemOutputMode() { itemOutputMode = itemOutputMode.next(); sync(); }
-    public void cycleGemOutputMode() { gemOutputMode = gemOutputMode.next(); sync(); }
     public void toggleItems() { collectItems = !collectItems; sync(); }
     public void toggleExperience() { collectExperience = !collectExperience; sync(); }
     public void toggleDestroyMatches() { destroyMatches = !destroyMatches; sync(); }
     public void toggleStrictComponents() { strictComponents = !strictComponents; sync(); }
     public void cycleRangeMode() { rangeMode = rangeMode.next(); sync(); }
-    public void cycleBindChannel() { bindChannel = bindChannel.next(); sync(); }
 
     public ItemStackHandler drops() { return drops; }
     public IItemHandler automationItems() { return automationItems; }
-    public ItemStackHandler gems() { return gems; }
     public ItemStackHandler filters() { return filters; }
     public int experience() { return experience; }
     public boolean collectsItems() { return collectItems; }
@@ -315,10 +311,7 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     public GemMode gemMode() { return gemMode; }
     public RangeMode rangeMode() { return rangeMode; }
     public OutputMode itemOutputMode() { return itemOutputMode; }
-    public OutputMode gemOutputMode() { return gemOutputMode; }
-    public BindChannel bindChannel() { return bindChannel; }
     public boolean hasItemTarget() { return itemTarget != null; }
-    public boolean hasGemTarget() { return gemTarget != null; }
 
     @Override public Component getDisplayName() {
         return Component.translatable("block.ars_arcane_matrix.arcane_vacuum_hopper");
@@ -340,7 +333,9 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Drops", drops.serializeNBT(registries));
-        tag.put("Gems", gems.serializeNBT(registries));
+        if (!legacyGems.getStackInSlot(0).isEmpty() || !legacyGems.getStackInSlot(1).isEmpty()) {
+            tag.put("Gems", legacyGems.serializeNBT(registries));
+        }
         tag.put("Filters", filters.serializeNBT(registries));
         tag.putInt("Experience", experience);
         tag.putBoolean("CollectItems", collectItems);
@@ -351,15 +346,12 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         tag.putInt("GemMode", gemMode.ordinal());
         tag.putInt("RangeMode", rangeMode.ordinal());
         tag.putInt("ItemOutputMode", itemOutputMode.ordinal());
-        tag.putInt("GemOutputMode", gemOutputMode.ordinal());
-        tag.putInt("BindChannel", bindChannel.ordinal());
         saveTarget(tag, "Item", itemTarget, itemTargetFace);
-        saveTarget(tag, "Gem", gemTarget, gemTargetFace);
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         if (tag.contains("Drops")) drops.deserializeNBT(registries, tag.getCompound("Drops"));
-        if (tag.contains("Gems")) gems.deserializeNBT(registries, tag.getCompound("Gems"));
+        if (tag.contains("Gems")) legacyGems.deserializeNBT(registries, tag.getCompound("Gems"));
         if (tag.contains("Filters")) filters.deserializeNBT(registries, tag.getCompound("Filters"));
         experience = Math.max(0, Math.min(MAX_EXPERIENCE, tag.getInt("Experience")));
         collectItems = !tag.contains("CollectItems") || tag.getBoolean("CollectItems");
@@ -370,10 +362,13 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         gemMode = value(GemMode.values(), tag.getInt("GemMode"));
         rangeMode = tag.contains("RangeMode") ? value(RangeMode.values(), tag.getInt("RangeMode")) : RangeMode.R12;
         itemOutputMode = value(OutputMode.values(), tag.getInt("ItemOutputMode"));
-        gemOutputMode = value(OutputMode.values(), tag.getInt("GemOutputMode"));
-        bindChannel = value(BindChannel.values(), tag.getInt("BindChannel"));
         Target item = loadTarget(tag, "Item"); itemTarget = item.pos; itemTargetFace = item.face;
-        Target gem = loadTarget(tag, "Gem"); gemTarget = gem.pos; gemTargetFace = gem.face;
+        // Preserve an old gem-only output binding as the new unified output target.
+        if (itemTarget == null) {
+            Target gem = loadTarget(tag, "Gem");
+            itemTarget = gem.pos;
+            itemTargetFace = gem.face;
+        }
     }
     private static void saveTarget(CompoundTag tag, String prefix, @Nullable GlobalPos pos, @Nullable Direction face) {
         if (pos == null) return;
@@ -416,5 +411,4 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         public RangeMode next() { return value(values(), ordinal() + 1); }
     }
     public enum OutputMode { AUTO, BOUND_ONLY, BELOW_ONLY, OFF; public OutputMode next(){ return value(values(), ordinal()+1); } }
-    public enum BindChannel { ITEMS, GEMS; public BindChannel next(){ return value(values(), ordinal()+1); } }
 }

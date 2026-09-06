@@ -16,7 +16,5 @@
     ,"ars_arcane_matrix:dimension_anchor"
     ,"ars_arcane_matrix:arcane_fluid_reservoir"
     ,"ars_arcane_matrix:arcane_fluid_tank"
-    ,"ars_arcane_matrix:arcane_reaction_vessel"
-    ,"ars_arcane_matrix:arcane_vacuum_hopper"
   ]
 }

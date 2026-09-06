@@ -1,6 +1,6 @@
 {
   "ingredients": [
-    {"item": "minecraft:copper_ingot", "count": 8},
+    {"item": "minecraft:copper_ingot", "count": 4},
     {"item": "minecraft:quartz", "count": 1}
   ],
   "input_fluid": {"id": "minecraft:water", "amount": 250},

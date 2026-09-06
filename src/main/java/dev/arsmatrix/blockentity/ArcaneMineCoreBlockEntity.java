@@ -51,6 +51,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -268,7 +269,7 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         for (ISourceTile source : sources) {
             if (remaining <= 0) break;
             int extracted = Math.max(0, Math.min(
-                    remaining, source.removeSource(remaining, false)));
+                    remaining, extractOperationSource(source, remaining, false)));
             remaining -= extracted;
         }
         return remaining == 0;
@@ -283,23 +284,64 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         for (ISourceTile source : sources) {
             int wanted = cost - Math.min(cost, available);
             if (wanted <= 0) break;
-            available += Math.max(0, Math.min(wanted, source.removeSource(wanted, true)));
+            available += Math.max(0, Math.min(
+                    wanted, extractOperationSource(source, wanted, true)));
         }
         return available;
+    }
+
+    /**
+     * Mine operations pay their complete recipe cost in one transaction. Our
+     * large jars therefore expose their network extraction path here instead
+     * of the ordinary Ars per-transfer cap. Native Ars providers retain their
+     * normal transfer behavior.
+     */
+    private static int extractOperationSource(ISourceTile source, int amount, boolean simulate) {
+        if (source instanceof ArcaneSourceJarBlockEntity jar) {
+            return jar.extractForNetwork(amount, simulate);
+        }
+        if (source instanceof SuperSourceJarCoreBlockEntity jar) {
+            return jar.extractForNetwork(amount, simulate);
+        }
+        return source.removeSource(amount, simulate);
     }
 
     private List<ISourceTile> operationSourceProviders() {
         if (level == null) return List.of();
         int inputRange = getSourceInputRange();
         LinkedHashSet<ISourceTile> result = new LinkedHashSet<>();
-        if (hasCompleteStructure()) addNearbyMatrixCores(result, inputRange);
         addNearbyIntegratedRelays(result, inputRange);
+        if (hasCompleteStructure()) addNearbyMatrixCores(result, inputRange);
         for (ISpecialSourceProvider provider : SourceUtil.canTakeSource(
                 worldPosition, level, inputRange)) {
             ISourceTile source = provider.getSource();
             if (source != null && source != this && source.canProvideSource()) result.add(source);
         }
-        return List.copyOf(result);
+
+        // A nearby relay and its linked jar/core are two access paths to the
+        // same storage. Counting both makes simulation report enough Source,
+        // then drains the backing storage even though the operation cannot be
+        // fully paid. Prefer the relay and exclude its backing tile.
+        Set<GlobalPos> relayedSources = new HashSet<>();
+        for (ISourceTile source : result) {
+            if (source instanceof IntegratedSourceRelayBlockEntity relay) {
+                GlobalPos linked = relay.linkedSourcePosition();
+                if (linked != null) relayedSources.add(linked);
+            }
+        }
+        if (relayedSources.isEmpty()) return List.copyOf(result);
+        return result.stream()
+                .filter(source -> source instanceof IntegratedSourceRelayBlockEntity
+                        || !relayedSources.contains(globalPositionOf(source)))
+                .toList();
+    }
+
+    @Nullable
+    private static GlobalPos globalPositionOf(ISourceTile source) {
+        if (!(source instanceof BlockEntity blockEntity) || blockEntity.getLevel() == null) {
+            return null;
+        }
+        return GlobalPos.of(blockEntity.getLevel().dimension(), blockEntity.getBlockPos());
     }
 
     private boolean hasCompleteStructure() {
@@ -360,6 +402,7 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         int minChunkZ = (worldPosition.getZ() - inputRange) >> 4;
         int maxChunkZ = (worldPosition.getZ() + inputRange) >> 4;
         double rangeSquared = (double) inputRange * inputRange;
+        Set<GlobalPos> linkedSources = new HashSet<>();
 
         for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
@@ -368,7 +411,8 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
                 for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
                     if (blockEntity instanceof IntegratedSourceRelayBlockEntity relay
                             && relay.getBlockPos().distSqr(worldPosition) <= rangeSquared
-                            && relay.canProvideSource()) {
+                            && relay.canProvideSource()
+                            && linkedSources.add(relay.linkedSourcePosition())) {
                         result.add(relay);
                     }
                 }

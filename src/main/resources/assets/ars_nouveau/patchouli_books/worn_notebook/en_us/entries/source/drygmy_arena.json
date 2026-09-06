@@ -1,18 +1,30 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:drygmy_arena",
-  "name": "block.ars_arcane_matrix.drygmy_arena",
+  "name": "Arcane Hunting Grounds",
   "sortnum": 24,
   "pages": [
     {
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.drygmy_arena",
-      "text": "book.ars_arcane_matrix.drygmy_arena.overview"
+      "text": "The Arcane Hunting Grounds reads the boss stored in the Mob Jar above it and produces that boss's unique reward. Its recipe requires a Nether Star, Wilden Tribute, and Dragon's Breath, so those challenges must be completed first."
+    },
+    {
+      "type": "ars_nouveau:apparatus_recipe",
+      "recipe": "ars_arcane_matrix:drygmy_arena"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Place one Mob Jar above the Grounds and at least two Arcane Pedestals within two horizontal blocks. Conjuration Essence supplies 10 points and a Condensed Summoning Core supplies 100. The creature only selects the target."
     },
     {
       "type": "patchouli:text",
       "title": "book.ars_arcane_matrix.drygmy_arena.automation.title",
-      "text": "book.ars_arcane_matrix.drygmy_arena.automation"
+      "text": "Default targets include the Wither, Wilden Chimera, and Ender Dragon, producing Nether Stars, Wilden Tributes, and Dragon Eggs. With enough points, a cycle takes five minutes and sends rewards to adjacent containers."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The Grounds never spawns or kills a creature, and creates no experience, boss death sounds, or Wither Roses. Use a Drygmy Henge for ordinary drops and Alakarkinos exploration for structure treasure. Redstone pauses it."
     }
   ]
 }

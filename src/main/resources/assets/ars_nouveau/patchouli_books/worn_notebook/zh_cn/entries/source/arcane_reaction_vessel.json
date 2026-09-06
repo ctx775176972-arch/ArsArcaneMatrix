@@ -1,8 +1,9 @@
 {
   "name":"奥术反应釜","icon":"ars_arcane_matrix:arcane_reaction_vessel","category":"ars_nouveau:ars_arcane_matrix",
   "pages":[
-    {"type":"patchouli:text","text":"$(l)初学者的物质转换$()$(br2)取得第一枚魔源宝石后，即可用平滑魔源石、炼药锅、普通魔源宝石、魔源罐与漏斗制作反应釜。它消耗流体、材料和少量魔源，补齐石英、粗金、魔源浆果、至高木果实与陶片等前期材料。"},
-    {"type":"patchouli:text","text":"反应釜减少了群系和随机探索对新生魔艺与矩阵进程的阻塞。它也能批量制作虫蚀石头，配合生死魔源通道构成初学者魔源农场。具体材料、流体量、魔源消耗与时间请查看JEI的奥术反应分类。"},
+    {"type":"patchouli:text","text":"documentation.ars_arcane_matrix.arcane_reaction_vessel"},
+    {"type":"patchouli:text","text":"反应釜有两个物品输入格、一个物品输出格和一个流体槽。配方开始时预留所需材料、流体与魔源，完成后再统一消耗。物品和流体可从任意方向输入或取出。"},
+    {"type":"patchouli:text","text":"空桶可在1秒内装入1,000 mB水、熔岩或牛奶，且不消耗魔源。装满的桶无法堆叠，应及时用漏斗等设备取走。具体配方与消耗请查看JEI的“奥术反应”。"},
     {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_reaction_vessel"}
   ]
 }

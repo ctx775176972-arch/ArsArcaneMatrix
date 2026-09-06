@@ -1,13 +1,13 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:arcane_imbuement_core",
-  "name": "block.ars_arcane_matrix.arcane_imbuement_core",
+  "name": "Arcane Imbuement Core",
   "sortnum": 23,
   "pages": [
     {
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.arcane_imbuement_core",
-      "text": "book.ars_arcane_matrix.arcane_imbuement_core.overview"
+      "text": "The Arcane Imbuement Core is a standalone bulk Source Gem converter. It does not use an Imbuement Chamber or ordinary imbuement recipes. Use a Dominion Wand to bind output first and input second; sneak-use clears its links."
     },
     {
       "type": "ars_nouveau:apparatus_recipe",
@@ -16,7 +16,11 @@
     {
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.arcane_imbuement_core",
-      "text": "book.ars_arcane_matrix.arcane_imbuement_core.bulk"
+      "text": "Each five-second cycle processes up to four inputs. Lapis Lazuli or an Amethyst Shard costs 500 Source and yields one Source Gem. A Lapis Block yields nine, while an Amethyst Block yields four."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The Core takes block ingredients before loose ones. Empty-hand use switches between loose and compact output. Compact mode turns each four Gems into one Source Gem Block and keeps any remainder. Redstone pauses processing."
     }
   ]
 }

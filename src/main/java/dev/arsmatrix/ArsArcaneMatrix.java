@@ -8,6 +8,7 @@ import dev.arsmatrix.compat.arsnouveau.ModDocumentation;
 import dev.arsmatrix.compat.arsnouveau.AmethystGolemEnhancements;
 import dev.arsmatrix.compat.arsnouveau.AlakarkinosExpeditions;
 import dev.arsmatrix.config.MatrixConfig;
+import dev.arsmatrix.config.MatrixClientConfig;
 import dev.arsmatrix.data.ArcaneMineOreManager;
 import dev.arsmatrix.data.SourceStoneGeneratorRecipeManager;
 import dev.arsmatrix.data.ArcaneHuntingRuleManager;
@@ -72,6 +73,11 @@ public class ArsArcaneMatrix {
         NeoForge.EVENT_BUS.addListener(SpellBookPedestalInteractionEvents::onRightClickBlock);
         NeoForge.EVENT_BUS.addListener(DeviceTierDebugInteractionEvents::onRightClickBlock);
         if (FMLEnvironment.dist == Dist.CLIENT) {
+            modContainer.registerConfig(ModConfig.Type.CLIENT, MatrixClientConfig.SPEC,
+                    "ars_arcane_matrix-client.toml");
+            if (net.neoforged.fml.ModList.get().isLoaded("cloth_config")) {
+                dev.arsmatrix.client.MatrixClothConfigScreen.register(modContainer);
+            }
             modBus.addListener(ClientModEvents::clientSetup);
             modBus.addListener(ClientModEvents::registerLayerDefinitions);
             modBus.addListener(ClientModEvents::registerRenderers);
@@ -84,6 +90,8 @@ public class ArsArcaneMatrix {
             NeoForge.EVENT_BUS.addListener(WixieRangeRenderer::onRenderLevelStage);
         }
         modContainer.registerConfig(ModConfig.Type.SERVER, MatrixConfig.SPEC, "ars_arcane_matrix-server.toml");
+        modContainer.registerConfig(ModConfig.Type.COMMON, dev.arsmatrix.config.MatrixCommonConfig.SPEC,
+                "ars_arcane_matrix-common.toml");
 
         LOGGER.info("Ars Arcane Matrix initialized.");
     }

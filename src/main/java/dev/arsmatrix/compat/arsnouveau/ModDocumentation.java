@@ -84,6 +84,13 @@ public final class ModDocumentation {
                         Component.translatable("block.ars_arcane_matrix.arcane_mine_core"),
                         mineCore.getDefaultInstance()
                 )
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_mine.operation"))
+                .withHeaderPage(
+                        Component.translatable("book.ars_arcane_matrix.arcane_mine.cycle.text"),
+                        Component.translatable("book.ars_arcane_matrix.arcane_mine.cycle.title"))
+                .withHeaderPage(
+                        Component.translatable("book.ars_arcane_matrix.arcane_mine.amplifier.text"),
+                        Component.translatable("book.ars_arcane_matrix.arcane_mine.amplifier.title"))
                 .withCraftingPages()
                 .withTextPage(Component.translatable("documentation.ars_arcane_matrix.multiblock.building"))
                 .addConnectedSearch(mineCore);
@@ -99,6 +106,7 @@ public final class ModDocumentation {
                         Component.translatable("block.ars_arcane_matrix.arcane_processor_core"),
                         processor.getDefaultInstance())
                 .withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_processor.operation"))
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_processor.tools"))
                 .withTextPage(Component.translatable("documentation.ars_arcane_matrix.multiblock.prototype"))
                 .withCraftingPages()
                 .addConnectedSearch(processor)
@@ -117,6 +125,8 @@ public final class ModDocumentation {
                         Component.translatable("block.ars_arcane_matrix.arcane_amplifier"),
                         amplifier.getDefaultInstance()
                 )
+                .withTextPage(Component.translatable("book.ars_arcane_matrix.arcane_amplifier.matrix"))
+                .withTextPage(Component.translatable("book.ars_arcane_matrix.arcane_amplifier.mine"))
                 .withCraftingPages(
                         ResourceLocation.fromNamespaceAndPath(
                                 ArsArcaneMatrix.MOD_ID,
@@ -142,6 +152,7 @@ public final class ModDocumentation {
                         Component.translatable("block.ars_arcane_matrix.arcane_imbuement_core"),
                         imbuementCore.getDefaultInstance()
                 )
+                .withTextPage(Component.translatable("book.ars_arcane_matrix.arcane_imbuement_core.bulk"))
                 .withCraftingPages()
                 .addConnectedSearch(imbuementCore);
 
@@ -155,6 +166,7 @@ public final class ModDocumentation {
                         Component.translatable("documentation.ars_arcane_matrix.advanced_imbuement_chamber.overview"),
                         Component.translatable("block.ars_arcane_matrix.advanced_imbuement_chamber"),
                         advancedImbuement.getDefaultInstance())
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.advanced_imbuement_chamber.operation"))
                 .withTextPage(Component.translatable(
                         "documentation.ars_arcane_matrix.advanced_imbuement_chamber.formless"))
                 .addConnectedSearch(advancedImbuement)
@@ -655,6 +667,10 @@ public final class ModDocumentation {
                             Component.translatable("block.ars_arcane_matrix.drygmy_arena"),
                             drygmyArena.getDefaultInstance()
                     )
+                    .withTextPage(Component.translatable("book.ars_arcane_matrix.drygmy_arena.overview"))
+                    .withHeaderPage(
+                            Component.translatable("book.ars_arcane_matrix.drygmy_arena.automation"),
+                            Component.translatable("book.ars_arcane_matrix.drygmy_arena.automation.title"))
                     .withCraftingPages()
                     .addConnectedSearch(drygmyArena);
 

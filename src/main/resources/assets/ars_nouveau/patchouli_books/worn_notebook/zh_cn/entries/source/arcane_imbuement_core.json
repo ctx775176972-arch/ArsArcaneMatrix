@@ -1,11 +1,12 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:arcane_imbuement_core",
-  "name": "block.ars_arcane_matrix.arcane_imbuement_core",
+  "name": "奥术灌注核心",
   "sortnum": 23,
   "pages": [
-    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_imbuement_core","text":"book.ars_arcane_matrix.arcane_imbuement_core.overview"},
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_imbuement_core","text":"奥术灌注核心是独立的批量魔源宝石转换设备，不需要灌注室，也不会处理普通灌注配方。支配之杖依次绑定输出和输入容器；潜行使用可清除连接。"},
     {"type":"ars_nouveau:apparatus_recipe","recipe":"ars_arcane_matrix:arcane_imbuement_core"},
-    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_imbuement_core","text":"book.ars_arcane_matrix.arcane_imbuement_core.bulk"}
+    {"type":"patchouli:text","title":"block.ars_arcane_matrix.arcane_imbuement_core","text":"每轮最多处理四份材料，默认耗时5秒。青金石或紫水晶碎片每个消耗500魔源并产生1个魔源宝石；青金石块产生9个，紫水晶块产生4个。"},
+    {"type":"patchouli:text","text":"核心会优先取用方块材料。空手右击可切换普通与压缩模式；压缩模式每4个魔源宝石合成1个魔源宝石块，并保留不足4个的余数。红石信号会暂停加工。"}
   ]
 }

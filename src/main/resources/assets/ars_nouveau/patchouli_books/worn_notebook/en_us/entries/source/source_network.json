@@ -1,10 +1,13 @@
 {
-  "name": "Matrix Source Reservoir",
+  "name": "Matrix Source Reservoir Core",
   "icon": "ars_arcane_matrix:super_source_jar_core",
   "category": "ars_nouveau:ars_arcane_matrix",
   "pages": [
-    { "type": "patchouli:text", "text": "Place the Matrix Source Reservoir Core at the midpoint of any bottom outer edge of a hollow 7×7×7 structure. Top and bottom are Arcane Structural Frames; the five middle walls are Tinted Glass. The unrestricted interior may contain a Matrix or any other blocks. Empty-hand use shows the projection." },
-    { "type": "patchouli:text", "text": "The completed reservoir stores 100,000,000 Source and only accepts Source. An Integrated Source Relay draws up to 100,000 Source per second and exposes it to nearby Ars Nouveau devices. An incomplete structure cannot receive or output." },
-    { "type": "patchouli:text", "text": "Use a Dominion Wand on two compatible Source nodes in either order; sneak-use a node with the wand to clear its links. A jar may link directly to a relay in the same dimension, or both may link to an Advanced Storage Lectern as a cross-dimensional gateway. The lectern's ordinary storage links remain available, and remote chunks must stay loaded." }
+    { "type": "patchouli:text", "text": "Place the Matrix Source Reservoir Core at the midpoint of any lower outer edge of a hollow 7×7×7 structure. Build the top and bottom from Arcane Structural Frames." },
+    { "type": "patchouli:text", "text": "Use Tinted Glass for the five middle walls. The interior may contain a Matrix or any other blocks. Empty-hand use on the Core previews the structure." },
+    { "type": "patchouli:text", "text": "The complete Reservoir stores 100,000,000 Source and collects from producers within 24 blocks. Each producer supplies at most 20,000 per second, up to 1,000,000 total per second." },
+    { "type": "patchouli:text", "text": "Matrix Cores may also push Source directly into it. The Reservoir does not actively drain other jars or working devices. An incomplete structure cannot receive or output Source." },
+    { "type": "patchouli:text", "text": "An Integrated Source Relay draws from its linked network when nearby machines need Source; it does not fill a local buffer first. Use a Dominion Wand on two nodes to link them, or sneak-use a node to clear its links." },
+    { "type": "patchouli:text", "text": "A Source Jar and relay may link directly in the same dimension. For cross-dimensional use, link both ends through Advanced Storage Lecterns and use Dimensional Anchors to keep the remote nodes loaded." }
   ]
 }

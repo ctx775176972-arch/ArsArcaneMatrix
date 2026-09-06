@@ -45,6 +45,8 @@ public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
     private static final int OUTPUT_SLOTS = 9;
     private static final int CONTEXT_INTERVAL = 5;
     private static final int POWERED_DURATION_SECONDS = 5;
+    /** Only providers in the generator's surrounding 3x3x3 cube may power it. */
+    private static final int SOURCE_INPUT_RANGE = 1;
 
     private final List<ItemStack> bufferedOutputs = new ArrayList<>();
     private final IItemHandler outputHandler = new OutputHandler();
@@ -215,7 +217,7 @@ public final class SourceStoneGeneratorBlockEntity extends BlockEntity {
         for (ISpecialSourceProvider provider : SourceUtil.canTakeSource(
                 worldPosition,
                 level,
-                MatrixConfig.GENERATOR_SOURCE_INPUT_RANGE.get()
+                SOURCE_INPUT_RANGE
         )) {
             if (remaining <= 0) {
                 break;

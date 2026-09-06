@@ -1,12 +1,20 @@
 {
   "category": "ars_nouveau:ars_arcane_matrix",
   "icon": "ars_arcane_matrix:source_stone_generator",
-  "name": "block.ars_arcane_matrix.source_stone_generator",
+  "name": "Source Stone Generator",
   "pages": [
     {
       "type": "patchouli:text",
       "title": "block.ars_arcane_matrix.source_stone_generator",
-      "text": "book.ars_arcane_matrix.source_stone_generator.overview"
+      "text": "With no matching recipe, the Source Stone Generator produces 64 Cobblestone per cycle. It works slowly without Source; when Source is available inside the surrounding 3×3×3 area, each cycle takes five seconds."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Arcane Pedestals in the same area select the output. Their item types and amounts are matched as one combination, but the items are not consumed. An unknown combination still produces Cobblestone."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Outputs enter nine internal slots and are sent to a container directly below. Pipes may extract from any side. A full output stops the machine, and a redstone signal pauses it."
     },
     {
       "type": "patchouli:crafting",
