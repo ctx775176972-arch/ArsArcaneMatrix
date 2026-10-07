@@ -45,7 +45,10 @@ public final class MatrixSkyblock {
     }
     private static ItemStack tome(Spell spell) {
         ItemStack stack=item("ars_nouveau:caster_tome",1);
-        if (stack.getItem() instanceof ICasterTool tool) tool.getSpellCaster(stack).setSpell(spell).saveToStack(stack);
+        if (stack.getItem() instanceof ICasterTool tool) {
+            var caster = tool.getSpellCaster(stack);
+            if (caster != null) caster.setSpell(spell).saveToStack(stack);
+        }
         return stack;
     }
     private static void give(ServerPlayer player,ItemStack stack) {
