@@ -442,13 +442,19 @@ public final class WixiePatternProviderBlockEntity extends BlockEntity implement
                 // Return old pedestal contents before checking the new recipe's
                 // inventory. The returned stacks may themselves be ingredients.
                 cleanupApparatusPedestals(wixie, apparatusPedestals);
+                // Resolve all destinations before extracting any ingredients.
+                List<ArcanePedestalTile> destinationPedestals = availablePedestals.stream()
+                        .map(level::getBlockEntity)
+                        .filter(ArcanePedestalTile.class::isInstance)
+                        .map(ArcanePedestalTile.class::cast)
+                        .toList();
+                if (destinationPedestals.size() != availablePedestals.size()) continue;
                 List<ItemStack> extracted = extractPhysicalIngredients(wixie, ingredients);
                 if (extracted == null) return false;
                 ItemStack reagent = extracted.getFirst();
                 List<ItemStack> pedestalStacks = extracted.subList(1, extracted.size());
                 for (int index = 0; index < availablePedestals.size(); index++) {
-                    ArcanePedestalTile pedestal = (ArcanePedestalTile) level.getBlockEntity(
-                            availablePedestals.get(index));
+                    ArcanePedestalTile pedestal = destinationPedestals.get(index);
                     pedestal.setStack(pedestalStacks.get(index));
                 }
                 if (!recipe.matches(new ApparatusRecipeInput(
@@ -526,6 +532,12 @@ public final class WixiePatternProviderBlockEntity extends BlockEntity implement
                     continue;
                 }
 
+                List<ArcanePedestalTile> destinationPedestals = emptyPedestals.stream()
+                        .map(level::getBlockEntity)
+                        .filter(ArcanePedestalTile.class::isInstance)
+                        .map(ArcanePedestalTile.class::cast)
+                        .toList();
+                if (!reusePedestals && destinationPedestals.size() != emptyPedestals.size()) continue;
                 List<ItemStack> extracted = extractPhysicalIngredients(wixie,
                         reusePedestals ? List.of(ingredients.getFirst()) : ingredients);
                 if (extracted == null) return false;
@@ -533,8 +545,7 @@ public final class WixiePatternProviderBlockEntity extends BlockEntity implement
                 if (!reusePedestals) {
                     List<ItemStack> pedestalStacks = extracted.subList(1, extracted.size());
                     for (int index = 0; index < emptyPedestals.size(); index++) {
-                        ArcanePedestalTile pedestal = (ArcanePedestalTile) level.getBlockEntity(
-                                emptyPedestals.get(index));
+                        ArcanePedestalTile pedestal = destinationPedestals.get(index);
                         pedestal.setStack(pedestalStacks.get(index));
                     }
                 }
