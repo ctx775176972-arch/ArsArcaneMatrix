@@ -4,6 +4,7 @@ import dev.arsmatrix.blockentity.StorageGridDirectoryBlockEntity;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModItems;
 import dev.arsmatrix.registry.ModMenus;
+import dev.arsmatrix.util.RemoteMenuAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -100,6 +101,6 @@ public final class StorageGridDirectoryMenu extends AbstractContainerMenu {
 
     @Override public boolean stillValid(Player player) {
         return player.level().getBlockState(pos).is(ModBlocks.STORAGE_GRID_DIRECTORY.get())
-                && player.distanceToSqr(pos.getX() + .5D, pos.getY() + .5D, pos.getZ() + .5D) <= 64.0D;
+                && RemoteMenuAccess.isWithinUseRange(player, pos);
     }
 }

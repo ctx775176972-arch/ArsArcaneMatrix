@@ -3,6 +3,7 @@ package dev.arsmatrix.menu;
 import dev.arsmatrix.blockentity.SourceStoneFurnaceBlockEntity;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModMenus;
+import dev.arsmatrix.util.RemoteMenuAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -65,6 +66,6 @@ public final class SourceStoneFurnaceMenu extends AbstractContainerMenu {
 
     @Override public boolean stillValid(Player player) {
         return player.level().getBlockState(pos).is(ModBlocks.SOURCE_STONE_FURNACE.get())
-                && player.distanceToSqr(pos.getCenter()) <= 64.0D;
+                && RemoteMenuAccess.isWithinUseRange(player, pos);
     }
 }

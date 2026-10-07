@@ -41,6 +41,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.capabilities.Capabilities;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity implements MenuProvider, IWandable {
     public static final int RANGE = 32;
     private static final int SCAN_INTERVAL = 20;
+    private static final int RELOAD_RECOVERY_TICKS = 600;
     private static final int AUTO_RECALL_TICKS = 1200;
     public static final int MAX_UPGRADE_TIER = 4;
     private static final int[] THROUGHPUT_BY_TIER = {256, 1_024, 4_096, 16_384, 32_768};
@@ -72,6 +74,7 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
     private final Set<UUID> registeredStarbuncles = new HashSet<>();
     private final Map<UUID, Integer> incompleteRouteTicks = new HashMap<>();
     private final Map<UUID, FilterProfile> filterProfiles = new HashMap<>();
+    private final Map<UUID, RouteMemory> routeMemories = new HashMap<>();
     private final Set<UUID> pendingWandDetach = new HashSet<>();
     private final Map<UUID, TransitTracker> transitTrackers = new HashMap<>();
     private boolean allowList;
@@ -84,6 +87,7 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
     private boolean loadingFilterProfile;
     private int nearbyOwned;
     private int tickCounter;
+    private int reloadRecoveryTicks;
     private HubState state = HubState.IDLE;
 
     public StarbuncleLogisticsHubBlockEntity(BlockPos pos, BlockState state) {
@@ -202,6 +206,7 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
         boolean maintenanceTick = tickCounter % SCAN_INTERVAL == 0;
         boostLoadedStarbuncles(serverLevel, maintenanceTick);
         if (maintenanceTick) scan(serverLevel);
+        if (reloadRecoveryTicks > 0) reloadRecoveryTicks--;
     }
 
     private void scan(ServerLevel serverLevel) {
@@ -212,6 +217,11 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
         nearbyOwned = starbuncles.size();
         for (Starbuncle starbuncle : starbuncles) {
             if (starbuncle.dynamicBehavior instanceof StarbyTransportBehavior transport) {
+                if (hasCompleteRoute(transport)) {
+                    rememberRoute(starbuncle.getUUID(), transport);
+                } else if (reloadRecoveryTicks > 0) {
+                    restoreRememberedRoute(starbuncle.getUUID(), transport);
+                }
                 ItemStack scroll = createFilterScroll(profile(starbuncle.getUUID()));
                 if (!ItemStack.isSameItemSameComponents(transport.itemScroll, scroll)) {
                     transport.itemScroll = scroll.copy();
@@ -222,12 +232,46 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
                 if (hasCompleteRoute(transport) && transferBudget.hasCapacity()) {
                     bulkTransfer(serverLevel, starbuncle, transport, transferBudget);
                 }
+                wakeIdleTransport(serverLevel, starbuncle, transport);
                 checkTransit(serverLevel, starbuncle, transport);
             }
         }
         if (automaticRecall) recallExpiredIncomplete(starbuncles);
         if (state != HubState.OUTPUT_BLOCKED) state = nearbyOwned == 0 ? HubState.IDLE : HubState.READY;
         if (previousNearby != nearbyOwned || previousState != state) sync();
+    }
+
+    /**
+     * Ars Nouveau can restore a transport Starbuncle with its navigation already marked as
+     * finished. Backoff reset alone does not wake that state, so explicitly restart the route
+     * whenever a registered worker has a target but no active path.
+     */
+    private static void wakeIdleTransport(ServerLevel level, Starbuncle starbuncle,
+                                          StarbyTransportBehavior transport) {
+        if (!hasCompleteRoute(transport) || !starbuncle.getNavigation().isDone()) return;
+        BlockPos target = starbuncle.getHeldStack().isEmpty()
+                ? transport.getValidTakePos()
+                : transport.getValidStorePos(starbuncle.getHeldStack());
+        if (target == null || !level.hasChunkAt(target)
+                || starbuncle.distanceToSqr(target.getCenter()) <= 4.0D) return;
+        starbuncle.setNoActionTime(0);
+        starbuncle.getNavigation().moveTo(
+                target.getX() + 0.5D, target.getY() + 1.0D, target.getZ() + 0.5D, 1.5D);
+    }
+
+    private void rememberRoute(UUID id, StarbyTransportBehavior transport) {
+        routeMemories.put(id, RouteMemory.capture(transport));
+    }
+
+    private void restoreRememberedRoute(UUID id, StarbyTransportBehavior transport) {
+        RouteMemory remembered = routeMemories.get(id);
+        if (remembered == null || !remembered.isComplete()) return;
+        remembered.restore(transport);
+        transport.findItemBackoff = 0;
+        transport.takeItemBackoff = 0;
+        transport.berryBackoff = 0;
+        transport.nextBerryBackoff = 1;
+        transport.syncTag();
     }
 
     private void boostLoadedStarbuncles(ServerLevel serverLevel, boolean maintenanceTick) {
@@ -515,6 +559,7 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
         starbuncle.setHeldStack(ItemStack.EMPTY);
         registeredStarbuncles.remove(starbuncle.getUUID());
         filterProfiles.remove(starbuncle.getUUID());
+        routeMemories.remove(starbuncle.getUUID());
         incompleteRouteTicks.remove(starbuncle.getUUID());
         transitTrackers.remove(starbuncle.getUUID());
         starbuncle.discard();
@@ -611,6 +656,7 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
         incompleteRouteTicks.clear();
         transitTrackers.clear();
         filterProfiles.clear();
+        routeMemories.clear();
         highlightedStarbuncle = null;
         loadSelectedFilterProfile();
         nearbyOwned = 0;
@@ -689,6 +735,14 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
             profileList.add(profileTag);
         }
         tag.put("FilterProfiles", profileList);
+        ListTag routeList = new ListTag();
+        for (Map.Entry<UUID, RouteMemory> entry : routeMemories.entrySet()) {
+            CompoundTag routeTag = new CompoundTag();
+            routeTag.putUUID("Starbuncle", entry.getKey());
+            entry.getValue().save(routeTag);
+            routeList.add(routeTag);
+        }
+        tag.put("RememberedRoutes", routeList);
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
@@ -730,6 +784,14 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
             }
             filterProfiles.put(profileTag.getUUID("Starbuncle"), profile);
         }
+        routeMemories.clear();
+        ListTag routeList = tag.getList("RememberedRoutes", Tag.TAG_COMPOUND);
+        for (int index = 0; index < routeList.size(); index++) {
+            CompoundTag routeTag = routeList.getCompound(index);
+            if (routeTag.hasUUID("Starbuncle")) {
+                routeMemories.put(routeTag.getUUID("Starbuncle"), RouteMemory.load(routeTag));
+            }
+        }
         // Migrate the earlier hub-wide filter to each registered Starbuncle once.
         if (profileList.isEmpty()) {
             for (UUID id : registeredStarbuncles) {
@@ -745,6 +807,10 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
             highlightedStarbuncle = null;
         }
         loadSelectedFilterProfile();
+        reloadRecoveryTicks = RELOAD_RECOVERY_TICKS;
+        tickCounter = 0;
+        incompleteRouteTicks.clear();
+        transitTrackers.clear();
     }
     private void sync() {
         setChanged();
@@ -780,6 +846,73 @@ public final class StarbuncleLogisticsHubBlockEntity extends BlockEntity impleme
         private TransitTracker(BlockPos target, double lastDistance) {
             this.target = target.immutable();
             this.lastDistance = lastDistance;
+        }
+    }
+
+    private record RouteMemory(List<BlockPos> inputs, List<BlockPos> outputs,
+                               Map<Integer, Direction> inputDirections,
+                               Map<Integer, Direction> outputDirections) {
+        private static RouteMemory capture(StarbyTransportBehavior transport) {
+            return new RouteMemory(
+                    transport.FROM_LIST.stream().map(BlockPos::immutable).toList(),
+                    transport.TO_LIST.stream().map(BlockPos::immutable).toList(),
+                    new HashMap<>(transport.FROM_DIRECTION_MAP),
+                    new HashMap<>(transport.TO_DIRECTION_MAP));
+        }
+
+        private boolean isComplete() {
+            return !inputs.isEmpty() && !outputs.isEmpty();
+        }
+
+        private void restore(StarbyTransportBehavior transport) {
+            transport.FROM_LIST.clear();
+            transport.FROM_LIST.addAll(inputs);
+            transport.TO_LIST.clear();
+            transport.TO_LIST.addAll(outputs);
+            transport.FROM_DIRECTION_MAP.clear();
+            transport.FROM_DIRECTION_MAP.putAll(inputDirections);
+            transport.TO_DIRECTION_MAP.clear();
+            transport.TO_DIRECTION_MAP.putAll(outputDirections);
+        }
+
+        private void save(CompoundTag tag) {
+            tag.put("Inputs", savePositions(inputs, inputDirections));
+            tag.put("Outputs", savePositions(outputs, outputDirections));
+        }
+
+        private static RouteMemory load(CompoundTag tag) {
+            List<BlockPos> inputs = new ArrayList<>();
+            List<BlockPos> outputs = new ArrayList<>();
+            Map<Integer, Direction> inputDirections = new HashMap<>();
+            Map<Integer, Direction> outputDirections = new HashMap<>();
+            loadPositions(tag.getList("Inputs", Tag.TAG_COMPOUND), inputs, inputDirections);
+            loadPositions(tag.getList("Outputs", Tag.TAG_COMPOUND), outputs, outputDirections);
+            return new RouteMemory(inputs, outputs, inputDirections, outputDirections);
+        }
+
+        private static ListTag savePositions(List<BlockPos> positions,
+                                             Map<Integer, Direction> directions) {
+            ListTag result = new ListTag();
+            for (BlockPos pos : positions) {
+                CompoundTag entry = new CompoundTag();
+                entry.putLong("Pos", pos.asLong());
+                Direction direction = directions.get(pos.hashCode());
+                if (direction != null) entry.putInt("Direction", direction.get3DDataValue());
+                result.add(entry);
+            }
+            return result;
+        }
+
+        private static void loadPositions(ListTag entries, List<BlockPos> positions,
+                                          Map<Integer, Direction> directions) {
+            for (int index = 0; index < entries.size(); index++) {
+                CompoundTag entry = entries.getCompound(index);
+                BlockPos pos = BlockPos.of(entry.getLong("Pos"));
+                positions.add(pos);
+                if (entry.contains("Direction", Tag.TAG_INT)) {
+                    directions.put(pos.hashCode(), Direction.from3DDataValue(entry.getInt("Direction")));
+                }
+            }
         }
     }
 

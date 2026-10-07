@@ -60,8 +60,10 @@ public final class ArcaneReactionManager extends SimpleJsonResourceReloadListene
         ResourceLocation outputItem = ResourceLocation.parse(fluidOutput ? "minecraft:air" : GsonHelper.getAsString(output, "item"));
         ResourceLocation outputFluid = ResourceLocation.parse(fluidOutput ? GsonHelper.getAsString(output, "fluid") : "minecraft:empty");
         int amount = positive(GsonHelper.getAsInt(output, "amount", fluidOutput ? 1000 : 1), "output amount");
+        int outputDamage = Math.max(0, GsonHelper.getAsInt(output, "damage", 0));
         return new ArcaneReactionRule(id, ingredients, inputFluid, inputAmount,
-                outputItem, fluidOutput ? 0 : amount, outputFluid, fluidOutput ? amount : 0,
+                outputItem, fluidOutput ? 0 : amount, fluidOutput ? 0 : outputDamage,
+                outputFluid, fluidOutput ? amount : 0,
                 Math.max(0, GsonHelper.getAsInt(json, "source_cost", 200)),
                 positive(GsonHelper.getAsInt(json, "processing_ticks", 100), "processing_ticks"),
                 GsonHelper.getAsBoolean(json, "enabled", true));

@@ -3,6 +3,7 @@ package dev.arsmatrix.menu;
 import dev.arsmatrix.blockentity.WixiePatternProviderBlockEntity;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModMenus;
+import dev.arsmatrix.util.RemoteMenuAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,7 +17,10 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 public final class WixiePatternProviderMenu extends AbstractContainerMenu {
-    public static final int PAGE_SIZE = WixiePatternProviderBlockEntity.GUIDE_SLOTS_PER_TIER;
+    /** Two base-capacity banks per page keeps upgraded providers practical to browse. */
+    public static final int PAGE_SIZE = WixiePatternProviderBlockEntity.GUIDE_SLOTS_PER_TIER * 2;
+    public static final int GUIDE_COLUMNS = 9;
+    public static final int GUIDE_ROWS = PAGE_SIZE / GUIDE_COLUMNS;
     public static final int BUTTON_PREVIOUS_PAGE = 0;
     public static final int BUTTON_NEXT_PAGE = 1;
     public static final int BUTTON_SORT_NAME = 2;
@@ -38,8 +42,8 @@ public final class WixiePatternProviderMenu extends AbstractContainerMenu {
         this(containerId, inventory,
                 inventory.player.level().getBlockEntity(pos) instanceof WixiePatternProviderBlockEntity provider
                         ? provider.getGuideHandler()
-                        : new ItemStackHandler(Math.max(PAGE_SIZE, advertisedSlots)),
-                pos, accessPos, Math.max(PAGE_SIZE, advertisedSlots));
+                        : new ItemStackHandler(Math.max(1, advertisedSlots)),
+                pos, accessPos, Math.max(1, advertisedSlots));
     }
 
     public WixiePatternProviderMenu(
@@ -56,15 +60,15 @@ public final class WixiePatternProviderMenu extends AbstractContainerMenu {
         super(ModMenus.WIXIE_PATTERN_PROVIDER.get(), containerId);
         providerPos = pos.immutable();
         this.accessPos = accessPos.immutable();
-        guideSlots = Math.min(guides.getSlots(), Math.max(PAGE_SIZE, capacity));
+        guideSlots = Math.min(guides.getSlots(), Math.max(1, capacity));
         addDataSlot(page);
 
         for (int slot = 0; slot < guideSlots; slot++) {
             int pageSlot = slot % PAGE_SIZE;
-            int row = pageSlot / 9;
-            int column = pageSlot % 9;
+            int row = pageSlot / GUIDE_COLUMNS;
+            int column = pageSlot % GUIDE_COLUMNS;
             final int pageIndex = slot / PAGE_SIZE;
-            addSlot(new SlotItemHandler(guides, slot, 8 + column * 18, 18 + row * 18) {
+            addSlot(new SlotItemHandler(guides, slot, 8 + column * 18, 28 + row * 18) {
                 @Override
                 public int getMaxStackSize() {
                     return 1;
@@ -79,11 +83,11 @@ public final class WixiePatternProviderMenu extends AbstractContainerMenu {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
                 addSlot(new Slot(inventory, column + row * 9 + 9,
-                        8 + column * 18, 85 + row * 18));
+                        8 + column * 18, 149 + row * 18));
             }
         }
         for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(inventory, column, 8 + column * 18, 143));
+            addSlot(new Slot(inventory, column, 8 + column * 18, 207));
         }
     }
 
@@ -97,6 +101,21 @@ public final class WixiePatternProviderMenu extends AbstractContainerMenu {
 
     public int getGuideSlots() {
         return guideSlots;
+    }
+
+    public int getUsedGuideSlots() {
+        int used = 0;
+        for (int slot = 0; slot < guideSlots; slot++) {
+            if (slots.get(slot).hasItem()) used++;
+        }
+        return used;
+    }
+
+    public int getUpgradeTier() {
+        if (guideSlots >= 729) return 3;
+        if (guideSlots >= 243) return 2;
+        if (guideSlots >= 81) return 1;
+        return 0;
     }
 
     @Override
@@ -157,7 +176,6 @@ public final class WixiePatternProviderMenu extends AbstractContainerMenu {
         boolean accessValid = accessPos.equals(providerPos)
                 ? providerValid
                 : player.level().getBlockState(accessPos).is(ModBlocks.ADVANCED_STORAGE_LECTERN.get());
-        return providerValid && accessValid && player.distanceToSqr(accessPos.getX() + 0.5D,
-                accessPos.getY() + 0.5D, accessPos.getZ() + 0.5D) <= 64.0D;
+        return providerValid && accessValid && RemoteMenuAccess.isWithinUseRange(player, accessPos);
     }
 }

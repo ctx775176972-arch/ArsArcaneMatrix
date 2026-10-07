@@ -5,7 +5,12 @@
     { "item": "ars_nouveau:ritual_containment" },
     { "item": "ars_nouveau:conjuration_essence" },
     { "item": "ars_nouveau:manipulation_essence" },
-    { "item": "ars_nouveau:mob_jar" }
+    {
+      "type": "neoforge:components",
+      "items": "ars_nouveau:mob_jar",
+      "components": {},
+      "strict": true
+    }
   ],
   "output": {
     "count": 1,

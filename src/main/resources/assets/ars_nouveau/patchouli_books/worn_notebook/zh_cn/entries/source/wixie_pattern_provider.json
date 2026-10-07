@@ -1,0 +1,22 @@
+{
+  "name": "block.ars_arcane_matrix.wixie_pattern_provider",
+  "icon": "ars_arcane_matrix:wixie_pattern_provider",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 20,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.pattern_provider.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.pattern_provider.setup.text",
+      "title": "documentation.ars_arcane_matrix.pattern_provider.setup.title"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.pattern_provider.upgrades.text",
+      "title": "documentation.ars_arcane_matrix.pattern_provider.upgrades.title"
+    }
+  ]
+}

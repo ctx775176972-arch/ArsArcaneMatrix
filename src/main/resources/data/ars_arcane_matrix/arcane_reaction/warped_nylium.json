@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    { "item": "minecraft:netherrack", "count": 1 },
+    { "item": "minecraft:red_mushroom", "count": 1 }
+  ],
+  "output": { "item": "minecraft:warped_nylium", "amount": 1 },
+  "source_cost": 200,
+  "processing_ticks": 100
+}

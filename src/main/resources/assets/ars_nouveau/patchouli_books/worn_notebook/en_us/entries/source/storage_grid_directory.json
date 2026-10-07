@@ -1,0 +1,16 @@
+{
+  "name": "block.ars_arcane_matrix.storage_grid_directory",
+  "icon": "ars_arcane_matrix:storage_grid_directory",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 27,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.grid_directory.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.grid_directory.operation"
+    }
+  ]
+}

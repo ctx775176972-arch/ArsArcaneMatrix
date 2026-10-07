@@ -1,0 +1,8 @@
+{
+  "ingredients": [
+    {"item": "minecraft:string", "count": 5}
+  ],
+  "output": {"item": "minecraft:cobweb", "amount": 1},
+  "source_cost": 200,
+  "processing_ticks": 100
+}

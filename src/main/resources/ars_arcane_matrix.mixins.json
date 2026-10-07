@@ -4,17 +4,26 @@
   "package": "dev.arsmatrix.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "SkyblockTerrainMixin",
+    "SkyblockGeneratedEntitiesMixin",
     "BlockEntityTypeMixin",
     "DrygmyTileEnhancementMixin",
     "HarvestClusterGoalMixin",
     "HarvestClusterGoalTimingMixin",
     "GrowClusterGoalMixin",
+    "GoBackHomeGoalMixin",
+    "CompleteCraftingGoalMixin",
     "ImbuementTileMixin",
+    "PotionMelderTileMixin",
     "RitualHarvestAncientCropMixin",
-    "WhirlisprigTileMixin"
+    "WhirlisprigTileMixin",
+    "WixieCauldronTileMixin"
   ],
   "client": [
-    "client.GenericModelMixin"
+    "client.SkyblockWorldUiStateMixin",
+    "client.SkyblockWorldTabMixin",
+    "client.GenericModelMixin",
+    "client.RitualTabletTooltipMixin"
   ],
   "injectors": {
     "defaultRequire": 1

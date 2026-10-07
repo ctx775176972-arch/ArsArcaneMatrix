@@ -60,11 +60,11 @@ runs {
 
     server {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
+        arguments.add '--nogui'
     }
 
     data {
-        programArguments.addAll '--mod', project.mod_id, '--all',
+        arguments.addAll '--mod', project.mod_id, '--all',
                 '--output', file('src/generated/resources/').getAbsolutePath(),
                 '--existing', file('src/main/resources/').getAbsolutePath()
     }
@@ -113,6 +113,7 @@ dependencies {
     localRuntime files(arsNouveauJar)
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    compileOnly "maven.modrinth:emi:1.1.24+1.21.1+neoforge"
 
     compileOnly "maven.modrinth:jade:${jade_version_id}"
     localRuntime "maven.modrinth:jade:${jade_version_id}"

@@ -13,6 +13,7 @@ public record OptionalRecipeCondition(String feature) implements ICondition {
     @Override
     public boolean test(IContext context) {
         return switch (feature) {
+            case "skyblock" -> MatrixCommonConfig.ENABLE_SKYBLOCK.get();
             case "enchanted_golden_apple" -> MatrixCommonConfig.ENABLE_ENCHANTED_GOLDEN_APPLE.get();
             case "budding_amethyst" -> MatrixCommonConfig.ENABLE_BUDDING_AMETHYST.get();
             case "creature_tokens" -> MatrixCommonConfig.ENABLE_CREATURE_TOKENS.get();

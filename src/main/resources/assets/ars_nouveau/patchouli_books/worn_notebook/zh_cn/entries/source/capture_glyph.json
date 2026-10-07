@@ -1,0 +1,16 @@
+{
+  "name": "documentation.ars_arcane_matrix.capture_glyph.title",
+  "icon": "ars_arcane_matrix:glyph_capture",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 70,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.capture_glyph.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.capture_glyph.operation"
+    }
+  ]
+}

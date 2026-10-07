@@ -1,9 +1,31 @@
 {
-  "name":"奥术反应釜","icon":"ars_arcane_matrix:arcane_reaction_vessel","category":"ars_nouveau:ars_arcane_matrix",
-  "pages":[
-    {"type":"patchouli:text","text":"documentation.ars_arcane_matrix.arcane_reaction_vessel"},
-    {"type":"patchouli:text","text":"反应釜有两个物品输入格、一个物品输出格和一个流体槽。配方开始时预留所需材料、流体与魔源，完成后再统一消耗。物品和流体可从任意方向输入或取出。"},
-    {"type":"patchouli:text","text":"空桶可在1秒内装入1,000 mB水、熔岩或牛奶，且不消耗魔源。装满的桶无法堆叠，应及时用漏斗等设备取走。具体配方与消耗请查看JEI的“奥术反应”。"},
-    {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_reaction_vessel"}
+  "name": "block.ars_arcane_matrix.arcane_reaction_vessel",
+  "icon": "ars_arcane_matrix:arcane_reaction_vessel",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.operation"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.operation.details"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.resources"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.nature"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ars_arcane_matrix:arcane_reaction_vessel"
+    }
   ]
 }

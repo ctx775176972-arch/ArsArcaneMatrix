@@ -1,3 +1,53 @@
 {
-  "parent": "ars_nouveau:block/arcane_pedestal"
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "ars_arcane_matrix:block/arcane_order_pedestal_stone",
+    "stone": "ars_arcane_matrix:block/arcane_order_pedestal_stone",
+    "trim": "ars_arcane_matrix:block/arcane_order_pedestal_trim",
+    "order": "ars_arcane_matrix:block/arcane_order_pedestal_order",
+    "top": "ars_arcane_matrix:block/arcane_order_pedestal_top"
+  },
+  "elements": [
+    {
+      "from": [1, 0, 1], "to": [15, 3, 15],
+      "faces": {
+        "down": {"uv": [0, 0, 16, 16], "texture": "#stone"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#stone"},
+        "north": {"uv": [0, 0, 16, 16], "texture": "#trim"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#trim"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#trim"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#trim"}
+      }
+    },
+    {
+      "from": [4, 3, 4], "to": [12, 12, 12],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#order"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#order"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#order"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#order"}
+      }
+    },
+    {
+      "from": [2, 12, 2], "to": [14, 14, 14],
+      "faces": {
+        "down": {"uv": [0, 0, 16, 16], "texture": "#stone"},
+        "north": {"uv": [0, 0, 16, 16], "texture": "#stone"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#stone"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#stone"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#stone"}
+      }
+    },
+    {
+      "from": [1, 14, 1], "to": [15, 16, 15],
+      "faces": {
+        "down": {"uv": [0, 0, 16, 16], "texture": "#stone"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#top"},
+        "north": {"uv": [0, 0, 16, 16], "texture": "#trim"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#trim"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#trim"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#trim"}
+      }
+    }
+  ]
 }

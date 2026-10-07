@@ -28,6 +28,12 @@ import com.hollingsworth.arsnouveau.setup.registry.BlockRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.neoforged.fml.ModList;
+import mezz.jei.api.recipe.RecipeType;
+import dev.arsmatrix.compat.RecipeAutomationSupport;
 
 import java.util.List;
 import java.util.Optional;
@@ -129,6 +135,14 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
         registration.addRecipeCatalyst(BlockRegistry.ENCHANTING_APP_BLOCK.get(),
                 UnbreakableRefinementJeiCategory.TYPE);
         registration.addRecipeCatalyst(ModItems.CRAFTING_GUIDE.get(), RecipeTypes.CRAFTING);
+        registration.addRecipeCatalyst(ModItems.CRAFTING_GUIDE.get(), RecipeTypes.STONECUTTING);
+        registration.addRecipeCatalyst(ModItems.CRAFTING_GUIDE.get(), ArcaneReactionJeiCategory.TYPE);
+        registration.addRecipeCatalyst(ModItems.CRAFTING_GUIDE.get(),
+                JEIArsNouveauPlugin.IMBUEMENT_RECIPE_TYPE.get());
+        registration.addRecipeCatalyst(ModItems.CRAFTING_GUIDE.get(),
+                JEIArsNouveauPlugin.ENCHANTING_APP_RECIPE_TYPE.get());
+        registration.addRecipeCatalyst(ModItems.CRAFTING_GUIDE.get(),
+                JEIArsNouveauPlugin.ENCHANTING_RECIPE_TYPE.get());
         registration.addRecipeCatalyst(ModBlocks.ARCANE_SMELTER_CORE.get(), RecipeTypes.SMELTING);
         registration.addRecipeCatalyst(ModBlocks.SOURCE_STONE_FURNACE.get(), RecipeTypes.SMELTING);
         registration.addRecipeCatalyst(ModBlocks.SOURCE_STONE_FURNACE.get(), RecipeTypes.SMOKING);
@@ -163,8 +177,18 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
         registration.addRecipeTransferHandler(
+                new ArcaneReactionVesselTransferHandler(),
+                ArcaneReactionJeiCategory.TYPE
+        );
+        registration.addRecipeTransferHandler(
+                new ArcaneReactionGuideTransferHandler(), ArcaneReactionJeiCategory.TYPE
+        );
+        registration.addRecipeTransferHandler(
                 new CraftingGuideRecipeTransferHandler(registration.getTransferHelper()),
                 RecipeTypes.CRAFTING
+        );
+        registration.addRecipeTransferHandler(
+                new StonecuttingGuideRecipeTransferHandler(), RecipeTypes.STONECUTTING
         );
         registration.addRecipeTransferHandler(
                 new CookingGuideRecipeTransferHandler<>(
@@ -176,6 +200,48 @@ public final class ArsMatrixJeiPlugin implements IModPlugin {
                         registration.getTransferHelper(), RecipeTypes.SMOKING),
                 RecipeTypes.SMOKING
         );
+        registration.addRecipeTransferHandler(
+                new ApparatusGuideRecipeTransferHandler<>(
+                        JEIArsNouveauPlugin.ENCHANTING_APP_RECIPE_TYPE.get()),
+                JEIArsNouveauPlugin.ENCHANTING_APP_RECIPE_TYPE.get()
+        );
+        registration.addRecipeTransferHandler(
+                new ApparatusGuideRecipeTransferHandler<>(
+                        JEIArsNouveauPlugin.ENCHANTING_RECIPE_TYPE.get()),
+                JEIArsNouveauPlugin.ENCHANTING_RECIPE_TYPE.get()
+        );
+        registration.addRecipeTransferHandler(
+                new ImbuementGuideRecipeTransferHandler(),
+                JEIArsNouveauPlugin.IMBUEMENT_RECIPE_TYPE.get()
+        );
+        if (ModList.get().isLoaded("farmersdelight")) {
+            var cookingType = BuiltInRegistries.RECIPE_TYPE.get(
+                    ResourceLocation.fromNamespaceAndPath("farmersdelight", "cooking"));
+            if (cookingType != null) {
+                registerOptionalTransfer(registration, RecipeType.createFromVanilla(cookingType));
+            }
+        }
+        if (ModList.get().isLoaded("avaritia")) {
+            registerOptionalTransfer(registration, RecipeType.createRecipeHolderType(
+                    ResourceLocation.fromNamespaceAndPath("avaritia", "sculk_craft")));
+            registerOptionalTransfer(registration, RecipeType.createRecipeHolderType(
+                    ResourceLocation.fromNamespaceAndPath("avaritia", "nether_craft")));
+            registerOptionalTransfer(registration, RecipeType.createRecipeHolderType(
+                    ResourceLocation.fromNamespaceAndPath("avaritia", "end_craft")));
+            registerOptionalTransfer(registration, RecipeType.createRecipeHolderType(
+                    ResourceLocation.fromNamespaceAndPath("avaritia", "extreme_craft")));
+            registerOptionalTransfer(registration, RecipeType.createRecipeHolderType(
+                    ResourceLocation.fromNamespaceAndPath("avaritia", "compressor")));
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void registerOptionalTransfer(
+            IRecipeTransferRegistration registration, RecipeType<?> recipeType
+    ) {
+        RecipeType<RecipeHolder<Recipe<?>>> typed = (RecipeType) recipeType;
+        registration.addRecipeTransferHandler(
+                new OptionalGuideRecipeTransferHandler<>(typed), typed);
     }
 
     @Override

@@ -28,7 +28,11 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.ARCANE_AMPLIFIER.get());
                         output.accept(ModItems.ARCANE_STRUCTURAL_FRAME.get());
                         output.accept(ModItems.MATRIX_CONSTRUCTION_WAND.get());
+                        output.accept(ModItems.ENCHANTERS_POCKET_WATCH.get());
                         output.accept(ModItems.DEVICE_TIER_DEBUG_TOOL.get());
+                        output.accept(ModItems.ENCHANTED_MACHINE_UPGRADE_COMPONENT.get());
+                        output.accept(ModItems.CASTING_MACHINE_UPGRADE_COMPONENT.get());
+                        output.accept(ModItems.ENRICHED_MACHINE_UPGRADE_COMPONENT.get());
                         output.accept(ModItems.ARCANE_PROCESSOR_CORE.get());
                         output.accept(ModItems.ENCHANTED_CRYSTAL.get());
                         output.accept(ModItems.ARCANE_SMELTER_CORE.get());
@@ -45,7 +49,6 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.GOLD_DUST.get());
                         output.accept(ModItems.ANCIENT_DEBRIS_DUST.get());
                         output.accept(ModItems.SOURCEBOUND_COPPER_ALLOY.get());
-                        output.accept(ModItems.SOURCEBOUND_COPPER_ALLOY_DUST.get());
                         output.accept(ModItems.ARCANE_IMBUEMENT_CORE.get());
                         output.accept(ModItems.ADVANCED_IMBUEMENT_CHAMBER.get());
                         output.accept(ModItems.SOURCE_STONE_GENERATOR.get());

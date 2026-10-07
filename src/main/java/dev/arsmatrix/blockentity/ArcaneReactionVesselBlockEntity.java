@@ -34,6 +34,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public final class ArcaneReactionVesselBlockEntity extends BlockEntity implements MenuProvider {
     public static final int TANK_CAPACITY = 16000;
@@ -46,11 +47,36 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
     private final FluidTank tank = new FluidTank(TANK_CAPACITY) {
         @Override protected void onContentsChanged() { setChanged(); sync(); }
     };
+    /** External fluid access is frozen while a Wixie batch owns this vessel. */
+    private final IFluidHandler automationFluids = new IFluidHandler() {
+        @Override public int getTanks() { return tank.getTanks(); }
+        @Override public FluidStack getFluidInTank(int tankIndex) {
+            return tank.getFluidInTank(tankIndex);
+        }
+        @Override public int getTankCapacity(int tankIndex) {
+            return tank.getTankCapacity(tankIndex);
+        }
+        @Override public boolean isFluidValid(int tankIndex, FluidStack stack) {
+            return tank.isFluidValid(tankIndex, stack);
+        }
+        @Override public int fill(FluidStack resource, FluidAction action) {
+            return networkReserved ? 0 : tank.fill(resource, action);
+        }
+        @Override public FluidStack drain(FluidStack resource, FluidAction action) {
+            return networkReserved ? FluidStack.EMPTY : tank.drain(resource, action);
+        }
+        @Override public FluidStack drain(int maxDrain, FluidAction action) {
+            return networkReserved ? FluidStack.EMPTY : tank.drain(maxDrain, action);
+        }
+    };
     private int progress;
     private int maxProgress = 100;
     private boolean sourcePaid;
     private ResourceLocation activeRecipe;
     private State state = State.IDLE;
+    private boolean networkReserved;
+    /** Opt-in so a dedicated manual/fluid-production vessel is never commandeered. */
+    private boolean wixieAutomationEnabled;
 
     public final ContainerData menuData = new ContainerData() {
         @Override public int get(int index) { return switch (index) {
@@ -136,6 +162,119 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
         return remaining == 0;
     }
 
+    public boolean isAvailableForNetworkJob(ArcaneReactionRule recipe, int operations) {
+        if (!canPrepareNetworkJob(recipe)) return false;
+        if (recipe.inputFluidAmount() <= 0) return true;
+        FluidStack fluid = tank.getFluid();
+        var required = BuiltInRegistries.FLUID.getOptional(recipe.inputFluid()).orElse(null);
+        return required != null && fluid.getFluid() == required
+                && fluid.getAmount() >= recipe.inputFluidAmount() * Math.max(1, operations);
+    }
+
+    public boolean canPrepareNetworkJob(ArcaneReactionRule recipe) {
+        if (level == null || level.isClientSide || !wixieAutomationEnabled || networkReserved
+                || level.hasNeighborSignal(worldPosition) || recipe.createItemOutput().isEmpty()
+                || progress != 0 || sourcePaid || activeRecipe != null) return false;
+        for (int slot = 0; slot < 3; slot++) {
+            if (!items.getStackInSlot(slot).isEmpty()) return false;
+        }
+        return hasSource(recipe.sourceCost());
+    }
+
+    public int missingInputFluid(ArcaneReactionRule recipe, int operations) {
+        if (recipe.inputFluidAmount() <= 0) return 0;
+        var required = BuiltInRegistries.FLUID.getOptional(recipe.inputFluid()).orElse(null);
+        FluidStack stored = tank.getFluid();
+        if (required == null || !stored.isEmpty() && stored.getFluid() != required) return -1;
+        int requiredAmount = recipe.inputFluidAmount() * Math.max(1, operations);
+        if (requiredAmount > TANK_CAPACITY) return -1;
+        return Math.max(0, requiredAmount - stored.getAmount());
+    }
+
+    public boolean canAcceptJeiTransfer() {
+        return !networkReserved && progress == 0 && !sourcePaid;
+    }
+
+    public boolean startNetworkJob(
+            ArcaneReactionRule recipe, List<ItemStack> extracted, int operations
+    ) {
+        if (!isAvailableForNetworkJob(recipe, operations)) return false;
+        List<ItemStack> combined = new ArrayList<>();
+        for (ItemStack stack : extracted) {
+            if (stack.isEmpty()) continue;
+            ItemStack existing = combined.stream()
+                    .filter(value -> ItemStack.isSameItemSameComponents(value, stack))
+                    .findFirst().orElse(ItemStack.EMPTY);
+            if (existing.isEmpty()) combined.add(stack.copy());
+            else existing.grow(stack.getCount());
+        }
+        if (combined.size() > 2 || !recipe.matches(combined, tank.getFluid())) return false;
+        for (int slot = 0; slot < combined.size(); slot++) {
+            ItemStack remainder = items.insertItem(slot, combined.get(slot), false);
+            if (!remainder.isEmpty()) {
+                for (int rollback = 0; rollback <= slot; rollback++) {
+                    items.setStackInSlot(rollback, ItemStack.EMPTY);
+                }
+                return false;
+            }
+        }
+        networkReserved = true;
+        sync();
+        return true;
+    }
+
+    public ItemStack takeNetworkResult(ItemStack expected) {
+        if (!networkReserved || progress != 0 || sourcePaid || activeRecipe != null) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack stored = items.getStackInSlot(2);
+        if (stored.isEmpty() || !ItemStack.isSameItemSameComponents(stored, expected)
+                || stored.getCount() < expected.getCount()) return ItemStack.EMPTY;
+        ItemStack result = items.extractItem(2, expected.getCount(), false);
+        networkReserved = false;
+        sync();
+        return result;
+    }
+
+    /** A persisted provider reservation without any machine-side state can never finish. */
+    public boolean isOrphanedNetworkJob() {
+        if (!networkReserved) return true;
+        if (progress != 0 || sourcePaid || activeRecipe != null) return false;
+        for (int slot = 0; slot < items.getSlots(); slot++) {
+            if (!items.getStackInSlot(slot).isEmpty()) return false;
+        }
+        return true;
+    }
+
+    public void releaseOrphanedNetworkJob() {
+        if (!isOrphanedNetworkJob()) return;
+        networkReserved = false;
+        sync();
+    }
+
+    public String networkDiagnostic() {
+        return "reserved=" + networkReserved
+                + ", state=" + state.name().toLowerCase(java.util.Locale.ROOT)
+                + ", progress=" + progress + "/" + maxProgress
+                + ", inputs=" + items.getStackInSlot(0).getCount()
+                + "+" + items.getStackInSlot(1).getCount()
+                + ", output=" + items.getStackInSlot(2).getCount()
+                + ", fluid=" + tank.getFluidAmount() + "mB";
+    }
+
+    private boolean hasSource(int cost) {
+        if (cost <= 0 || level == null) return true;
+        int available = 0;
+        for (ISpecialSourceProvider provider : SourceUtil.canTakeSource(worldPosition, level, SOURCE_RANGE)) {
+            ISourceTile source = provider.getSource();
+            if (source == null || !source.canProvideSource()) continue;
+            int needed = cost - available;
+            available += Math.max(0, Math.min(needed, source.removeSource(needed, true)));
+            if (available >= cost) return true;
+        }
+        return false;
+    }
+
     private void reset(State next) {
         if (progress != 0 || sourcePaid || activeRecipe != null) {
             progress = 0; sourcePaid = false; activeRecipe = null; setChanged();
@@ -147,10 +286,21 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
 
     public ItemStackHandler items() { return items; }
     public IItemHandler itemHandler(@Nullable Direction side) { return automationItems; }
-    public IFluidHandler fluidHandler(@Nullable Direction side) { return tank; }
+    public IFluidHandler fluidHandler(@Nullable Direction side) { return automationFluids; }
     public FluidTank tank() { return tank; }
     public State state() { return state; }
+    public boolean isWixieAutomationEnabled() { return wixieAutomationEnabled; }
+    public void toggleWixieAutomation(Player player) {
+        wixieAutomationEnabled = !wixieAutomationEnabled;
+        sync();
+        player.displayClientMessage(Component.translatable(
+                "message.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation.changed",
+                Component.translatable(wixieAutomationEnabled
+                        ? "message.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation.enabled"
+                        : "message.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation.disabled")), true);
+    }
     public void clearFluid() {
+        if (networkReserved) return;
         tank.setFluid(FluidStack.EMPTY);
         reset(State.IDLE);
         sync();
@@ -166,6 +316,8 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
         tag.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
         tag.putInt("Progress", progress); tag.putInt("MaxProgress", maxProgress);
         tag.putBoolean("SourcePaid", sourcePaid); tag.putInt("State", state.ordinal());
+        tag.putBoolean("NetworkReserved", networkReserved);
+        tag.putBoolean("WixieAutomationEnabled", wixieAutomationEnabled);
         if (activeRecipe != null) tag.putString("ActiveRecipe", activeRecipe.toString());
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
@@ -191,6 +343,8 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
         }
         progress = Math.max(0, tag.getInt("Progress")); maxProgress = Math.max(1, tag.getInt("MaxProgress"));
         sourcePaid = tag.getBoolean("SourcePaid");
+        networkReserved = tag.getBoolean("NetworkReserved");
+        wixieAutomationEnabled = tag.getBoolean("WixieAutomationEnabled");
         state = State.values()[Math.floorMod(tag.getInt("State"), State.values().length)];
         activeRecipe = ResourceLocation.tryParse(tag.getString("ActiveRecipe"));
     }
@@ -209,7 +363,9 @@ public final class ArcaneReactionVesselBlockEntity extends BlockEntity implement
         @Override public int getSlots() { return 3; }
         @Override public ItemStack getStackInSlot(int slot) { return items.getStackInSlot(slot); }
         @Override public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) { return slot < 2 ? items.insertItem(slot, stack, simulate) : stack; }
-        @Override public ItemStack extractItem(int slot, int amount, boolean simulate) { return slot == 2 ? items.extractItem(slot, amount, simulate) : ItemStack.EMPTY; }
+        @Override public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return slot == 2 && !networkReserved ? items.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
+        }
         @Override public int getSlotLimit(int slot) { return items.getSlotLimit(slot); }
         @Override public boolean isItemValid(int slot, ItemStack stack) { return slot < 2; }
     }

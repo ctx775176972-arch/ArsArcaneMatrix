@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"item": "minecraft:sugar", "count": 1},
+    {"item": "minecraft:bamboo", "count": 1}
+  ],
+  "output": {"item": "minecraft:sugar_cane", "amount": 1},
+  "source_cost": 100,
+  "processing_ticks": 100
+}

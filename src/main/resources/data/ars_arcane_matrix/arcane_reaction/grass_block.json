@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"item": "minecraft:dirt", "count": 1},
+    {"item": "minecraft:bone_meal", "count": 1}
+  ],
+  "output": {"item": "minecraft:grass_block", "amount": 1},
+  "source_cost": 100,
+  "processing_ticks": 100
+}

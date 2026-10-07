@@ -1,0 +1,26 @@
+{
+  "name": "documentation.ars_arcane_matrix.alakarkinos_expedition.title",
+  "icon": "ars_nouveau:alakarkinos_charm",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 24,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.alakarkinos_expedition.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.alakarkinos_expedition.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.alakarkinos_expedition.layout.text",
+      "title": "documentation.ars_arcane_matrix.alakarkinos_expedition.layout.title"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.text",
+      "title": "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.title"
+    }
+  ]
+}

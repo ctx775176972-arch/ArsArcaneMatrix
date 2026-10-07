@@ -1,0 +1,28 @@
+{
+  "name": "documentation.ars_arcane_matrix.machine_upgrades.title",
+  "icon": "ars_arcane_matrix:enchanted_machine_upgrade_component",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 45,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.machine_upgrades.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.machine_upgrades.devices"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ars_arcane_matrix:enchanted_machine_upgrade_component"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ars_arcane_matrix:casting_machine_upgrade_component"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ars_arcane_matrix:enriched_machine_upgrade_component"
+    }
+  ]
+}

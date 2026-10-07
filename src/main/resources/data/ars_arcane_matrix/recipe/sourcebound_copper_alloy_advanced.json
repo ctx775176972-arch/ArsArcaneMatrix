@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:copper_ingot" },
+    { "item": "minecraft:copper_ingot" },
+    { "item": "minecraft:copper_ingot" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "ars_nouveau:source_gem" },
+    { "item": "ars_arcane_matrix:enchanted_crystal" }
+  ],
+  "result": { "id": "ars_arcane_matrix:sourcebound_copper_alloy", "count": 8 }
+}

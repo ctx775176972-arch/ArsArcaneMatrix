@@ -1,0 +1,19 @@
+{
+  "category": "ars_nouveau:rituals",
+  "icon": "ars_arcane_matrix:chunk_excavation",
+  "name": "深层掘进",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "深层掘进会从仪式火盆下方开始，每秒挖掘火盆所在区块的一整层。每个存在可挖方块的层消耗1,000魔源；魔源或周围容器空间不足时，仪式会暂停等待。仪式会一直挖到世界底部，基岩等不可破坏方块会留在原处，不会阻止后续层的挖掘。"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ars_arcane_matrix:chunk_excavation"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "默认使用铁级工具，足以开采主世界的钻石等矿物。投入绿宝石可精准回收矿石，留给带时运的加工者处理；投入海绵可清除岩浆海等流体；投入钻石则提升为钻石级，用于黑曜石和远古残骸。三种强化物可以同时投入。箱子、机器等带有数据的方块不会被破坏。"
+    }
+  ]
+}

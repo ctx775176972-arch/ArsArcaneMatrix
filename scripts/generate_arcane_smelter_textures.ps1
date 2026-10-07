@@ -1,12 +1,10 @@
 Add-Type -AssemblyName System.Drawing
 
 $textureDir = Join-Path $PSScriptRoot "..\src\main\resources\assets\ars_arcane_matrix\textures\block"
-$referenceDir = Join-Path $PSScriptRoot "..\build\texture_reference\ars\assets\ars_nouveau\textures\block"
 $oldFront = Join-Path $textureDir "arcane_smelter_front.png"
 $oldLit = Join-Path $textureDir "arcane_smelter_front_on.png"
 $furnaceFront = Join-Path $textureDir "source_stone_furnace_front.png"
 $furnaceLit = Join-Path $textureDir "source_stone_furnace_front_on.png"
-$sourceStone = Join-Path $referenceDir "sourcestone.png"
 
 # Preserve the former shared face as the simple single-block furnace artwork.
 if (-not (Test-Path $furnaceFront)) { [System.IO.File]::Copy($oldFront, $furnaceFront, $true) }
@@ -27,12 +25,11 @@ function Fill-Rect($bitmap, [int]$x1, [int]$y1, [int]$x2, [int]$y2, [string]$hex
 }
 
 function New-BaseTexture {
-    $source = [System.Drawing.Bitmap]::FromFile($sourceStone)
     $result = New-Object System.Drawing.Bitmap 16, 16, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
-    $graphics = [System.Drawing.Graphics]::FromImage($result)
-    $graphics.DrawImage($source, 0, 0, 16, 16)
-    $graphics.Dispose()
-    $source.Dispose()
+    Fill-Rect $result 0 0 15 15 '#44394D'
+    Fill-Rect $result 0 0 15 1 '#958199'
+    Fill-Rect $result 0 2 1 15 '#69566F'
+    Fill-Rect $result 2 14 15 15 '#302837'
     return $result
 }
 

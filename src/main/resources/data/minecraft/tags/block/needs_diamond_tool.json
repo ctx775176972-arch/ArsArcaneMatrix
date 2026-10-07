@@ -14,7 +14,6 @@
     ,"ars_arcane_matrix:super_source_jar_core"
     ,"ars_arcane_matrix:integrated_source_relay"
     ,"ars_arcane_matrix:dimension_anchor"
-    ,"ars_arcane_matrix:arcane_fluid_reservoir"
     ,"ars_arcane_matrix:arcane_fluid_tank"
   ]
 }

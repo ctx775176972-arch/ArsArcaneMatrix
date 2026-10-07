@@ -53,7 +53,8 @@ import java.util.List;
 
 /** Tool-driven ore breaker. Food is time, magic food enables Enchanted Crystal rolls. */
 public final class ArcaneProcessorCoreBlockEntity extends BlockEntity implements IWandable {
-    public static final int MAX_BATCH = 5;
+    public static final int MAX_BATCH = 20;
+    private static final int SPECIAL_ROLL_ITEMS = 5;
     public static final int CYCLE_TICKS = 100;
     private static final int OUTPUT_SLOTS = 18;
     private static final TagKey<Item> ORES = ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ores"));
@@ -160,8 +161,8 @@ public final class ArcaneProcessorCoreBlockEntity extends BlockEntity implements
             addExperience(experience);
             if (specialMode) {
                 specialWork++;
-                if (specialWork >= MAX_BATCH) {
-                    specialWork -= MAX_BATCH;
+                if (specialWork >= SPECIAL_ROLL_ITEMS) {
+                    specialWork -= SPECIAL_ROLL_ITEMS;
                     specialPity++;
                     if (specialPity >= 8 || serverLevel.random.nextFloat() < 0.125F) {
                         storeOutput(new ItemStack(ModItems.ENCHANTED_CRYSTAL.get()));
@@ -390,7 +391,7 @@ public final class ArcaneProcessorCoreBlockEntity extends BlockEntity implements
         }
         progressTicks = tag.getInt("Progress"); workTimeTicks = tag.getInt("WorkTime");
         specialPity = tag.getInt("SpecialPity"); experienceRemainder = tag.getInt("ExperienceRemainder");
-        specialWork = Math.max(0, Math.min(MAX_BATCH - 1, tag.getInt("SpecialWork")));
+        specialWork = Math.max(0, Math.min(SPECIAL_ROLL_ITEMS - 1, tag.getInt("SpecialWork")));
         specialMode = tag.getBoolean("SpecialMode"); outputs.clear();
         try { state = OperatingState.valueOf(tag.getString("OperatingState")); }
         catch (IllegalArgumentException ignored) { state = OperatingState.UNFORMED; }

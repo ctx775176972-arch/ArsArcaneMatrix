@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "ars_nouveau:blue_archwood_sapling"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ars_nouveau:purple_archwood_sapling"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ars_nouveau:green_archwood_sapling"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "ars_nouveau:red_archwood_sapling"
+        }
+      ]
+    }
+  ]
+}

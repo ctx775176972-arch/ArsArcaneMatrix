@@ -134,7 +134,11 @@ public final class ArcaneSourceJarBlockEntity extends BlockEntity
     @Override public int getSource() { return storage.getSource(); }
     @Override public int getMaxSource() { return CAPACITY; }
     @Override public int setSource(int source) {
+        int before = storage.getSource();
         storage.setSource(Math.max(0, Math.min(CAPACITY, source)));
+        // SourceStorage#setSource does not invoke onContentsChanged. Network
+        // extraction uses this path, so explicitly synchronize consumption.
+        if (storage.getSource() != before) sync();
         return getSource();
     }
     @Override public int addSource(int amount) {

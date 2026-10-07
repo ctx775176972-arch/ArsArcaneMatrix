@@ -8,6 +8,16 @@
   },
   "elements": [
     {
+      "name": "jar_support",
+      "from": [3, 9, 3],
+      "to": [13, 16, 13],
+      "faces": {
+        "north": {"texture": "#stone"}, "east": {"texture": "#stone"},
+        "south": {"texture": "#stone"}, "west": {"texture": "#stone"},
+        "up": {"texture": "#stone"}, "down": {"texture": "#stone"}
+      }
+    },
+    {
       "name": "north_left",
       "from": [4, 0, 0.5],
       "to": [7, 5, 2.5],

@@ -56,9 +56,18 @@ public final class MatrixClothConfigScreen {
         addEntries(common, entries, MatrixCommonConfig.SPEC.getValues(), "",
                 editCommon, MatrixCommonConfig.SPEC.isLoaded(), commonChanges);
         builder.setSavingRunnable(() -> {
+            boolean skyblockBefore = MatrixCommonConfig.SPEC.isLoaded() && MatrixCommonConfig.ENABLE_SKYBLOCK.get();
             if (editCommon && !commonChanges.isEmpty() && MatrixCommonConfig.SPEC.isLoaded()) {
                 commonChanges.forEach(Runnable::run);
                 MatrixCommonConfig.SPEC.save();
+            }
+            if (editCommon && server != null && skyblockBefore != MatrixCommonConfig.ENABLE_SKYBLOCK.get()) {
+                server.execute(() -> {
+                    if (Minecraft.getInstance().getSingleplayerServer() != server || server.isPublished()) return;
+                    server.reloadResources(server.getPackRepository().getSelectedIds()).whenComplete((ignored, error) -> {
+                        if (error != null) dev.arsmatrix.ArsArcaneMatrix.LOGGER.error("Failed to reload skyblock recipes", error);
+                    });
+                });
             }
             if (!clientChanges.isEmpty() && MatrixClientConfig.SPEC.isLoaded()) {
                 clientChanges.forEach(Runnable::run);

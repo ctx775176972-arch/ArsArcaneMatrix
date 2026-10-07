@@ -1,0 +1,20 @@
+{
+  "name": "block.ars_arcane_matrix.arcane_order_pedestal",
+  "icon": "ars_arcane_matrix:arcane_order_pedestal",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 18,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.order_pedestal.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.order_pedestal.operation"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.order_pedestal.upgrades"
+    }
+  ]
+}

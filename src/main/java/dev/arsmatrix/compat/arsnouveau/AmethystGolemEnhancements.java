@@ -30,10 +30,12 @@ import java.util.List;
 
 /** Adds non-consuming Arcane Pedestal upgrades to Ars Nouveau's Amethyst Golem. */
 public final class AmethystGolemEnhancements {
-    private static final int WORK_RANGE = 10;
+    private static final int WORK_RANGE = 12;
+    private static final int TOOL_PEDESTAL_RANGE = 5;
     private static final int WORK_SCAN_INTERVAL = 100;
     private static final int TRANSFER_INTERVAL = 5;
-    private static final int COLLECTION_RANGE = 10;
+    /** One extra block covers clusters growing on the outward face of a boundary budding block. */
+    private static final int COLLECTION_RANGE = WORK_RANGE + 1;
     private static final int GROWTH_BATCH_SIZE = 4;
     private static final String GROWTH_CURSOR_TAG = "ars_arcane_matrix_growth_cursor";
     private static final String GROWTH_CURSOR_INITIALIZED_TAG =
@@ -109,6 +111,24 @@ public final class AmethystGolemEnhancements {
         return Math.max(20, originalTicks - (int) Math.ceil(removable * efficiency / 5.0D));
     }
 
+    /** Keeps roughly four harvest checks even when Efficiency shortens the stomp animation. */
+    public static int acceleratedHarvestInterval(AmethystGolem golem, int originalInterval) {
+        int efficiency = Math.min(5, efficiencyLevel(golem));
+        if (efficiency <= 0) return originalInterval;
+        return Math.max(5, acceleratedActionTicks(golem, 130) / 4);
+    }
+
+    /** Tool-mode drops are delivered directly, so walking home only wastes work time. */
+    public static boolean isToolModeActive(AmethystGolem golem) {
+        if (!(golem.level() instanceof ServerLevel level) || golem.getHome() == null) return false;
+        EnhancementState state = STATES.computeIfAbsent(golem, ignored -> new EnhancementState());
+        if (level.getGameTime() >= state.nextScan || !golem.getHome().equals(state.scannedHome)) {
+            scanWorkArea(level, golem, state);
+            state.nextScan = level.getGameTime() + WORK_SCAN_INTERVAL;
+        }
+        return !state.tool.isEmpty();
+    }
+
     private static void scanWorkArea(ServerLevel level, AmethystGolem golem, EnhancementState state) {
         BlockPos home = golem.getHome();
         if (home == null) return;
@@ -135,7 +155,11 @@ public final class AmethystGolemEnhancements {
                 }
             }
 
-            if (level.getBlockEntity(cursor) instanceof ArcanePedestalTile pedestal) {
+            // Tool selection is intentionally narrower than the golem's ordinary
+            // amethyst work area, preventing nearby apparatus and machine
+            // pedestals from changing its harvest mode.
+            if (isWithinToolPedestalRange(home, cursor)
+                    && level.getBlockEntity(cursor) instanceof ArcanePedestalTile pedestal) {
                 ItemStack offered = pedestal.getStack();
                 if (offered.isEmpty()) continue;
                 if (!offered.isCorrectToolForDrops(cluster)) continue;
@@ -157,6 +181,12 @@ public final class AmethystGolemEnhancements {
         initializeGrowthCursor(level, golem, home);
         // scanWorkArea rebuilds the list in deterministic coordinate order.
         state.appliedGrowthCursor = 0;
+    }
+
+    private static boolean isWithinToolPedestalRange(BlockPos home, BlockPos pos) {
+        return Math.abs(pos.getX() - home.getX()) <= TOOL_PEDESTAL_RANGE
+                && Math.abs(pos.getY() - home.getY()) <= TOOL_PEDESTAL_RANGE
+                && Math.abs(pos.getZ() - home.getZ()) <= TOOL_PEDESTAL_RANGE;
     }
 
     /**

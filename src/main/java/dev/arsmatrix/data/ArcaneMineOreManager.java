@@ -171,7 +171,7 @@ public final class ArcaneMineOreManager extends SimpleJsonResourceReloadListener
 
     /**
      * Maps the highest vanilla mining requirement in an ore item tag to Mine
-     * layers: wood/no tag, stone, iron, then diamond. Taking the highest tier
+     * layers: wood/no tag, stone, iron, then diamond or netherite. Taking the highest tier
      * prevents a mixed variant tag from occasionally producing an ore that is
      * stronger than the completed structure should allow.
      */
@@ -181,6 +181,18 @@ public final class ArcaneMineOreManager extends SimpleJsonResourceReloadListener
                 .flatMap(named -> named.stream())
                 .map(holder -> Block.byItem(holder.value()).defaultBlockState())
                 .mapToInt(state -> {
+                    if (state.is(TagKey.create(Registries.BLOCK,
+                            ResourceLocation.fromNamespaceAndPath("neoforge", "needs_netherite_tool")))) {
+                        return 4;
+                    }
+                    // Allthemodium uses common custom tiers above netherite.
+                    // The Mine caps these at its highest structure tier rather
+                    // than incorrectly treating unknown tool requirements as wood.
+                    for (String requirement : List.of("needs_allthemodium_tool", "needs_vibranium_tool",
+                            "needs_unobtainium_tool", "needs_allthemodiumalloy_tool")) {
+                        if (state.is(TagKey.create(Registries.BLOCK,
+                                ResourceLocation.fromNamespaceAndPath("c", requirement)))) return 4;
+                    }
                     if (state.is(BlockTags.NEEDS_DIAMOND_TOOL)) {
                         return 4;
                     }

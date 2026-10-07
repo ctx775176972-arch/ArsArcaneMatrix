@@ -3,6 +3,7 @@ package dev.arsmatrix.menu;
 import dev.arsmatrix.blockentity.StarbuncleLogisticsHubBlockEntity;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModMenus;
+import dev.arsmatrix.util.RemoteMenuAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -96,21 +97,7 @@ public final class StarbuncleLogisticsHubMenu extends AbstractContainerMenu {
         for (int col = 0; col < 9; col++) addSlot(new Slot(inv, col, 8 + col * 18, 212));
     }
     private static ContainerData serverData(StarbuncleLogisticsHubBlockEntity hub) {
-        return new ContainerData() {
-            @Override public int get(int index) { return switch (index) {
-                case 0 -> hub.getNearbyOwned();
-                case 1 -> hub.getState().ordinal();
-                case 2 -> hub.isAllowList() ? 1 : 0;
-                case 3 -> hub.getMatchMode().ordinal();
-                case 4 -> hub.isAutomaticRecall() ? 1 : 0;
-                case 5 -> hub.isTeleportOnStuck() ? 1 : 0;
-                case 6 -> hub.getUpgradeTier();
-                case 7 -> hub.getSharedThroughput();
-                default -> 0;
-            }; }
-            @Override public void set(int index, int value) {}
-            @Override public int getCount() { return 8; }
-        };
+        return new StarbuncleLogisticsHubContainerData(hub);
     }
     public int getNearbyOwned() { return data.get(0); }
     public StarbuncleLogisticsHubBlockEntity.HubState getHubState() {
@@ -174,7 +161,7 @@ public final class StarbuncleLogisticsHubMenu extends AbstractContainerMenu {
     }
     @Override public boolean stillValid(Player player) {
         return player.level().getBlockState(pos).is(ModBlocks.STARBUNCLE_LOGISTICS_HUB.get())
-                && player.distanceToSqr(pos.getX() + .5, pos.getY() + .5, pos.getZ() + .5) <= 64;
+                && RemoteMenuAccess.isWithinUseRange(player, pos);
     }
 
     @Override public void broadcastChanges() {

@@ -1,0 +1,14 @@
+{
+  "name": "documentation.ars_arcane_matrix.automation_start.title",
+  "icon": "ars_arcane_matrix:wixie_order_terminal",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 1,
+  "pages": [
+    {"type":"patchouli:text","title":"documentation.ars_arcane_matrix.automation_start.setup.title","text":"documentation.ars_arcane_matrix.automation_start.setup.text"},
+    {"type":"patchouli:text","title":"documentation.ars_arcane_matrix.automation_start.patterns.title","text":"documentation.ars_arcane_matrix.automation_start.patterns.text"},
+    {"type":"patchouli:text","title":"documentation.ars_arcane_matrix.automation_start.planning.title","text":"documentation.ars_arcane_matrix.automation_start.planning.text"},
+    {"type":"patchouli:text","title":"documentation.ars_arcane_matrix.automation_start.stations.title","text":"documentation.ars_arcane_matrix.automation_start.stations.text"},
+    {"type":"patchouli:text","title":"documentation.ars_arcane_matrix.automation_start.fluids.title","text":"documentation.ars_arcane_matrix.automation_start.fluids.text"},
+    {"type":"patchouli:text","title":"documentation.ars_arcane_matrix.automation_start.troubleshooting.title","text":"documentation.ars_arcane_matrix.automation_start.troubleshooting.text"}
+  ]
+}

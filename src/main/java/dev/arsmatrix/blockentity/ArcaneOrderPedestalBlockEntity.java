@@ -16,7 +16,7 @@ import java.util.UUID;
 public final class ArcaneOrderPedestalBlockEntity extends BlockEntity {
 
     public static final int MAX_UPGRADE_TIER = 3;
-    private static final int[] DISPATCH_INTERVALS = {10, 5, 2, 1};
+    private static final int[] DISPATCH_INTERVALS = {40, 20, 10, 5};
     private static final int[] MAX_PARALLEL = {1, 2, 4, Integer.MAX_VALUE};
 
     private ItemStack virtualTarget = ItemStack.EMPTY;

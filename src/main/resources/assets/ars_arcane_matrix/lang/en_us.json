@@ -1,8 +1,12 @@
 {
-  "item.ars_arcane_matrix.wizards_pocket_watch": "Wizard's Pocket Watch",
-  "item.ars_arcane_matrix.wizards_pocket_watch.prototype": "Prototype: no crafting recipe",
-  "item.ars_arcane_matrix.wizards_pocket_watch.help": "Scribe like an Enchanter's Mirror. Right-click to configure; casts periodically while equipped.",
-  "item.ars_arcane_matrix.wizards_pocket_watch.error": "Pocket watch paused after a spell error. See the log.",
+  "generator.ars_arcane_matrix.skyblock": "Arcane Matrix Skyblock",
+  "config.ars_arcane_matrix.enableSkyblock": "Enable skyblock starters and recipes",
+  "config.ars_arcane_matrix.enableSkyblock.tooltip": "No game restart required. Saving in singleplayer reloads recipes; menu changes apply when entering a world. Existing terrain is unchanged.",
+  "item.ars_arcane_matrix.enchanters_pocket_watch": "Enchanter's Pocket Watch",
+  "item.ars_arcane_matrix.enchanters_pocket_watch.help": "Scribe like an Enchanter's Mirror. Right-click to configure; casts periodically while equipped.",
+  "item.ars_arcane_matrix.enchanters_pocket_watch.error": "Pocket watch paused after a spell error. See the log.",
+  "documentation.ars_arcane_matrix.enchanters_pocket_watch.summary": "The Enchanter's Pocket Watch is a curio that stores a Self spell and casts it automatically at the configured interval while equipped.",
+  "documentation.ars_arcane_matrix.enchanters_pocket_watch.operation": "Scribe a spell without a cast form at a Scribe's Table, as with an Enchanter's Mirror; the watch inserts Self automatically. Right-click it to choose an interval from 5 to 3,600 seconds or pause it. It works only in a curio slot, spends the player's normal spell mana, and does not queue failed casts.",
   "gui.ars_arcane_matrix.watch.seconds": "Interval (seconds, 5–3600)",
   "gui.ars_arcane_matrix.watch.apply": "Apply",
   "gui.ars_arcane_matrix.watch.enabled": "Auto-cast: ON",
@@ -111,6 +115,10 @@
   "config.ars_arcane_matrix.source_stone_generator.passiveProgressPerSecond.tooltip": "Free imbuement-style progress gained each second without external Source.",
   "config.ars_arcane_matrix.drygmy_arena.cycleTicks": "Cycle Ticks",
   "config.ars_arcane_matrix.drygmy_arena.cycleTicks.tooltip": "Ticks per special-output cycle. 6000 ticks equals five minutes.",
+  "config.ars_arcane_matrix.drygmy_arena.condensedSpeedDivisor": "Condensed Catalyst Speed Multiplier",
+  "config.ars_arcane_matrix.drygmy_arena.condensedSpeedDivisor.tooltip": "Hunting speed multiplier when the entire cycle is paid with Condensed Summoning Cores.",
+  "config.ars_arcane_matrix.drygmy_arena.condensedOutputMultiplier": "Condensed Catalyst Output Multiplier",
+  "config.ars_arcane_matrix.drygmy_arena.condensedOutputMultiplier.tooltip": "Output multiplier when the entire cycle is paid with Condensed Summoning Cores.",
   "config.ars_arcane_matrix.visuals.showMineBeam": "Show Mine Beam",
   "config.ars_arcane_matrix.visuals.showMineBeam.tooltip": "Show the Arcane Mine scanning beam.",
   "config.ars_arcane_matrix.visuals.structurePreviewOpacity": "Structure Preview Opacity",
@@ -146,7 +154,7 @@
   "documentation.ars_arcane_matrix.source_stone_generator.overview": "The Source Stone Generator produces stone and soil in bulk. With no matching pedestal setup, it makes 64 Cobblestone and works slowly even without Source. Available Source within the surrounding 3×3×3 area makes each batch take five seconds. Non-empty pedestals in that area select the product without consuming their items. Results enter an inventory below or can be extracted from any face. Redstone pauses operation.",
   "book.ars_arcane_matrix.source_stone_generator.overview": "The Source Stone Generator makes 64 Cobblestone when no pedestal recipe matches. It works slowly without Source; available Source within the surrounding 3×3×3 area makes each batch take five seconds. Non-empty pedestals in that area select the product without consuming their items. Results enter a container below or can be extracted from any face. Redstone pauses operation.",
   "documentation.ars_arcane_matrix.drygmy_arena.overview": "The Arcane Hunting Grounds creates the unique drop of the boss stored in its Mob Jar. Hearts of the Sea, Echo Shards, smithing templates, and Dragon Heads come from Alakarkinos exploration instead. The Grounds consumes no Source, creates no entity, causes no death event, produces no experience, and creates no ordinary drops.",
-  "book.ars_arcane_matrix.drygmy_arena.overview": "Place one Mob Jar directly above the Arcane Hunting Grounds and at least two Arcane Pedestals within two blocks horizontally. Pedestals draw catalysts from nearby inventories: Conjuration Essence supplies 10 points and a Condensed Summoning Core supplies 100. The stored creature only selects the target and is never spawned or harmed.",
+  "book.ars_arcane_matrix.drygmy_arena.overview": "Place one Mob Jar directly above the Arcane Hunting Grounds and at least one ordinary inventory nearby. The Grounds consumes catalysts directly from that inventory: Conjuration Essence supplies 10 points and a Condensed Summoning Core supplies 100. The stored creature only selects the target and is never spawned or harmed.",
   "ars_arcane_matrix.glyph_name.glyph_capture": "Capture",
   "item.ars_arcane_matrix.glyph_capture": "Glyph of Capture",
   "ars_arcane_matrix.glyph_desc.glyph_capture": "Captures a touched non-boss creature into an empty Containment Jar in the caster's inventory. Amplify switches the glyph to boss-only capture mode.",
@@ -162,7 +170,7 @@
   "message.ars_arcane_matrix.capture.success": "Captured %s in a Containment Jar",
   "message.ars_arcane_matrix.capture.passenger_success": "Captured passenger %s first; cast again to capture its mount",
   "book.ars_arcane_matrix.drygmy_arena.automation.title": "Special Material Hunting",
-  "book.ars_arcane_matrix.drygmy_arena.automation": "The Grounds creates a stored boss's unique material, such as a Nether Star, Wilden Tribute, or Dragon Egg. It produces no ordinary loot, experience, death sounds, or Wither Roses. Once enough catalyst points are available, a cycle takes five minutes by default. Results enter adjacent inventories and redstone pauses operation.",
+  "book.ars_arcane_matrix.drygmy_arena.automation": "The Grounds creates a stored boss's unique material, such as a Nether Star, Wilden Tribute, or Dragon Egg. A normal cycle takes five minutes by default. If Condensed Summoning Cores pay the entire point cost, it runs at four times the speed and produces four times the output. Attach a lever to the side of the inventory below the Grounds to pause it without activating the Mob Jar above.",
   "book.ars_arcane_matrix.arcane_imbuement_core.overview": "The Arcane Imbuement Core is a standalone bulk converter. It does not require an Imbuement Chamber and does not improve ordinary imbuement recipes; the Advanced Imbuement Chamber is a separate device. Use a Dominion Wand to bind output first and input second; sneak-use clears both bindings. The Core draws nearby Source, and redstone pauses processing.",
   "book.ars_arcane_matrix.arcane_imbuement_core.bulk": "Up to four inputs finish every five seconds. Lapis or an Amethyst Shard costs 500 Source for one Source Gem; a Lapis Block costs 4,500 for nine; an Amethyst Block costs 2,000 for four. An Amplifier costs 2,000 and recycles into sixteen. Empty-hand use switches between loose and compact output.",
   "book.ars_arcane_matrix.arcane_amplifier.overview": "A complete four-layer Arcane Mine gains one 1% Amplifier roll for every 128 material points consumed and guarantees one after 12,800 points. Progress resets after a success. If output is blocked, the Mine stores up to 64 Amplifiers.",
@@ -232,7 +240,7 @@
   "jei.ars_arcane_matrix.arcane_hunting.points": "Required: %s points",
   "jei.ars_arcane_matrix.arcane_hunting.time": "Cycle: %s seconds",
   "jei.ars_arcane_matrix.arcane_hunting.catalyst.normal": "Normal Catalyst · 10 points each",
-  "jei.ars_arcane_matrix.arcane_hunting.catalyst.advanced": "Advanced Catalyst · 100 points each",
+  "jei.ars_arcane_matrix.arcane_hunting.catalyst.advanced": "Advanced Catalyst · 100 points each · 4x speed and output when fully paid",
   "jei.ars_arcane_matrix.source_stone_generation.default": "No pedestal items",
   "jei.ars_arcane_matrix.source_stone_generation.pedestals": "%s exact pedestal item(s)",
   "jei.ars_arcane_matrix.source_stone_generation.progress": "%s progress",
@@ -255,9 +263,9 @@
   "jei.ars_arcane_matrix.source_stone_generator.info": "A compact generator for bulk stone and soil production. With no matching pedestal setup, it produces 64 Cobblestone after 200 progress and gains 20 progress per second even without Source.",
   "jei.ars_arcane_matrix.source_stone_generator.multiblock": "It reads every non-empty Arcane Pedestal in a 3x3x3 area centered on the generator. Items are matched unordered and exactly and are not consumed. Only Source providers in that area can power it; with Source, every batch takes a fixed five seconds.",
   "jei.ars_arcane_matrix.source_stone_generator.automation": "The nine-slot buffer pushes into the inventory directly below. Pipes may extract from every face. A blocked output stops progress and Source use; redstone pauses operation.",
-  "jei.ars_arcane_matrix.drygmy_arena.info": "Place a Mob Jar directly above the Arcane Hunting Grounds and at least two Arcane Pedestals anywhere in its nearby detection volume. Conjuration Essence is worth 10 points and a Condensed Summoning Core is worth 100.",
+  "jei.ars_arcane_matrix.drygmy_arena.info": "Place a Mob Jar directly above the Arcane Hunting Grounds and at least one ordinary inventory in its nearby detection volume. The Grounds consumes catalysts directly from it; Conjuration Essence is worth 10 points and a Condensed Summoning Core is worth 100.",
   "jei.ars_arcane_matrix.drygmy_arena.drops": "Creates the unique drop of the boss stored in the Mob Jar. Structure loot comes from Alakarkinos exploration and ordinary drops from Drygmy Henges. The Grounds never creates or kills entities, causes death events, plays boss sounds, or awards experience.",
-  "jei.ars_arcane_matrix.drygmy_arena.automation": "After the configured target cost is paid, one cycle takes five minutes by default. Outputs are pushed into adjacent inventories and may be extracted from every side. Redstone pauses operation.",
+  "jei.ars_arcane_matrix.drygmy_arena.automation": "Normal catalysts take five minutes per cycle by default. Fully paying a cycle with Condensed Summoning Cores grants 4x speed and 4x output. Only redstone around the block below the Grounds is detected.",
   "jade.ars_arcane_matrix.matrix.status": "Matrix: %s",
   "jade.ars_arcane_matrix.matrix.source": "Source: %s / %s",
   "jade.ars_arcane_matrix.matrix.frames": "Frames: %s / %s · %s Source/s · Amplifiers: %s / 6",
@@ -301,11 +309,13 @@
   "message.ars_arcane_matrix.crafting_guide.need_sample": "Hold the desired result sample in your off hand.",
   "message.ars_arcane_matrix.crafting_guide.no_recipe": "No ordinary crafting recipe was found for %s.",
   "message.ars_arcane_matrix.crafting_guide.recorded": "Recorded the crafting method for %s.",
-  "tooltip.ars_arcane_matrix.crafting_guide.blank": "Blank: open a Wixie Order Terminal or Advanced Storage Lectern, then use a JEI transfer button to encode",
+  "tooltip.ars_arcane_matrix.crafting_guide.blank": "Blank: use a JEI transfer button while a terminal is open; Shift-click in an Advanced Storage Lectern to preview and encode a complete crafting chain",
   "tooltip.ars_arcane_matrix.crafting_guide.recipe": "Crafted item: %s",
   "tooltip.ars_arcane_matrix.crafting_guide.mode": "Matching mode: %s",
+  "tooltip.ars_arcane_matrix.crafting_guide.workstation": "Workstation: %s",
   "screen.ars_arcane_matrix.pattern_provider.sort_name.tooltip": "Sort by output name; top-left to bottom-right is also recipe priority",
   "screen.ars_arcane_matrix.pattern_provider.sort_workstation.tooltip": "Sort by workstation and output; top-left to bottom-right is also recipe priority",
+  "screen.ars_arcane_matrix.pattern_provider.capacity": "Guides %s/%s | Free %s | Tier %s",
   "screen.ars_arcane_matrix.advanced_storage_lectern.manage_patterns": "Manage Wixie Crafting Guides (left-click to remove, right-click to toggle strict/fuzzy)",
   "message.ars_arcane_matrix.pattern_provider.none_nearby": "No manageable Wixie Pattern Provider is nearby",
   "tooltip.ars_arcane_matrix.crafting_guide.mode.fuzzy": "Tag Preference",
@@ -376,6 +386,17 @@
   "screen.ars_arcane_matrix.order_terminal.recipe_details": "Workstation: %s | Match: %s",
   "screen.ars_arcane_matrix.order_terminal.workstation.crafting": "Crafting Table",
   "screen.ars_arcane_matrix.order_terminal.workstation.furnace": "Source Stone Furnace",
+  "screen.ars_arcane_matrix.order_terminal.workstation.apparatus": "Enchanting Apparatus",
+  "screen.ars_arcane_matrix.order_terminal.workstation.imbuement": "Imbuement Chamber",
+  "screen.ars_arcane_matrix.order_terminal.workstation.stonecutter": "Stonecutter",
+  "screen.ars_arcane_matrix.order_terminal.workstation.reaction_vessel": "Arcane Reaction Vessel",
+  "screen.ars_arcane_matrix.order_terminal.workstation.cooking_pot": "Cooking Pot",
+  "screen.ars_arcane_matrix.order_terminal.workstation.avaritia_table": "Avaritia Crafting Table",
+  "screen.ars_arcane_matrix.order_terminal.workstation.avaritia_compressor": "Neutron Compressor",
+  "message.ars_arcane_matrix.arcane_reaction_vessel.jei.busy": "The Arcane Reaction Vessel is currently working",
+  "message.ars_arcane_matrix.arcane_reaction_vessel.jei.clear_inputs": "Remove the incompatible items from the reaction vessel first",
+  "message.ars_arcane_matrix.arcane_reaction_vessel.jei.missing": "Missing %s × %s",
+  "message.ars_arcane_matrix.arcane_reaction_vessel.jei.filled": "Reaction materials inserted; supply the displayed fluid separately",
   "screen.ars_arcane_matrix.order_terminal.mode.strict.short": "S",
   "screen.ars_arcane_matrix.order_terminal.mode.fuzzy.short": "F",
   "screen.ars_arcane_matrix.order_terminal.mode.toggle": "Current: %s; click to toggle strict/fuzzy matching",
@@ -386,21 +407,28 @@
   "screen.ars_arcane_matrix.advanced_storage_lectern.storage": "Storage",
   "screen.ars_arcane_matrix.advanced_storage_lectern.crafting": "Crafting",
   "screen.ars_arcane_matrix.advanced_storage_lectern.rows": "%s rows",
-  "screen.ars_arcane_matrix.advanced_storage_lectern.extract_hint": "Left-click a stack; right-click one",
+  "screen.ars_arcane_matrix.advanced_storage_lectern.extract_hint": "Left-click a stack; right-click one; Shift-left-click fills available inventory space; hold and drag across items",
   "screen.ars_arcane_matrix.advanced_storage_lectern.deposit": "Deposit into connected storage",
+  "screen.ars_arcane_matrix.advanced_storage_lectern.return_crafting": "Return crafting ingredients to storage",
   "screen.ars_arcane_matrix.advanced_storage_lectern.fluid_amount": "Stored: %s mB (%s buckets)",
   "message.ars_arcane_matrix.advanced_storage_lectern.storage_full": "Connected storage is full or no storage is available",
+  "message.ars_arcane_matrix.advanced_storage_lectern.recipe_missing": "The crafting recipe could not be found",
+  "message.ars_arcane_matrix.advanced_storage_lectern.crafting_missing": "Missing from network storage and inventory: %s",
+  "message.ars_arcane_matrix.advanced_storage_lectern.crafting_changed": "Storage changed while filling ingredients; please try again",
+  "jei.ars_arcane_matrix.advanced_storage_lectern.missing": "Missing ingredients from network storage and inventory",
   "message.ars_arcane_matrix.advanced_storage_lectern.bound": "Advanced Storage Lectern linked an inventory (%s total).",
-  "message.ars_arcane_matrix.advanced_lectern.fluid_linked": "Linked Arcane Reservoir: %s %s",
-  "message.ars_arcane_matrix.advanced_lectern.fluid_out_of_range": "The Arcane Reservoir is out of wireless range or its chunk is not loaded",
+  "message.ars_arcane_matrix.advanced_lectern.fluid_linked": "Linked fluid container: %s %s",
+  "message.ars_arcane_matrix.advanced_lectern.fluid_removed": "Unlinked fluid container.",
+  "message.ars_arcane_matrix.advanced_lectern.fluid_out_of_range": "The fluid container is outside Bookwyrm range or its chunk is not loaded.",
+  "message.ars_arcane_matrix.advanced_lectern.storage_full": "The Bookwyrms cannot manage another external storage node.",
   "jei.ars_arcane_matrix.crafting_guide.need_blank": "A blank Wixie Crafting Guide and an open Order Terminal or Advanced Storage Lectern are required",
   "jei.ars_arcane_matrix.crafting_guide.special_unsupported": "Special or dynamic crafting recipes cannot be encoded yet",
-  "jei.ars_arcane_matrix.crafting_guide.advanced_required": "Cooking guides can only be encoded from an Advanced Storage Lectern",
+  "jei.ars_arcane_matrix.crafting_guide.advanced_required": "Open a Wixie Order Terminal or Advanced Storage Lectern to encode cooking guides",
   "message.ars_arcane_matrix.crafting_guide.jei_recorded_distributed": "Encoded %s and sent it to an available Pattern Provider",
   "message.ars_arcane_matrix.crafting_guide.jei_provider_full": "No Pattern Provider in this network has a free slot",
   "message.ars_arcane_matrix.crafting_guide.jei_already_encoded": "This Crafting Guide is already present in the network",
-  "jei.ars_arcane_matrix.crafting_guide.info": "First open a Wixie Order Terminal or the crafting page of an Advanced Storage Lectern. Then view an ordinary crafting recipe in JEI and press its transfer button to consume one blank guide and encode that recipe. Encoding is unavailable from the normal inventory screen. The off-hand sample and Crafting Table method remains available, but JEI is unambiguous when an output has multiple recipes.",
-  "jei.ars_arcane_matrix.crafting_guide.fuzzy": "Tag Preference chooses an available material allowed by the recipe. Strict Recipe always uses the preferred material shown by the recipe. Sneak-right-click a recorded guide to switch modes. Materials with enchantments, durability, or special data default to Strict Recipe.",
+  "jei.ars_arcane_matrix.crafting_guide.info": "Open a Wixie Order Terminal or the crafting page of an Advanced Storage Lectern. Press a JEI transfer button to encode one guide. In an Advanced Storage Lectern, Shift-click it to preview the complete crafting chain and atomically encode every missing pattern. Encoding is unavailable from the normal inventory screen.",
+  "jei.ars_arcane_matrix.crafting_guide.fuzzy": "Tag Preference favors available materials allowed by the recipe. Strict Recipe prefers the displayed material, while different valid tag materials may still fill separate slots. Sneak-right-click a recorded guide to switch modes. Materials with enchantments, durability, or special data default to Strict Recipe.",
   "documentation.ars_arcane_matrix.crafting_network.overview": "The Wixie Order Terminal, Order Pedestal, and Pattern Provider handle crafting. The Storage Lectern and Bookwyrm handle storage. The Advanced Storage Lectern combines them. Crafting Guides record recipes, while the Automatic Stock Requester replenishes low stock. See each device entry for instructions.",
   "documentation.ars_arcane_matrix.crafting_network.summary": "The Order Terminal selects an output, calculates its materials, and sends a virtual request to the Wixie network.",
   "block.ars_arcane_matrix.arcane_processor_core": "Arcane Processor Core",
@@ -438,13 +466,14 @@
   ,"jade.ars_arcane_matrix.arcane_smelter.operation": "Input: %s · Progress: %s/5 s · Fuel remaining: %s · Buffered: %s"
   ,"jade.ars_arcane_matrix.arcane_smelter.crystal": "Casting Crystal pity: %s/8 · Roll progress: %s/16 minerals"
   ,"jade.ars_arcane_matrix.arcane_smelter.links": "Input: %s · Output: %s · Fuel container: %s"
-  ,"jei.ars_arcane_matrix.arcane_smelter.info": "Processes minerals in #c:ores, #c:raw_materials, and #c:dusts that have furnace recipes, plus vanilla raw metal blocks. It smelts a mixed batch of up to 64 items every five seconds; dust yield is determined by its recipe."
+  ,"jei.ars_arcane_matrix.arcane_smelter.info": "Processes ores, raw metals, and mineral dusts with furnace recipes, plus vanilla raw metal blocks. It smelts a mixed batch of up to 64 items every five seconds; dust yield is determined by its recipe."
   ,"jei.ars_arcane_matrix.arcane_smelter.structure": "Empty-hand right-click the core to preview the 3x3x2 structure. Leave the block above the core empty as the furnace mouth and place any inventory-capable container above it for fuel; the preview uses a Chest."
   ,"jei.ars_arcane_matrix.arcane_smelter.automation": "The Dominion Wand's first connection binds output and its second binds input. Redstone pauses the machine. Lava buckets return their empty buckets."
   ,"jei.ars_arcane_matrix.enchanted_archwood_charcoal.info": "Crafted from one Enchanted Crystal and eight Archwood logs. It powers 128 Arcane Smelter operations and enables Casting Crystal byproducts. Once the Crusher stage can sustain Fire Essence production, combine four Enchanted Archwood Charcoal, four Fire Essence, one bucket of lava, and 2,000 Source in an Arcane Reaction Vessel to make a block with ten times one charcoal's burn duration, replacing part of the Archwood demand with the essence line. Inserting either enchanted fuel immediately replaces unfinished ordinary fuel."
   ,"jei.ars_arcane_matrix.casting_crystal.source": "Casting Crystals are produced only by an Arcane Smelter fueled with Enchanted Archwood Charcoal and gate the next Crusher stage."
   ,"jei.ars_arcane_matrix.casting_crystal.pity": "Enchanted fuel mode rolls a 12.5% chance for every 16 minerals processed. The eighth roll after seven failures is guaranteed, so one appears after at most 128 minerals."
-  ,"documentation.ars_arcane_matrix.arcane_smelter.overview": "The Arcane Smelter is the second stage of the mineral-processing line. It uses vanilla furnace fuels to process mixed batches of ores, raw minerals, raw metal blocks, and dusts, totaling up to 64 every five seconds. Build a 3×3×3 shell with the core at the center of its front face, a fuel container below it, and 24 structural frames around them. Interior gaps are not checked. Enchanted Archwood Charcoal enables Casting Crystal byproducts. Buckets and other crafting remainders return to the fuel container when possible, otherwise to the output buffer. Bind input and output with a Dominion Wand, and empty-hand right-click the core to preview its structure."
+  ,"documentation.ars_arcane_matrix.arcane_smelter.overview": "The Arcane Smelter is the second stage of the mineral-processing line. It uses vanilla furnace fuels to process mixed batches of ores, raw minerals, raw metal blocks, and dusts, totaling up to 64 every five seconds. Build a 3×3×3 shell with the core at the center of its front face, a fuel container below it, and 24 structural frames around them."
+  ,"documentation.ars_arcane_matrix.arcane_smelter.overview.details": "Interior gaps are not checked. Enchanted Archwood Charcoal enables Casting Crystal byproducts. Buckets and other crafting remainders return to the fuel container when possible, otherwise to the output buffer. Bind input and output with a Dominion Wand, and empty-hand right-click the core to preview its structure."
   ,"block.ars_arcane_matrix.arcane_crusher_core": "Arcane Crusher Core"
   ,"item.ars_arcane_matrix.enriched_mineral_crystal": "Enriched Mineral Crystal"
   ,"item.ars_arcane_matrix.ancient_grove_catalyst": "Ancient Grove Catalyst"
@@ -473,7 +502,7 @@
   ,"documentation.ars_arcane_matrix.whirlisprig.production_layout.text": "Whirlisprig groves primarily serve the Archwood chain. Special modes already filter output, so different Archwood species and a few representative plants can share a compact grove. Repeating one family does not add speed. Bulk ordinary crops should still use Ars Nouveau growth and harvest systems."
   ,"block.ars_arcane_matrix.advanced_imbuement_chamber": "Advanced Imbuement Chamber"
   ,"item.ars_arcane_matrix.formless_essence": "Formless Essence"
-  ,"jei.ars_arcane_matrix.advanced_imbuement_chamber.info": "The Advanced Imbuement Chamber uses the ordinary chamber's recipes, pedestal matching, automation, and rotating model, and appears in the same JEI Imbuement category. With external Source it draws up to 2,000 Source per second and reduces recipe preparation to one second."
+  ,"jei.ars_arcane_matrix.advanced_imbuement_chamber.info": "The Advanced Imbuement Chamber uses the ordinary chamber's recipes, pedestal matching, automation, and rotating model, and appears in the same JEI Imbuement category. It draws up to 2,000 Source per second from providers within Manhattan distance 5 and reduces recipe preparation to one second."
   ,"jei.ars_arcane_matrix.advanced_imbuement_chamber.passive": "Without an external Source provider it retains Ars Nouveau's slow 10 Source per second passive accumulation and does not scale that free progress. High-speed operation therefore requires Source infrastructure. Ordinary chambers remain unchanged."
   ,"jei.ars_arcane_matrix.formless_essence.info": "Around an ordinary or Advanced Imbuement Chamber, place all seven native Essences and one Wilden Tribute on eight pedestals. Imbue an Amethyst Cluster with 2,000 Source to produce four Formless Essences. Pedestal items are catalytic and are not consumed."
   ,"jei.ars_arcane_matrix.formless_essence.compat": "Shapelessly combine Formless Essence with an available Essence to produce two of that Essence. All seven native Essences and compatible Essences from installed add-ons are supported."
@@ -481,7 +510,8 @@
   ,"documentation.ars_arcane_matrix.advanced_imbuement_chamber.formless": "The Formless Essence recipe works in either an ordinary or Advanced Imbuement Chamber. Put all seven native Essences and one Wilden Tribute on eight surrounding pedestals, then imbue an Amethyst Cluster with 2,000 Source to produce four Formless Essences. Pedestal catalysts are not consumed. Shapeless conversion supports every native Essence."
   ,"item.ars_arcane_matrix.condensed_summoning_catalyst": "Condensed Summoning Core"
   ,"item.ars_arcane_matrix.rare_creature_summoning": "Forgotten Call"
-  ,"ars_arcane_matrix.ritual_desc.rare_creature_summoning": "Consumes one Source Jar and summons a Breeze. Reinforced Deepslate, Prismarine Bricks, Gilded Blackstone, and Purpur select a Warden, Elder Guardian, Piglin Brute, and Shulker. Each activation summons one sample and ends."
+  ,"ars_arcane_matrix.ritual_desc.rare_creature_summoning": "Consumes 1,000 Source and summons a Breeze. Rotten Flesh, a Prismarine Shard, Reinforced Deepslate, a Nautilus Shell, Gilded Blackstone, and Purpur select a Zombie Villager, Guardian, Warden, Elder Guardian, Piglin Brute, and Shulker. Each activation summons one sample and ends."
+  ,"tooltip.ars_arcane_matrix.rare_creature_summoning": "The consumed augment selects the summoned creature. See the Spell Book or Worn Notebook for the full list."
   ,"message.ars_arcane_matrix.arcane_crusher.input_bound": "The Crusher input inventory was bound."
   ,"message.ars_arcane_matrix.arcane_crusher.output_bound": "The Crusher output inventory was bound."
   ,"message.ars_arcane_matrix.arcane_crusher.bindings_cleared": "The Crusher input and output bindings were cleared."
@@ -508,14 +538,15 @@
   ,"jei.ars_arcane_matrix.arcane_crushing.water_bonus.ancient_debris": "Each Ancient Debris grants 16 progress, immediately making one crystal roll; the eighth roll is guaranteed"
   ,"jei.ars_arcane_matrix.arcane_crushing.mode.yield": "Yield Mode"
   ,"jei.ars_arcane_matrix.arcane_crushing.mode.enrichment": "Enrichment Mode"
-  ,"jei.ars_arcane_matrix.arcane_crusher.info": "Every five seconds, the Crusher consumes one Essence from the upper structure container to process a mixed batch of up to 16 minerals. Raw minerals yield two dust by default and ore blocks yield one; Air Essence raises these to three and two respectively."
+  ,"jei.ars_arcane_matrix.arcane_crusher.info": "Every five seconds, the Crusher consumes one Essence from the upper structure container to process a mixed batch of up to 64 minerals. Raw minerals yield two dust by default and ore blocks yield one; Air Essence raises these to three and two respectively."
   ,"jei.ars_arcane_matrix.arcane_crusher.compat": "Automatically recognizes metal ores and raw minerals and finds a compatible dust. Iron, copper, gold prefer this mod's dusts. Redstone, lapis, diamond, emerald, and Amethyst Clusters are excluded. Ancient Debris uses a special recipe and receives the normal ore-block Air Essence yield bonus."
   ,"jei.ars_arcane_matrix.arcane_crusher.automation": "The Dominion Wand's first connection binds output and its second binds input. Empty-hand right-click previews the 5x3x2 grinding frame. Any inventory-capable container may replace the preview Chest and supply Essence; redstone pauses operation."
   ,"jei.ars_arcane_matrix.enriched_mineral_crystal.source": "Water Essence mode makes a 12.5% roll for every 16 minerals processed. The eighth roll after seven failures is guaranteed to produce an Enriched Mineral Crystal."
-  ,"documentation.ars_arcane_matrix.arcane_crusher.overview": "The Arcane Crusher is the third mineral-processing stage. It discovers metal dusts through common tags and consumes one Essence every five seconds to process a mixed batch totaling up to 16 items. Its 5×4×5 structure uses 33 frames to form a lower 3×3 bed, a middle 5×5 rim, and an upper 3×3 crushing plate. The core replaces the front-center frame, with the Essence container directly below it; all other positions are ignored. Air Essence increases dust yield, while Water Essence keeps the base yield and enables Enriched Mineral Crystal byproducts. Bind input and output with a Dominion Wand, and empty-hand right-click the core to preview its structure."
+  ,"documentation.ars_arcane_matrix.arcane_crusher.overview": "The Arcane Crusher is the third mineral-processing stage. It discovers metal dusts through common tags and consumes one Essence every five seconds to process a mixed batch totaling up to 64 items. Its 5×4×5 structure uses 33 frames to form a lower 3×3 bed, a middle 5×5 rim, and an upper 3×3 crushing plate."
+  ,"documentation.ars_arcane_matrix.arcane_crusher.overview.details": "The core replaces the front-center frame, with the Essence container directly below it; all other positions are ignored. Air Essence increases dust yield, while Water Essence keeps the base yield and enables Enriched Mineral Crystal byproducts. Bind input and output with a Dominion Wand, and empty-hand right-click the core to preview its structure."
   ,"item.ars_arcane_matrix.matrix_construction_wand": "Matrix Construction Wand"
-  ,"tooltip.ars_arcane_matrix.construction_wand.single": "Right-click a core: place one missing structure block"
-  ,"tooltip.ars_arcane_matrix.construction_wand.all": "Sneak-right-click a core: complete as much of the structure as possible"
+  ,"tooltip.ars_arcane_matrix.construction_wand.single": "Right-click a supported core or device: quick build"
+  ,"tooltip.ars_arcane_matrix.construction_wand.all": "Sneak-right-click a multiblock core: complete as much as possible"
   ,"tooltip.ars_arcane_matrix.construction_wand.creative": "In Creative, right-click builds everything without materials"
   ,"message.ars_arcane_matrix.construction_wand.unsupported": "The Matrix Construction Wand only works on supported multiblock cores."
   ,"message.ars_arcane_matrix.construction_wand.placed": "Placed %s structure blocks."
@@ -525,6 +556,15 @@
   ,"message.ars_arcane_matrix.construction_wand.portal_built": "Built a standard Nether portal frame."
   ,"message.ars_arcane_matrix.construction_wand.portal_missing": "Not enough obsidian; %s more required."
   ,"message.ars_arcane_matrix.construction_wand.portal_blocked": "The portal construction area is obstructed."
+  ,"message.ars_arcane_matrix.construction_wand.warp_portal_built": "Built a standard Warp Portal frame."
+  ,"message.ars_arcane_matrix.construction_wand.warp_portal_missing": "Not enough Sourcestone; %s more required."
+  ,"message.ars_arcane_matrix.construction_wand.warp_portal_blocked": "The Warp Portal construction area is obstructed."
+  ,"message.ars_arcane_matrix.construction_wand.enchanting_built": "Placed %s Enchanting Apparatus and %s Arcane Pedestals this time."
+  ,"message.ars_arcane_matrix.construction_wand.enchanting_missing": "Materials exhausted: up to %s Enchanting Apparatus and %s Arcane Pedestals remain."
+  ,"message.ars_arcane_matrix.construction_wand.enchanting_blocked": "Skipped %s obstructed positions."
+  ,"message.ars_arcane_matrix.construction_wand.imbuement_built": "Placed %s Arcane Pedestals around the Imbuement Chamber this time."
+  ,"message.ars_arcane_matrix.construction_wand.imbuement_missing": "Materials exhausted: up to %s Arcane Pedestals remain."
+  ,"message.ars_arcane_matrix.construction_wand.imbuement_blocked": "Skipped %s obstructed pedestal positions."
   ,"item.ars_arcane_matrix.iron_dust": "Iron Dust"
   ,"item.ars_arcane_matrix.copper_dust": "Copper Dust"
   ,"item.ars_arcane_matrix.gold_dust": "Gold Dust"
@@ -593,6 +633,7 @@
   ,"jade.ars_arcane_matrix.source_network.storage": "Source buffer: %s / %s"
   ,"jade.ars_arcane_matrix.source_network.gateway": "Source network: %s jars · %s relays · %s / %s"
   ,"documentation.ars_arcane_matrix.source_network": "Place the Matrix Source Reservoir Core at the midpoint of any lower outer edge of a hollow 7×7×7 structure. Fill the top and bottom with Arcane Structural Frames and the five middle walls with Tinted Glass; the interior may contain a Matrix or other blocks. Once formed, it stores 100,000,000 Source and gathers from producers within 24 blocks: up to 20,000 from each and 1,000,000 total per second. Matrix Cores may also push Source directly into it. It does not drain machines or other jars. Integrated Source Relays supply devices; cross-dimensional links require an Advanced Storage Lectern and loaded remote chunks."
+  ,"screen.ars_arcane_matrix.advanced_storage_lectern.source_resource": "Network Source"
   ,"screen.ars_arcane_matrix.advanced_storage_lectern.source_network": "Source: %s / %s | Jars: %s | Relays: %s"
   ,"block.ars_arcane_matrix.dimension_anchor": "Dimensional Anchor"
   ,"message.ars_arcane_matrix.dimension_anchor.state.active": "Stabilizing dimension"
@@ -639,28 +680,36 @@
   ,"documentation.ars_arcane_matrix.roadmap.progression.title": "Recommended Progression"
   ,"documentation.ars_arcane_matrix.roadmap.progression.text": "The Processor produces Enchanted Crystals for the Smelter. The Smelter produces Casting Crystals for the Crusher. The Advanced Imbuement Chamber is available during the smelting stage. Enriched Mineral Crystals from crushing unlock the Matrix Core and later devices. Check recipes for exact requirements."
   ,"documentation.ars_arcane_matrix.construction_wand.title": "Matrix Construction Wand"
-  ,"documentation.ars_arcane_matrix.construction_wand.text": "Right-click a multiblock core with an empty hand to preview missing blocks. Right-click with the Matrix Construction Wand to place one block; sneak-right-click to place as many as possible. Creative mode needs no materials. Remove obstructing blocks yourself; the wand never breaks them."
+  ,"documentation.ars_arcane_matrix.construction_wand.text": "Right-click a multiblock core with an empty hand to preview missing blocks. Use the Matrix Construction Wand on a core to place missing blocks, or sneak-right-click to place as many as possible. Using it on an Arcane Core, Imbuement Chamber, or Advanced Imbuement Chamber quickly builds a compact eight-pedestal setup. Creative mode needs no materials, and the wand never breaks existing blocks."
   ,"documentation.ars_arcane_matrix.multiblock.building": "Use an empty hand on the core to preview missing blocks. The Matrix Construction Wand places one missing block, or as many as possible when sneak-used. In Creative mode it needs no materials."
   ,"documentation.ars_arcane_matrix.multiblock.prototype": "Supply consumables in the structure's ordinary container and tools on an Arcane Pedestal. Previews and the construction wand use barrels to demonstrate container positions; other compatible containers also work. Unspecified spaces need not stay empty and may hold levers, lights, or pipes."
-  ,"documentation.ars_arcane_matrix.arcane_processor.overview": "The Processor is the first ore-processing stage. It accepts intact ore blocks and simulates the tool on its pedestal. It processes up to five ores in parallel. Food supplies runtime, while magical food immediately switches it into a special mode that advances the Enchanted Crystal byproduct."
+  ,"documentation.ars_arcane_matrix.arcane_processor.overview": "The Processor is the first ore-processing stage. It accepts intact ore blocks and simulates the tool on its pedestal. It processes up to 20 ores in parallel. Food supplies runtime, while magical food immediately switches it into a special mode that advances the Enchanted Crystal byproduct."
   ,"documentation.ars_arcane_matrix.arcane_processor.operation": "Bind ore input and product output containers with the Dominion Wand. The container below the core supplies food. Five frames above form a cross, with the tool pedestal above its center. Right-click empty-handed for a preview. Redstone pauses processing; blocked outputs remain buffered in the core."
   ,"documentation.ars_arcane_matrix.drygmy_enhancement.title": "Drygmy Henge Enhancements"
   ,"documentation.ars_arcane_matrix.drygmy_enhancement.overview": "A Drygmy Henge reads weapons on nearby Arcane Pedestals as simulated kill tools. Sharpness improves speed, Looting increases rewards, and beheading effects can participate in the simulated kill. Only targets worth substantial experience produce noticeable experience gems."
-  ,"documentation.ars_arcane_matrix.drygmy_enhancement.weapon": "Pedestal weapons are not consumed. The Henge also has improved per-operation Source transfer and clearly reports when Source is missing."
+  ,"documentation.ars_arcane_matrix.drygmy_enhancement.weapon": "Tools are not consumed as ingredients, but simulated kills may damage them or trigger weapon effects. Check durability and repair them. Source transfer is improved. Matrix removes the default Iron Golem Drygmy blacklist entry; other restrictions remain."
   ,"documentation.ars_arcane_matrix.stock_requester.overview": "The Automatic Stock Requester monitors one item in a linked target container. When stock falls below its threshold, it submits one configured order to a linked Wixie Order Terminal and consumes one Manipulation Essence from linked storage."
   ,"documentation.ars_arcane_matrix.stock_requester.setup": "Open the GUI empty-handed. Pick up a sample with the cursor and click the target slot to set it without consuming the sample. Right-click that slot or use the clear button to remove it. Set the stock threshold and order amount, then bind the target container and a terminal or Advanced Storage Lectern."
   ,"documentation.ars_arcane_matrix.storage.overview": "The Advanced Storage Lectern searches linked containers and Storage Grid Directories and provides a collapsible 3x3 crafting area. Bookwyrms establish storage links; the lectern browses and manipulates the network instead of requiring Bookwyrms to physically carry every item."
   ,"documentation.ars_arcane_matrix.storage.grid.title": "Storage Grid Directory"
   ,"documentation.ars_arcane_matrix.storage.grid.text": "Grid Directories excel at storing many copies of relatively few items. Base capacity is 16 types and 4,096 items. Up to four Grid Expansion Warehouses may be installed; each adds 64 types and 262,144 items. Equipment with different enchantments, durability, or affixes consumes separate types and is better kept in ordinary storage. Breaking the directory preserves its inventory and upgrades."
   ,"documentation.ars_arcane_matrix.storage.lectern.title": "Advanced Storage Lectern"
-  ,"documentation.ars_arcane_matrix.storage.lectern.text": "The lectern supports search, sorting, scrolling, a collapsible crafting area, and JEI uses/recipes for virtual items. It can also bridge cross-dimensional storage and Source networks. Remote nodes must remain chunk-loaded through a Dimensional Anchor or equivalent."
+  ,"documentation.ars_arcane_matrix.storage.lectern.text": "The lectern supports search, sorting, scrolling, a collapsible crafting area, and JEI uses/recipes for virtual items. It also integrates Wixie ordering and can bridge storage, fluid, and Source networks. Remote nodes must remain chunk-loaded."
+  ,"documentation.ars_arcane_matrix.storage.proxy.title": "Storage Lectern Proxy"
+  ,"documentation.ars_arcane_matrix.storage.proxy.text": "Link an ordinary Storage Lectern to an Advanced Storage Lectern with a Bookwyrm. Opening the ordinary lectern then opens the advanced interface, making it a proxy terminal. Any method capable of remotely opening that ordinary lectern can therefore reach the advanced lectern through the proxy; remote opening is not supplied by the advanced lectern itself."
+  ,"documentation.ars_arcane_matrix.storage.fluids.title": "Fluids and Autocrafting"
+  ,"documentation.ars_arcane_matrix.storage.fluids.text": "Ordinary fluid containers and item inventories share the same Bookwyrm storage network. Use a Dominion Wand on the container and then the Advanced Storage Lectern. Each container uses one Bookwyrm connection. Bucket-compatible fluids appear in the lectern and can directly replace filled buckets in advanced Wixie autocrafting."
+  ,"screen.ars_arcane_matrix.advanced_storage_lectern.sort.current": "Current: %s"
+  ,"screen.ars_arcane_matrix.advanced_storage_lectern.sort.name": "Sort by name"
+  ,"screen.ars_arcane_matrix.advanced_storage_lectern.sort.count": "Sort by amount"
+  ,"screen.ars_arcane_matrix.advanced_storage_lectern.sort.mod": "Sort by mod"
   ,"documentation.ars_arcane_matrix.logistics.overview": "The Starbuncle Logistics Hub manages registered Starbuncles, increases endgame transfer throughput, and shows each Starbuncle's input, output, and target container. Filters, match modes, and current selection are saved per Starbuncle."
   ,"documentation.ars_arcane_matrix.logistics.filters": "Each Starbuncle has an independent 27-slot virtual filter with allowlist, denylist, and matching modes. The hub can recall invalid-route or all Starbuncles and protects registered workers from transport hazards, pushing, and prolonged jams. Filter samples are never consumed."
   ,"documentation.ars_arcane_matrix.logistics.upgrades": "All routes share one maximum transfer rate: 256 items/s at base, then 1,024, 4,096, and 16,384 through the Enchanted, Casting, and Enriched upgrades, reaching 32,768 items/s with the grid-stage upgrade. Ordinary pickup preserves the tier, managed Starbuncles, and filters. After an Enchanting Apparatus upgrade, scan the Starbuncles again. Items in the 18-slot buffer drop when broken."
   ,"documentation.ars_arcane_matrix.source_network.title": "Large Source Network"
   ,"documentation.ars_arcane_matrix.source_network.nodes.title": "Node Responsibilities"
   ,"documentation.ars_arcane_matrix.source_network.nodes.text": "The Arcane Source Jar is a pre-Mine 1,000,000-Source buffer that actively gathers nearby Sourcelink output and directly supplies machines. The Matrix Source Reservoir is its post-processing multiblock upgrade and does nothing while incomplete. Integrated Source Relays supply linked devices, Advanced Storage Lecterns bridge dimensions, and Dimensional Anchors keep remote chunks loaded."
-  ,"documentation.ars_arcane_matrix.integrated_source_relay.summary": "The Integrated Source Relay is the machine-facing output of a large Source network. It draws from a bound Matrix Core, completed Matrix Source Reservoir, or Advanced Storage Lectern and exposes that Source through an Ars Nouveau-compatible provider for nearby machines. Its early recipe uses four ordinary relays and a Source Gem Block; after unlocking the Crusher, four Enriched Mineral Crystals provide an alternative recipe."
+  ,"documentation.ars_arcane_matrix.integrated_source_relay.summary": "The Integrated Source Relay is the machine-facing output of a large Source network. It draws from a bound Matrix Core, Arcane Source Jar, completed Matrix Source Reservoir, or Advanced Storage Lectern and exposes that Source through an Ars Nouveau-compatible provider for nearby machines. Its early recipe uses four ordinary relays and a Source Gem Block; after unlocking the Crusher, four Enriched Mineral Crystals provide an alternative recipe."
   ,"documentation.ars_arcane_matrix.integrated_source_relay.operation": "Click the Integrated Source Relay and its Source node with the Dominion Wand in either order to bind them. Sneak-right-click to clear the link. The relay draws directly from its network without filling a local buffer. Cross-dimensional use requires an Advanced Storage Lectern and loaded remote chunks."
   ,"documentation.ars_arcane_matrix.troubleshooting.title": "Troubleshooting"
   ,"documentation.ars_arcane_matrix.troubleshooting.overview": "When a machine does not work, check structure completion, redstone power, available Source, input/output links, output capacity, and whether the item has a supported recipe. Inspect projections with an empty hand, read Jade status, and confirm recipes and modes in JEI."
@@ -669,7 +718,7 @@
   ,"documentation.ars_arcane_matrix.crafting_network.minimum.title": "Minimum Working Network"
   ,"documentation.ars_arcane_matrix.crafting_network.minimum.text": "Prepare one Wixie workstation with a summoned Wixie, an Arcane Order Pedestal, Pattern Provider, Order Terminal, at least one encoded Crafting Guide, and Dominion-bound shared input and output containers. The workstation and pedestal must be within network range. Sneak-use a device with an empty hand to display that range."
   ,"documentation.ars_arcane_matrix.crafting_network.workflow.title": "How an Order Runs"
-  ,"documentation.ars_arcane_matrix.crafting_network.workflow.text": "Use the JEI transfer button to record a Crafting Table recipe in a blank Crafting Guide, then store it in the Pattern Provider. Select an output and quantity in the terminal. The network automatically plans required intermediates while multiple Wixies work in parallel. Intermediates must return to shared input storage and final products enter the bound output. The terminal lists missing materials."
+  ,"documentation.ars_arcane_matrix.crafting_network.workflow.text": "Record supported recipes through JEI or EMI on the ordering page and store guides in a Provider. Each intermediate needs a guide and a workstation in range. Review the plan before submitting. Check the active device and completed quantity while running. Intermediates return to shared input storage; final items go to output."
   ,"documentation.ars_arcane_matrix.roadmap.summary": "New players should begin here for device order, material loops, and multiblock construction."
   ,"documentation.ars_arcane_matrix.whirlisprig.summary": "Enable grove mode with Earth Essence or Ancient Grove Catalyst in an inventory, then gain speed from nearby plant diversity; without a catalyst, native behavior remains unchanged."
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.summary": "Alakarkinos consume bulk terrain and metal blocks to simulate vanilla structure chests."
@@ -677,17 +726,17 @@
   ,"documentation.ars_arcane_matrix.troubleshooting.summary": "When a device stops, check structure, redstone, Source, links, output space, and recipe support first."
   ,"documentation.ars_arcane_matrix.order_pedestal.summary": "The Order Pedestal marks a virtual crafting task sent by the terminal; players never place or retrieve output samples on it."
   ,"documentation.ars_arcane_matrix.order_pedestal.operation": "Place the Order Pedestal within the Wixie crafting network's range. After an order is placed, it displays the current virtual task and awaited materials. Wixies still draw real ingredients from Dominion-bound shared input containers and deliver final products through workstation output links. No finished-product container is required beneath the pedestal."
-  ,"documentation.ars_arcane_matrix.order_pedestal.upgrades": "A base pedestal dispatches every 0.5 seconds and permits one parallel job. Upgrade it as an Enchanting Apparatus reagent through gold, diamond, and netherite blocks, using Manipulation Essence, the matching stage crystal, and 1, 2, then 4 Sourcebound Copper Alloy. The tiers permit 2, 4, then all available Wixies in parallel; the final tier dispatches every 0.05 seconds. Upgrades never shorten a workstation's real processing time."
-  ,"documentation.ars_arcane_matrix.crafting_guide.summary": "A Crafting Guide stores one ordinary Crafting Table recipe for Pattern Providers and order planning. Inverse 1-to-4/9 single-material compression recipes are treated as storage operations and consume no Source."
+  ,"documentation.ars_arcane_matrix.order_pedestal.upgrades": "A base pedestal dispatches every 2 seconds and permits one parallel job. Upgrade it as an Enchanting Apparatus reagent through gold, diamond, and netherite blocks, using Manipulation Essence, the matching stage crystal, and 1, 2, then 4 Sourcebound Copper Alloy. The three upgraded tiers dispatch every 1, 0.5, and 0.25 seconds and permit 2, 4, then all available Wixies in parallel. Upgrades never shorten a workstation's real processing time."
+  ,"documentation.ars_arcane_matrix.crafting_guide.summary": "A Crafting Guide stores one supported recipe and its workstation for order planning. Crafting and smelting recipes must be recorded separately. Reversible single-material compression and decompression can be handled as storage operations without Source."
   ,"documentation.ars_arcane_matrix.crafting_guide.encoding.title": "Encoding and Clearing"
-  ,"documentation.ars_arcane_matrix.crafting_guide.encoding.text": "First open a Wixie Order Terminal or the crafting page of an Advanced Storage Lectern, then open the desired Crafting Table recipe in JEI and press its transfer plus button while carrying a blank guide. Encoding is unavailable from the normal inventory screen. Alternatively, hold the output sample offhand and use a blank guide on a Crafting Table. Craft an encoded guide by itself in a shapeless grid to clear it back into a blank guide."
+  ,"documentation.ars_arcane_matrix.crafting_guide.encoding.text": "Open the ordering page of a terminal or Advanced Lectern, select a recipe in JEI or EMI, and use its transfer button to encode a guide. Shift-click in the Advanced Lectern previews a batch of guides: select the entries you want. Default choices are not the only production route. Check blank guides and provider space before confirming."
   ,"documentation.ars_arcane_matrix.crafting_guide.matching.title": "Ingredient Matching"
   ,"documentation.ars_arcane_matrix.crafting_guide.matching.text": "Sneak-right-click a recorded guide to switch between tag-preferred and strict matching. Tag-preferred matching may use compatible materials; strict matching follows the recorded requirements. Its inventory icon shows the result, while its held appearance remains parchment."
   ,"documentation.ars_arcane_matrix.pattern_provider.summary": "The Pattern Provider stores Crafting Guides and exposes their recipes to nearby Order Terminals and Wixie workstations."
   ,"documentation.ars_arcane_matrix.pattern_provider.setup.title": "Connecting Workstations"
   ,"documentation.ars_arcane_matrix.pattern_provider.setup.text": "Place encoded guides in its GUI. The provider discovers workstations with summoned Wixies inside its range; sneak-use it with an empty hand to display that range. Wixies use Dominion-bound shared input and output containers—the provider is not an ingredient inventory. One provider can serve several workstations participating in parallel orders."
   ,"documentation.ars_arcane_matrix.pattern_provider.upgrades.title": "Capacity Upgrades"
-  ,"documentation.ars_arcane_matrix.pattern_provider.upgrades.text": "A base provider stores 27 guides. Upgrade it as an Enchanting Apparatus reagent through gold, diamond, and netherite blocks, using the matching stage crystal, Manipulation Essence, and 1, 2, then 4 Sourcebound Copper Alloy to reach 54, 81, and 108 slots. Existing guides are preserved."
+  ,"documentation.ars_arcane_matrix.pattern_provider.upgrades.text": "A base provider stores 27 guides. Upgrade it as an Enchanting Apparatus reagent through gold, diamond, and netherite blocks, using the matching stage crystal, Manipulation Essence, and 1, 2, then 4 Sourcebound Copper Alloy to reach 81, 243, and 729 slots. Existing guides are preserved."
   ,"documentation.ars_arcane_matrix.grid_directory.summary": "The Storage Grid Directory uses a Repository Controller as its index core, then folds warehouse space through four Arcane Structural Frames and Enriched Mineral Crystals. It exposes compact storage to lecterns, Bookwyrms, pipes, and automation."
   ,"documentation.ars_arcane_matrix.grid_directory.operation": "Base capacity is 16 types and 4,096 items. Its menu directly accepts and returns items and has slots for up to four Grid Expansion Warehouses. Once linked, an Advanced Storage Lectern can search, withdraw, and autocraft from it. Breaking the directory preserves its inventory and upgrades. Equipment with different affixes, enchantments, or durability consumes separate types and is better kept in ordinary storage."
   ,"documentation.ars_arcane_matrix.grid_expansion.summary": "Grid Expansion Warehouses increase Grid Directory capacity. Install them in the directory's upgrade slots; they are not independently placeable blocks."
@@ -697,12 +746,12 @@
   ,"item.ars_arcane_matrix.sourcebound_copper_alloy_dust": "Sourcebound Copper Alloy Dust"
   ,"block.ars_arcane_matrix.arcane_structural_frame": "Arcane Structural Frame"
   ,"jei.ars_arcane_matrix.sourcebound_copper_alloy.info": "The early recipe turns three Copper Ingots, one Gold Ingot, and one Source Gem into two alloys. If Gold Ore cannot be found, the Arcane Reaction Vessel can transmute four Copper Ingots, one Nether Quartz, 250 mB of water, and 400 Source into one Raw Gold."
-  ,"jei.ars_arcane_matrix.sourcebound_copper_alloy.advanced": "After completing the mineral line, three Copper Dust, one Gold Dust, one Source Gem, and one each of the Enchanted, Casting, and Enriched Mineral Crystals produce eight alloy dust. Smelting yields eight alloys—four times the early alloy yield from the same metals."
+  ,"jei.ars_arcane_matrix.sourcebound_copper_alloy.advanced": "After unlocking the Arcane Processor, three Copper Ingots, one Gold Ingot, one Source Gem, and one Enchanted Crystal directly produce eight Sourcebound Copper Alloy, without diverting dust from the Smelter input."
   ,"documentation.ars_arcane_matrix.metal_dusts.title": "Metal Dusts"
   ,"documentation.ars_arcane_matrix.metal_dusts.summary": "The Arcane Crusher produces metal dusts that can be smelted into their corresponding metals. This mod supplies Iron, Copper, Gold, and Ancient Debris Dust. Crushing raw ores improves metal yield; check the crushing recipes for exact amounts."
   ,"documentation.ars_arcane_matrix.metal_dusts.operation": "In Air Essence mode, each raw mineral produces three dust and each ore block produces two. Water Essence keeps the base yields of two and one while enabling Enriched Mineral Crystal rolls. Ancient Debris produces three Ancient Debris Dust in Air mode. Dusts can be processed into their metals in a furnace or Arcane Smelter; consult Arcane Crusher recipes for exact inputs and yields."
-  ,"documentation.ars_arcane_matrix.sourcebound_alloy.summary": "Sourcebound Copper Alloy is the foundational magical metal used by Arcane Structural Frames, automation devices, and their upgrades. Its early recipe unlocks the Mine and basic infrastructure; completing mineral processing unlocks a much more productive dust route."
-  ,"documentation.ars_arcane_matrix.sourcebound_alloy.operation": "The early recipe combines three Copper Ingots, one Gold Ingot, and one Source Gem into two Sourcebound Copper Alloy. After completing the Processor, Smelter, and Crusher, three Copper Dust, one Gold Dust, one Source Gem, and one each of the Enchanted, Casting, and Enriched Mineral Crystals produce eight alloy dust, which smelts into eight alloy. The following pages show both routes."
+  ,"documentation.ars_arcane_matrix.sourcebound_alloy.summary": "Sourcebound Copper Alloy is the foundational magical metal used by Arcane Structural Frames, automation devices, and their upgrades. Its early recipe unlocks the Mine and basic infrastructure; the Arcane Processor later unlocks a higher-yield Enchanted Crystal recipe."
+  ,"documentation.ars_arcane_matrix.sourcebound_alloy.operation": "The early recipe combines three Copper Ingots, one Gold Ingot, and one Source Gem into two Sourcebound Copper Alloy. After unlocking the Arcane Processor, adding one Enchanted Crystal lets the same metals directly produce eight alloy without diverting dust from the Smelter input. Casting and Enriched Mineral Crystals remain available for later uses such as discounted Netherite."
   ,"tooltip.ars_arcane_matrix.starbuncle_hub.tier": "Logistics Tier %s | %s items/s shared"
   ,"screen.ars_arcane_matrix.starbuncle_hub.throughput": "Lv.%s | %s/s"
   ,"jei.ars_arcane_matrix.starbuncle_hub.upgrades": "All Starbuncles managed by one hub share its throughput. Tiers 0 through 4 move 256, 1,024, 4,096, 16,384, and 32,768 items/s respectively; adding Starbuncles does not increase the hub total. Upgrade it through the Enchanting Apparatus. Filtering, protection, teleport, and recall are fully available at the base tier."
@@ -785,23 +834,31 @@
   ,"state.ars_arcane_matrix.arcane_reaction_vessel.missing_source": "Missing Source"
   ,"state.ars_arcane_matrix.arcane_reaction_vessel.output_blocked": "Output blocked"
   ,"state.ars_arcane_matrix.arcane_reaction_vessel.redstone_paused": "Redstone paused"
+  ,"message.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation.changed": "Wixie orders: %s"
+  ,"message.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation.enabled": "Allowed"
+  ,"message.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation.disabled": "Blocked"
+  ,"tooltip.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation": "Wixie orders: %s"
   ,"jei.ars_arcane_matrix.arcane_reaction": "Arcane Reactions"
   ,"jei.ars_arcane_matrix.arcane_reaction.details": "%s Source | %s s"
   ,"documentation.ars_arcane_matrix.arcane_reaction_vessel": "The Arcane Reaction Vessel processes items with Source and fluids. It is an introductory material-conversion machine available after obtaining the first Source Gem. See the Arcane Reaction JEI category for exact recipes and costs."
   ,"documentation.ars_arcane_matrix.arcane_source_jar.summary": "The Arcane Source Jar is a pre-Mine 1,000,000-Source buffer that actively gathers nearby Sourcelink output, overcoming the response delay of ordinary jars and relays."
   ,"documentation.ars_arcane_matrix.arcane_source_jar.operation": "Once per second it gathers from loaded Source producers within 12 blocks: up to 10,000 from each and 50,000 total. Matrix Cores may also push Source into the jar at their own rate, so one fully amplified Matrix can supply about 18,750 Source per second. The jar does not drain machines or other jars, preventing storage loops. Ordinary Ars Nouveau machines may draw from it directly."
-  ,"documentation.ars_arcane_matrix.arcane_reaction_vessel.operation": "The vessel has two item inputs, an item output, a fluid tank, and a Source requirement. Items and fluids may enter or leave from any side. An empty bucket can package 1,000 mB of water, lava, or milk in one second without consuming Source. Filled buckets do not stack, so extract them with a hopper or similar device. See the Arcane Reaction JEI category for exact ingredients, fluid amounts, Source costs, and processing times."
+  ,"documentation.ars_arcane_matrix.arcane_reaction_vessel.operation": "The vessel has two item inputs, an item output, a fluid tank, and a Source requirement. Items and fluids may enter or leave from any side. Right-click it with a Dominion Wand to toggle whether Wixies may dispatch orders to it; this is blocked by default."
+  ,"documentation.ars_arcane_matrix.arcane_reaction_vessel.operation.details": "An empty bucket can package 1,000 mB of water, lava, or milk in one second without consuming Source. Filled buckets do not stack, so extract them with a hopper or similar device. See the Arcane Reaction JEI category for exact ingredients, fluid amounts, Source costs, and processing times."
   ,"documentation.ars_arcane_matrix.arcane_fluid_controller.summary": "The Arcane Fluid Controller collects, sorts, stores, and wirelessly transports fluids. It includes one fluid tank; installing Arcane Fluid Reservoirs in its dedicated slots lets it manage up to three fluid types."
-  ,"documentation.ars_arcane_matrix.arcane_fluid_controller.operation": "The menu selects the fluid collected from the world and the default output reservoir. Use a Dominion Wand on the controller then a container to bind output; reverse the order to bind input. The base controller supports one input and one output target. Each Range Upgrade adds one of each, up to four, and all targets share the total transfer speed. Capacity, Range, and Speed use ordinary upgrade slots. Arcane Fluid Reservoirs use separate slots and cannot be removed while nonempty. The controller never creates lava by itself."
+  ,"documentation.ars_arcane_matrix.arcane_fluid_controller.operation": "The menu selects the fluid collected from the world and the default output reservoir. Use a Dominion Wand on the controller then a container to bind output; reverse the order to bind input. The base controller supports one input and one output target."
+  ,"documentation.ars_arcane_matrix.arcane_fluid_controller.operation.details": "Each Range Upgrade adds one of each, up to four, and all targets share the total transfer speed. Capacity, Range, and Speed use ordinary upgrade slots. Arcane Fluid Reservoirs use separate slots and cannot be removed while nonempty. The controller never creates lava by itself."
+  ,"documentation.ars_arcane_matrix.arcane_fluid_controller.lectern": "Like any other fluid container, the Arcane Fluid Controller can be connected to an Advanced Storage Lectern as one Bookwyrm storage node. Use a Dominion Wand on the controller and then the lectern. Its bucket-compatible fluids join the lectern network and can be consumed directly by advanced Wixie autocrafting."
   ,"documentation.ars_arcane_matrix.arcane_fluid_controller.upgrades": "The controller has four shared upgrade slots and two reservoir-module slots. Capacity Upgrades increase every unlocked reservoir's capacity. Range Upgrades expand world-fluid searching and raise wireless reach and input/output target limits. Speed Upgrades shorten the work interval and increase the total transfer rate shared by all targets. Installing an empty Arcane Fluid Reservoir unlocks one additional fluid type, up to three at once. The following pages show all three upgrade recipes."
   ,"documentation.ars_arcane_matrix.arcane_fluid_tank.summary": "The Arcane Fluid Reservoir is a placeable single-fluid container holding 64,000 mB. It may also be installed as an expansion module inside an Arcane Fluid Controller."
   ,"documentation.ars_arcane_matrix.arcane_fluid_tank.operation": "Use a fluid container on the block to insert or withdraw fluid; pipes may access it from any side. Breaking the reservoir preserves its contents, while crafting it by itself clears them. Only an empty reservoir can be installed in a controller, preventing hidden or lost fluid during expansion."
   ,"tooltip.ars_arcane_matrix.arcane_fluid_tank.empty": "Empty reservoir | Capacity: %s mB"
   ,"tooltip.ars_arcane_matrix.arcane_fluid_tank.stored": "%s: %s / %s mB"
   ,"documentation.ars_arcane_matrix.arcane_vacuum_hopper.summary": "The Arcane Vacuum Hopper directly teleports dropped items and vanilla experience orbs through walls. Its range can be 4, 8, or 12 blocks, or the hopper's entire chunk; larger ranges use longer scan intervals. Redstone pauses collection, conversion, and output."
-  ,"documentation.ars_arcane_matrix.arcane_vacuum_hopper.operation": "Use an empty hand to open the menu or sneak-use to deposit all player experience. Created experience gems enter the shared item buffer and use the same Dominion Wand output target as other items; when the buffer is full, experience remains stored and conversion pauses. Filters may be disabled, whitelisted, or blacklisted, and can compare only the item type or also enchantments, durability, and other details. Void Matches is off by default; when enabled, matching collected or inserted items are permanently destroyed. Redstone pauses every function."
+  ,"documentation.ars_arcane_matrix.arcane_vacuum_hopper.operation": "Use an empty hand to open the menu or sneak-use to deposit all player experience. Created experience gems enter the shared item buffer and use the same Dominion Wand output target as other items; when the buffer is full, experience remains stored and conversion pauses."
+  ,"documentation.ars_arcane_matrix.arcane_vacuum_hopper.operation.details": "Filters may be disabled, whitelisted, or blacklisted, and can compare only the item type or also enchantments, durability, and other details. Void Matches is off by default; when enabled, matching collected or inserted items are permanently destroyed. Redstone pauses every function."
   ,"documentation.ars_arcane_matrix.source_stone_furnace.summary": "The Source Stone Furnace is a fuel-free Wixie automation workstation supporting both smelting and smoking recipes. Each item takes five seconds and pays 20 Source once when processing begins."
-  ,"documentation.ars_arcane_matrix.source_stone_furnace.operation": "The furnace has only input and output slots: ingredients enter from above by default and results leave below. Wixie Pattern Providers recognize it, so multi-step orders that require smelted intermediates can finish automatically. Smelting still waits for the normal processing time."
+  ,"documentation.ars_arcane_matrix.source_stone_furnace.operation": "Ingredients enter above and results leave below. The persistent 200 Source buffer pays for ten operations. With a valid recipe and output space, low reserves refill immediately to support acceleration. Failed refills retry once per second. Wixies can use the furnace for smelting orders."
   ,"block.ars_arcane_matrix.arcane_vacuum_hopper": "Arcane Vacuum Hopper"
   ,"message.ars_arcane_matrix.arcane_vacuum_hopper.invalid_target": "The target is not a valid item container"
   ,"message.ars_arcane_matrix.arcane_vacuum_hopper.bound": "Bound the %s output"
@@ -858,7 +915,88 @@
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.collection.button": "Input"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.output.button": "Output"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.tab.experience.button": "XP"
-  ,"documentation.ars_arcane_matrix.advanced_imbuement_chamber.operation": "Use an Imbuement Chamber as the apparatus reagent, with two Enchanted Crystals, four Casting Crystals, and two Source Gem Blocks on pedestals. Crafting costs 25,000 Source. It draws up to 2,000 Source per second and prepares in one second; passive progress remains 10 per second."
+  ,"documentation.ars_arcane_matrix.advanced_imbuement_chamber.operation": "Use an Imbuement Chamber as the apparatus reagent, with two Enchanted Crystals, four Casting Crystals, and two Source Gem Blocks on pedestals. Crafting costs 25,000 Source. It draws up to 2,000 Source per second from providers within Manhattan distance 5 and prepares in one second; passive progress remains 10 per second."
   ,"documentation.ars_arcane_matrix.arcane_processor.tools": "The tool must be able to mine the ore. Silk Touch tools cannot work. Efficiency reduces processing time, and Fortune improves applicable drops. Ordinary tools lose durability. Ore experience becomes Experience Gems. Ancient Debris bypasses simulated mining and goes directly to the output."
   ,"documentation.ars_arcane_matrix.arcane_mine.operation": "With the Dominion Wand, click the material container then the mine to bind input; reverse the order to bind output. Supply Sourcestone, Source Gems, or Source Gem Blocks and nearby Source. The mine only works when it can pay for a full operation. A complete four-layer mine draws within 32 blocks."
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.title": "Order Diagnostics (server state)"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.summary": "%1$s · %2$s/%3$s"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.state": "State: %s"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.target": "Target: %1$s · %2$s/%3$s"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.network": "Providers: %1$s · Active Wixies: %2$s · Buffer: %3$s"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.cost": "Elapsed: %1$ss · Crafts: %2$s · Source: %3$s"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.detail": "Detail: %s"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.missing": "Missing materials:"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.jobs": "Active workstation jobs:"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.copy": "Copy full diagnostics"
+  ,"screen.ars_arcane_matrix.order_terminal.diagnostics.copied": "Order diagnostics copied to clipboard"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.title": "Crafting Plan"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.target": "Target: %1$s ×%2$s"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.workstation": "Workstation: %s"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.row": "Need %1$s · Stored %2$s · Craft %3$s"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.row_missing": "Need %1$s · Stored %2$s · Craft %3$s · Missing %4$s"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.fluid_row": "Need %1$s mB · Stored %2$s mB"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.fluid_row_missing": "Need %1$s mB · Stored %2$s mB · Missing %3$s mB"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.fluid_required": "Required by this plan: %s mB"
+  ,"message.ars_arcane_matrix.order_terminal.missing_fluid": "Missing %1$s: %2$s mB"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.no_ingredients": "This recipe consumes no ingredients"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.ready": "Plan ready; materials are extracted only after starting"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.server_check": "External storage will be verified by the server after starting"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.missing": "Materials or a required pattern are missing"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.back": "Back"
+  ,"screen.ars_arcane_matrix.order_terminal.plan.start": "Start"
+  ,"screen.ars_arcane_matrix.order_terminal.status.title": "Crafting Status"
+  ,"screen.ars_arcane_matrix.order_terminal.status.progress": "Completed: %1$s / %2$s"
+  ,"screen.ars_arcane_matrix.order_terminal.order_progress": "Done %1$s/%2$s · %3$s"
+  ,"screen.ars_arcane_matrix.order_terminal.status.progress.tooltip": "Counts target items completed by this order, not existing stock or intermediate ingredients. Making intermediates does not increase this count."
+  ,"screen.ars_arcane_matrix.order_terminal.status.no_jobs": "No workstation job is currently active"
+  ,"screen.ars_arcane_matrix.order_terminal.status.cancel": "Cancel"
+  ,"screen.ars_arcane_matrix.order_terminal.status.copy": "Copy"
+  ,"item.ars_arcane_matrix.enchanted_machine_upgrade_component": "Enchanted Machine Upgrade Component"
+  ,"item.ars_arcane_matrix.casting_machine_upgrade_component": "Casting Machine Upgrade Component"
+  ,"item.ars_arcane_matrix.enriched_machine_upgrade_component": "Enriched Machine Upgrade Component"
+  ,"tooltip.ars_arcane_matrix.machine_upgrade_component": "Upgrades a compatible device to tier %s"
+  ,"tooltip.ars_arcane_matrix.machine_upgrade_component.use": "Use on a placed device"
+  ,"message.ars_arcane_matrix.machine_upgrade_component.applied": "%1$s upgraded to tier %2$s"
+  ,"message.ars_arcane_matrix.machine_upgrade_component.wrong_tier": "Wrong upgrade order: device is tier %1$s; this component upgrades to tier %2$s"
+  ,"message.ars_arcane_matrix.machine_upgrade_component.max_tier": "%1$s is already at its maximum tier, %2$s"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.title": "Bulk Crafting Guide Plan"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.target": "Target recipe: %s"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.capacity": "Providers %1$s · Patterns %2$s/%3$s · Blank guides %4$s"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.status.new": "New"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.status.existing": "Known"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.status.base": "Base"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.status.missing": "Unknown"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.unknown": "Unresolved ingredient"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.empty": "No crafting chain could be generated"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.ready": "%1$s guides will be written atomically"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.no_new": "The complete chain is already encoded"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.insufficient": "Need %1$s slots and guides; %2$s slots and %3$s guides are available"
+  ,"screen.ars_arcane_matrix.order_terminal.guide_chain.create": "Write selected"
+  ,"message.ars_arcane_matrix.crafting_guide.chain_requires_lectern": "Bulk guide creation requires an Advanced Storage Lectern"
+  ,"message.ars_arcane_matrix.crafting_guide.chain_changed": "Recipes or inventory changed; preview the chain again"
+  ,"message.ars_arcane_matrix.crafting_guide.chain_nothing_new": "Every recipe in this chain is already encoded"
+  ,"message.ars_arcane_matrix.crafting_guide.chain_provider_space": "%1$s pattern slots are required; only %2$s are free"
+  ,"message.ars_arcane_matrix.crafting_guide.chain_need_blanks": "%1$s blank crafting guides are required; only %2$s are available"
+  ,"message.ars_arcane_matrix.crafting_guide.chain_recorded": "Encoded and distributed %s crafting guides"
+  ,"item.ars_arcane_matrix.chunk_excavation": "Tablet of Deep Excavation"
+  ,"ars_arcane_matrix.ritual_desc.chunk_excavation": "Excavates one complete chunk layer below the Ritual Brazier each second and consumes 1,000 Source for each layer containing mineable blocks. A Diamond grants diamond-tier mining, a Sponge permits fluid removal, and an Emerald enables Silk Touch. Drops enter containers around the brazier; the ritual pauses when storage or Source is insufficient. It continues to the bottom of the world while preserving Bedrock, other unbreakable blocks, and block entities."
+  ,"tooltip.ars_arcane_matrix.chunk_excavation": "Excavates the brazier's chunk layer by layer. See the Spell Book or Worn Notebook for full rules."
+  ,"documentation.ars_arcane_matrix.automation_start.title": "Your First Automatic Order"
+  ,"documentation.ars_arcane_matrix.automation_start.setup.title": "Start Small"
+  ,"documentation.ars_arcane_matrix.automation_start.setup.text": "You can automate before building a Mine. Prepare an Order Terminal, Pattern Provider, Order Pedestal and Wixie. Bind material and output containers to the workstation and supply Source. Test one simple recipe before expanding."
+  ,"documentation.ars_arcane_matrix.automation_start.patterns.title": "Guides Are Not Materials"
+  ,"documentation.ars_arcane_matrix.automation_start.patterns.text": "Encode guides on the ordering page and put them in a Pattern Provider. Guides define recipes; connected inventories supply materials. Providers do not store ingredients. Record the final recipe and each intermediate recipe you want made automatically."
+  ,"documentation.ars_arcane_matrix.automation_start.planning.title": "Review the Plan"
+  ,"documentation.ars_arcane_matrix.automation_start.planning.text": "Check the plan before confirming a quantity. Supply missing ingredients or record their intermediate recipes. Use R or U on items in the plan to inspect recipes. Guide priority chooses between routes. Tag-preferred mode accepts compatible materials; strict mode restricts selection."
+  ,"documentation.ars_arcane_matrix.automation_start.stations.title": "Provide the Workstation"
+  ,"documentation.ars_arcane_matrix.automation_start.stations.text": "The guide's workstation icon shows where its recipe runs. Smelting needs a furnace; imbuement and apparatus recipes need their devices and nearby pedestals. Keep them within workstation detection range and keep the chunks loaded. Avoid sharing pedestals between devices when setting up."
+  ,"documentation.ars_arcane_matrix.automation_start.fluids.title": "Lecterns and Fluids"
+  ,"documentation.ars_arcane_matrix.automation_start.fluids.text": "The Advanced Lectern manages both items and fluids. Reaction Vessel orders require recipe fluids from its network, not just items. Crafting Table recipes can use stored fluid instead of buckets. Other stations needing actual buckets require a filling line. Water bottles are not water buckets."
+  ,"documentation.ars_arcane_matrix.automation_start.troubleshooting.title": "Find the Blocked Step"
+  ,"documentation.ars_arcane_matrix.automation_start.troubleshooting.text": "Missing materials: check linked inventories and intermediate guides. Waiting for a workstation: check Wixies, range and devices. Crafting: inspect the active device on the status page, then Source, redstone, leftover items and output space. Cancel one order and verify recovery before retrying."
+  ,"documentation.ars_arcane_matrix.machine_upgrades.title": "Device Upgrade Components"
+  ,"documentation.ars_arcane_matrix.machine_upgrades.overview": "Enchanted, Casting and Enriched components apply tiers 1, 2 and 3. Craft them in the Enchanting Apparatus and use them on placed devices without dismantling them. One component is consumed per upgrade. Apply tiers in order; skipping is not supported."
+  ,"documentation.ars_arcane_matrix.machine_upgrades.devices": "Supported: Wixie Order Pedestal, Pattern Provider, Automatic Stock Requester and Starbuncle Logistics Hub. Upgrades preserve device data. Mine and processing cores are not supported. The Hub's grid-stage upgrade still uses its dedicated recipe."
+  ,"documentation.ars_arcane_matrix.arcane_reaction_vessel.resources": "The Reaction Vessel supplies starter materials and resource conversions without repeated biome searches. Some unlock recipes need no fluid; ongoing production recipes require the fluid shown. Consult recipe pages for exact ingredients and costs."
+  ,"documentation.ars_arcane_matrix.arcane_reaction_vessel.nature": "Convert mycelium into brown mushrooms and exchange mushroom colors. Netherrack and mushrooms make both nylium types; bone meal then supplies Nether fungi. A wart block can become one Nether wart at higher Source cost. Once you obtain starter materials, establish farming."
 }

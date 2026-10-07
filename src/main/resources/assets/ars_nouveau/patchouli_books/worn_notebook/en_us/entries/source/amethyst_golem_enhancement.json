@@ -1,0 +1,12 @@
+{
+  "name": "documentation.ars_arcane_matrix.amethyst_golem_enhancement.title",
+  "icon": "ars_nouveau:amethyst_golem_charm",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 22,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.amethyst_golem_enhancement.overview"
+    }
+  ]
+}

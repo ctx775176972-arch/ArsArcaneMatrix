@@ -1,0 +1,16 @@
+{
+  "name": "documentation.ars_arcane_matrix.metal_dusts.title",
+  "icon": "ars_arcane_matrix:iron_dust",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 15,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.metal_dusts.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.metal_dusts.operation"
+    }
+  ]
+}

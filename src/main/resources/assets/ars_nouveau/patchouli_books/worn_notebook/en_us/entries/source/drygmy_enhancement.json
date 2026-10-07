@@ -1,0 +1,16 @@
+{
+  "name": "documentation.ars_arcane_matrix.drygmy_enhancement.title",
+  "icon": "ars_nouveau:drygmy_charm",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 25,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.drygmy_enhancement.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.drygmy_enhancement.weapon"
+    }
+  ]
+}

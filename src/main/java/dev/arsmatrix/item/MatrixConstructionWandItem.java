@@ -45,6 +45,9 @@ public final class MatrixConstructionWandItem extends Item {
     private static final Block SOURCESTONE = arsBlock("sourcestone");
     private static final Block SOURCE_GEM_BLOCK = arsBlock("source_gem_block");
     private static final Block ARCANE_PEDESTAL = arsBlock("arcane_pedestal");
+    private static final Block ARCANE_CORE = arsBlock("arcane_core");
+    private static final Block ENCHANTING_APPARATUS = arsBlock("enchanting_apparatus");
+    private static final Block IMBUEMENT_CHAMBER = arsBlock("imbuement_chamber");
     private static final TagKey<Block> MATRIX_FRAME = tag("matrix_frame_blocks");
     private static final TagKey<Block> MINE_FRAME = tag("arcane_mine_frame_blocks");
     private static final TagKey<Block> MINE_BASIC_FRAME = tag("arcane_mine_basic_frame_blocks");
@@ -70,6 +73,17 @@ public final class MatrixConstructionWandItem extends Item {
         if (player == null) return InteractionResult.PASS;
         if (context.getLevel().getBlockState(context.getClickedPos()).is(Blocks.OBSIDIAN)) {
             return buildNetherPortal(context, player);
+        }
+        if (context.getLevel().getBlockState(context.getClickedPos()).is(SOURCESTONE)) {
+            return buildWarpPortal(context, player);
+        }
+        if (context.getLevel().getBlockState(context.getClickedPos()).is(IMBUEMENT_CHAMBER)
+                || context.getLevel().getBlockState(context.getClickedPos())
+                        .is(ModBlocks.ADVANCED_IMBUEMENT_CHAMBER.get())) {
+            return buildImbuementSetup(context, player);
+        }
+        if (context.getLevel().getBlockState(context.getClickedPos()).is(ARCANE_CORE)) {
+            return buildEnchantingSetup(context, player);
         }
         List<Placement> structure = structureFor(context.getLevel(), context.getClickedPos());
         if (structure.isEmpty()) {
@@ -123,6 +137,22 @@ public final class MatrixConstructionWandItem extends Item {
      * and uses the vanilla ten-obsidian, cornerless shape.
      */
     private static InteractionResult buildNetherPortal(UseOnContext context, Player player) {
+        return buildPortalFrame(context, player, Blocks.OBSIDIAN,
+                "message.ars_arcane_matrix.construction_wand.portal_built",
+                "message.ars_arcane_matrix.construction_wand.portal_missing",
+                "message.ars_arcane_matrix.construction_wand.portal_blocked");
+    }
+
+    /** Builds the compact cornerless frame shown by Ars Nouveau's own guide. */
+    private static InteractionResult buildWarpPortal(UseOnContext context, Player player) {
+        return buildPortalFrame(context, player, SOURCESTONE,
+                "message.ars_arcane_matrix.construction_wand.warp_portal_built",
+                "message.ars_arcane_matrix.construction_wand.warp_portal_missing",
+                "message.ars_arcane_matrix.construction_wand.warp_portal_blocked");
+    }
+
+    private static InteractionResult buildPortalFrame(UseOnContext context, Player player, Block frameBlock,
+                                                      String builtKey, String missingKey, String blockedKey) {
         Level level = context.getLevel();
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
@@ -147,44 +177,128 @@ public final class MatrixConstructionWandItem extends Item {
         int required = 0;
         for (BlockPos pos : frame) {
             if (!level.isInWorldBounds(pos)) {
-                player.displayClientMessage(Component.translatable(
-                        "message.ars_arcane_matrix.construction_wand.portal_blocked"), true);
+                player.displayClientMessage(Component.translatable(blockedKey), true);
                 return InteractionResult.SUCCESS;
             }
             BlockState state = level.getBlockState(pos);
-            if (state.is(Blocks.OBSIDIAN)) continue;
+            if (state.is(frameBlock)) continue;
             if (!state.canBeReplaced()) {
-                player.displayClientMessage(Component.translatable(
-                        "message.ars_arcane_matrix.construction_wand.portal_blocked"), true);
+                player.displayClientMessage(Component.translatable(blockedKey), true);
                 return InteractionResult.SUCCESS;
             }
             required++;
         }
         for (BlockPos pos : interior) {
             if (!level.isInWorldBounds(pos) || !level.getBlockState(pos).canBeReplaced()) {
-                player.displayClientMessage(Component.translatable(
-                        "message.ars_arcane_matrix.construction_wand.portal_blocked"), true);
+                player.displayClientMessage(Component.translatable(blockedKey), true);
                 return InteractionResult.SUCCESS;
             }
         }
 
         if (!player.getAbilities().instabuild
-                && countItem(player.getInventory(), Blocks.OBSIDIAN.asItem()) < required) {
-            player.displayClientMessage(Component.translatable(
-                    "message.ars_arcane_matrix.construction_wand.portal_missing", required), true);
+                && countItem(player.getInventory(), frameBlock.asItem()) < required) {
+            player.displayClientMessage(Component.translatable(missingKey, required), true);
             return InteractionResult.SUCCESS;
         }
 
         for (BlockPos pos : frame) {
-            if (level.getBlockState(pos).is(Blocks.OBSIDIAN)) continue;
+            if (level.getBlockState(pos).is(frameBlock)) continue;
             if (!player.getAbilities().instabuild) {
-                consumeOne(player.getInventory(), Blocks.OBSIDIAN.asItem());
+                consumeOne(player.getInventory(), frameBlock.asItem());
             }
-            level.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
+            level.setBlockAndUpdate(pos, frameBlock.defaultBlockState());
+        }
+        player.displayClientMessage(Component.translatable(builtKey), true);
+        return InteractionResult.SUCCESS;
+    }
+
+    /** Places the apparatus and as many pedestals as the player currently has. */
+    private static InteractionResult buildEnchantingSetup(UseOnContext context, Player player) {
+        Level level = context.getLevel();
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+
+        BlockPos core = context.getClickedPos();
+        List<BlockPos> pedestalPositions = compactPedestalRing(core);
+        BlockPos apparatusPos = core.above();
+        int apparatusPlaced = 0;
+        int pedestalsPlaced = 0;
+        int apparatusMissing = 0;
+        int pedestalsMissing = 0;
+        int blocked = 0;
+
+        BlockState apparatusState = level.getBlockState(apparatusPos);
+        if (!apparatusState.is(ENCHANTING_APPARATUS)) {
+            if (!level.isInWorldBounds(apparatusPos) || !apparatusState.canBeReplaced()) {
+                blocked++;
+            } else if (player.getAbilities().instabuild
+                    || consumeOne(player.getInventory(), ENCHANTING_APPARATUS.asItem())) {
+                level.setBlockAndUpdate(apparatusPos, ENCHANTING_APPARATUS.defaultBlockState());
+                apparatusPlaced++;
+            } else {
+                apparatusMissing++;
+            }
+        }
+        for (BlockPos pos : pedestalPositions) {
+            if (level.getBlockState(pos).is(ARCANE_PEDESTAL)) continue;
+            if (!level.isInWorldBounds(pos) || !level.getBlockState(pos).canBeReplaced()) {
+                blocked++;
+            } else if (player.getAbilities().instabuild
+                    || consumeOne(player.getInventory(), ARCANE_PEDESTAL.asItem())) {
+                level.setBlockAndUpdate(pos, ARCANE_PEDESTAL.defaultBlockState());
+                pedestalsPlaced++;
+            } else {
+                pedestalsMissing++;
+            }
         }
         player.displayClientMessage(Component.translatable(
-                "message.ars_arcane_matrix.construction_wand.portal_built"), true);
+                "message.ars_arcane_matrix.construction_wand.enchanting_built",
+                apparatusPlaced, pedestalsPlaced), true);
+        if (apparatusMissing > 0 || pedestalsMissing > 0) player.displayClientMessage(Component.translatable(
+                "message.ars_arcane_matrix.construction_wand.enchanting_missing",
+                apparatusMissing, pedestalsMissing), false);
+        if (blocked > 0) player.displayClientMessage(Component.translatable(
+                "message.ars_arcane_matrix.construction_wand.enchanting_blocked", blocked), false);
         return InteractionResult.SUCCESS;
+    }
+
+    /** Adds as much of the compact pedestal ring as the player can supply. */
+    private static InteractionResult buildImbuementSetup(UseOnContext context, Player player) {
+        Level level = context.getLevel();
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+
+        List<BlockPos> pedestalPositions = compactPedestalRing(context.getClickedPos());
+        int placed = 0;
+        int missing = 0;
+        int blocked = 0;
+        for (BlockPos pos : pedestalPositions) {
+            if (level.getBlockState(pos).is(ARCANE_PEDESTAL)) continue;
+            if (!level.isInWorldBounds(pos) || !level.getBlockState(pos).canBeReplaced()) {
+                blocked++;
+            } else if (player.getAbilities().instabuild
+                    || consumeOne(player.getInventory(), ARCANE_PEDESTAL.asItem())) {
+                level.setBlockAndUpdate(pos, ARCANE_PEDESTAL.defaultBlockState());
+                placed++;
+            } else {
+                missing++;
+            }
+        }
+        player.displayClientMessage(Component.translatable(
+                "message.ars_arcane_matrix.construction_wand.imbuement_built", placed), true);
+        if (missing > 0) player.displayClientMessage(Component.translatable(
+                "message.ars_arcane_matrix.construction_wand.imbuement_missing", missing), false);
+        if (blocked > 0) player.displayClientMessage(Component.translatable(
+                "message.ars_arcane_matrix.construction_wand.imbuement_blocked", blocked), false);
+        return InteractionResult.SUCCESS;
+    }
+
+    private static List<BlockPos> compactPedestalRing(BlockPos center) {
+        List<BlockPos> positions = new ArrayList<>(8);
+        for (int z = -1; z <= 1; z++) {
+            for (int x = -1; x <= 1; x++) {
+                if (x != 0 || z != 0) positions.add(center.offset(x, 0, z));
+            }
+        }
+        return List.copyOf(positions);
     }
 
     private static int countItem(Inventory inventory, Item required) {

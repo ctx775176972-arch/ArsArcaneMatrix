@@ -1,0 +1,31 @@
+{
+  "name": "documentation.ars_arcane_matrix.whirlisprig.title",
+  "icon": "ars_nouveau:whirlisprig_charm",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 23,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.whirlisprig.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.whirlisprig.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.whirlisprig.earth_layout.text",
+      "title": "documentation.ars_arcane_matrix.whirlisprig.earth_layout.title"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.whirlisprig.ancient_layout.text",
+      "title": "documentation.ars_arcane_matrix.whirlisprig.ancient_layout.title"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.whirlisprig.production_layout.text",
+      "title": "documentation.ars_arcane_matrix.whirlisprig.production_layout.title"
+    }
+  ]
+}

@@ -164,6 +164,11 @@ public final class ArsMatrixJadePlugin implements IWailaPlugin {
             } else if (be instanceof ArcaneReactionVesselBlockEntity vessel) {
                 tooltip.add(Component.translatable("state.ars_arcane_matrix.arcane_reaction_vessel."
                         + vessel.state().name().toLowerCase(Locale.ROOT)));
+                tooltip.add(Component.translatable(
+                        "tooltip.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation",
+                        Component.translatable(vessel.isWixieAutomationEnabled()
+                                ? "message.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation.enabled"
+                                : "message.ars_arcane_matrix.arcane_reaction_vessel.wixie_automation.disabled")));
                 var fluid = vessel.tank().getFluid();
                 tooltip.add(Component.translatable("screen.ars_arcane_matrix.arcane_reaction_vessel.fluid",
                         fluid.isEmpty()

@@ -16,4 +16,9 @@ public abstract class HarvestClusterGoalTimingMixin {
     private int arsMatrix$shortenHarvestAction(int originalTicks) {
         return AmethystGolemEnhancements.acceleratedActionTicks(golem, originalTicks);
     }
+
+    @ModifyConstant(method = "tick", constant = @Constant(intValue = 40), remap = false)
+    private int arsMatrix$preserveHarvestAttempts(int originalInterval) {
+        return AmethystGolemEnhancements.acceleratedHarvestInterval(golem, originalInterval);
+    }
 }

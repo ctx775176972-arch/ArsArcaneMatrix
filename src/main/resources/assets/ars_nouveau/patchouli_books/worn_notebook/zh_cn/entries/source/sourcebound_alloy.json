@@ -1,0 +1,16 @@
+{
+  "name": "item.ars_arcane_matrix.sourcebound_copper_alloy",
+  "icon": "ars_arcane_matrix:sourcebound_copper_alloy",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 16,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.sourcebound_alloy.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.sourcebound_alloy.operation"
+    }
+  ]
+}

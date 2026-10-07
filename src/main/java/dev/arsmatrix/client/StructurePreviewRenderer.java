@@ -227,12 +227,10 @@ public final class StructurePreviewRenderer {
         if (!level.getBlockState(pos.above()).is(MOB_JAR.getBlock())) {
             renderBlock(poseStack, previewBuffers, MOB_JAR, 0, 1, 0);
         }
-        // These are recommended positions only. Runtime detection accepts any two
-        // Arcane Pedestals in the nearby 5x4x5 volume.
-        if (!level.getBlockState(pos.east(2)).is(ARCANE_PEDESTAL.getBlock()))
-            renderBlock(poseStack, previewBuffers, ARCANE_PEDESTAL, 2, 0, 0);
-        if (!level.getBlockState(pos.west(2)).is(ARCANE_PEDESTAL.getBlock()))
-            renderBlock(poseStack, previewBuffers, ARCANE_PEDESTAL, -2, 0, 0);
+        // Recommended position only. Runtime detection accepts any item-handler
+        // container in the nearby 5x4x5 volume.
+        if (StructureInventoryAccess.at(level, pos.east(2)) == null)
+            renderBlock(poseStack, previewBuffers, CONSUMABLE_CONTAINER, 2, 0, 0);
     }
 
     public static void renderCrusher(BlockPos pos, PoseStack poseStack, MultiBufferSource bufferSource) {
