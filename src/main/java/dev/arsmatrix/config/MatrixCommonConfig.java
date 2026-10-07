@@ -5,6 +5,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 /** Installation-wide switches evaluated while loading data; recipes remain server-authoritative. */
 public final class MatrixCommonConfig {
     public static final ModConfigSpec SPEC;
+    public static final ModConfigSpec.BooleanValue ENABLE_SKYBLOCK;
     public static final ModConfigSpec.BooleanValue ENABLE_UNBREAKABLE_REFINEMENT;
     public static final ModConfigSpec.BooleanValue ENABLE_ENCHANTED_GOLDEN_APPLE;
     public static final ModConfigSpec.BooleanValue ENABLE_BUDDING_AMETHYST;
@@ -12,6 +13,9 @@ public final class MatrixCommonConfig {
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+        ENABLE_SKYBLOCK = builder.comment("Enable skyblock starter items and resource recipes. Use the Arcane Matrix Skyblock world type for NEW worlds only. Never converts existing terrain.",
+                "启用空岛开局物资与资源配方。新建世界选择奥术矩阵空岛；不会转换已有地形。修改后重新加载数据包或重新进入世界，无需重启游戏。")
+                .translation("config.ars_arcane_matrix.enableSkyblock").define("enableSkyblock", false);
         builder.push("recipes");
         ENABLE_UNBREAKABLE_REFINEMENT = builder
                 .comment("Enable the unbreakable refinement recipe. Restart after changing. Existing items are unaffected.",

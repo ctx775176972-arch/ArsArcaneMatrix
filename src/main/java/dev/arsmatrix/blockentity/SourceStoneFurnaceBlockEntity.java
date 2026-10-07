@@ -33,11 +33,14 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements MenuProvider {
     public static final int PROCESS_TICKS = 100;
     public static final int SOURCE_COST = 20;
+    public static final int SOURCE_BUFFER_CAPACITY = 200;
     private static final int SOURCE_RANGE = 5;
     private static final int LIT_HOLD_TICKS = 10;
 
@@ -51,6 +54,9 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
     private final IItemHandler bottomHandler = new FaceHandler(false);
     private int progress;
     private boolean sourcePaid;
+    private int sourceBuffer;
+    private long lastSourceRefillTick = Long.MIN_VALUE;
+    private long lastFailedSourceRefillTick = Long.MIN_VALUE;
     private int litHoldTicks;
     /** Locked while one Advanced Lectern/Wixie machine task owns both slots. */
     private boolean networkReserved;
@@ -89,6 +95,7 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
             }
             return;
         }
+        furnace.refillSourceBuffer();
         if (!furnace.sourcePaid) {
             if (!furnace.consumeSource(SOURCE_COST)) {
                 furnace.setLit(furnace.litHoldTicks > 0);
@@ -131,27 +138,39 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
     }
 
     private boolean consumeSource(int cost) {
-        if (level == null || cost <= 0) return false;
+        if (cost <= 0 || sourceBuffer < cost) return false;
+        sourceBuffer -= cost;
+        setChanged();
+        return true;
+    }
+
+    /** Refill only when a valid recipe has output space; retain partial transfers. */
+    private void refillSourceBuffer() {
+        if (level == null || sourceBuffer >= SOURCE_BUFFER_CAPACITY) return;
+        long now = level.getGameTime();
+        // Extra block-entity ticks from acceleration share the same world time.
+        // Successful emergency refills must not be throttled by that clock.
+        if (lastFailedSourceRefillTick != Long.MIN_VALUE
+                && now - lastFailedSourceRefillTick < 20) return;
+        if (sourceBuffer >= SOURCE_COST && lastSourceRefillTick != Long.MIN_VALUE
+                && now - lastSourceRefillTick < 20) return;
+        lastSourceRefillTick = now;
         var providers = SourceUtil.canTakeSource(worldPosition, level, SOURCE_RANGE);
-        int available = 0;
         for (ISpecialSourceProvider provider : providers) {
             ISourceTile source = provider.getSource();
             if (source != null && source.canProvideSource()) {
-                int needed = cost - available;
-                available += Math.max(0, Math.min(needed, source.removeSource(needed, true)));
-                if (available >= cost) break;
+                int needed = SOURCE_BUFFER_CAPACITY - sourceBuffer;
+                int extracted = Math.max(0, Math.min(needed, source.removeSource(needed, false)));
+                if (extracted > 0) {
+                    sourceBuffer += extracted;
+                    setChanged();
+                }
+                if (sourceBuffer >= SOURCE_BUFFER_CAPACITY) break;
             }
         }
-        if (available < cost) return false;
-        int remaining = cost;
-        for (ISpecialSourceProvider provider : providers) {
-            if (remaining <= 0) break;
-            ISourceTile source = provider.getSource();
-            if (source == null || !source.canProvideSource()) continue;
-            int extracted = Math.max(0, Math.min(remaining, source.removeSource(remaining, false)));
-            remaining -= extracted;
-        }
-        return remaining == 0;
+        // Only back off when another operation cannot be paid. This bounds
+        // scans under 256x acceleration without limiting available throughput.
+        lastFailedSourceRefillTick = sourceBuffer < SOURCE_COST ? now : Long.MIN_VALUE;
     }
 
     private void setLit(boolean lit) {
@@ -167,11 +186,35 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
                 && inventory.getStackInSlot(1).isEmpty();
     }
 
-    /** Atomically reserves this furnace for exactly one real cooking operation. */
+    /**
+     * Returns manual leftovers before a Wixie reserves this furnace. Progress and
+     * prepaid Source belong to that old input and must not carry into a new recipe.
+     */
+    public List<ItemStack> takeUnreservedContents() {
+        if (networkReserved) return List.of();
+        List<ItemStack> removed = new ArrayList<>(2);
+        ItemStack input = inventory.extractItem(0, Integer.MAX_VALUE, false);
+        ItemStack output = inventory.extractItem(1, Integer.MAX_VALUE, false);
+        if (!input.isEmpty()) removed.add(input);
+        if (!output.isEmpty()) removed.add(output);
+        if (!removed.isEmpty()) {
+            progress = 0;
+            sourcePaid = false;
+            litHoldTicks = 0;
+            setLit(false);
+            setChanged();
+            if (level != null) {
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+            }
+        }
+        return List.copyOf(removed);
+    }
+
+    /** Atomically reserves this furnace and loads one complete network batch. */
     public boolean startNetworkJob(ItemStack input) {
         if (level == null || level.isClientSide || input.isEmpty() || !isAvailableForNetworkJob()
                 || findRecipe(input) == null) return false;
-        ItemStack remainder = inventory.insertItem(0, input.copyWithCount(1), false);
+        ItemStack remainder = inventory.insertItem(0, input.copy(), false);
         if (!remainder.isEmpty()) return false;
         networkReserved = true;
         setChanged();
@@ -184,12 +227,34 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
             return ItemStack.EMPTY;
         }
         ItemStack output = inventory.getStackInSlot(1);
-        if (!ItemStack.isSameItemSameComponents(output, expected)
-                || output.getCount() < expected.getCount()) return ItemStack.EMPTY;
-        ItemStack extracted = inventory.extractItem(1, expected.getCount(), false);
+        if (!ItemStack.isSameItemSameComponents(output, expected)) return ItemStack.EMPTY;
+        // No input remains, so this reservation cannot produce another result.
+        // Accepting the actual amount also recovers batches made by older builds
+        // that accidentally inserted only their first inventory fragment.
+        ItemStack extracted = inventory.extractItem(
+                1, Math.min(expected.getCount(), output.getCount()), false);
         networkReserved = false;
         setChanged();
         return extracted;
+    }
+
+    /** Cancels a stale reservation and returns everything still held by the furnace. */
+    public List<ItemStack> cancelNetworkJob() {
+        List<ItemStack> recovered = new ArrayList<>(2);
+        ItemStack input = inventory.extractItem(0, Integer.MAX_VALUE, false);
+        ItemStack output = inventory.extractItem(1, Integer.MAX_VALUE, false);
+        if (!input.isEmpty()) recovered.add(input);
+        if (!output.isEmpty()) recovered.add(output);
+        networkReserved = false;
+        progress = 0;
+        sourcePaid = false;
+        litHoldTicks = 0;
+        setLit(false);
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+        setChanged();
+        return List.copyOf(recovered);
     }
 
     public boolean isNetworkReserved() { return networkReserved; }
@@ -214,6 +279,7 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
         tag.put("Inventory", inventory.serializeNBT(registries));
         tag.putInt("Progress", progress);
         tag.putBoolean("SourcePaid", sourcePaid);
+        tag.putInt("SourceBuffer", sourceBuffer);
         tag.putBoolean("NetworkReserved", networkReserved);
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
@@ -221,6 +287,9 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
         if (tag.contains("Inventory")) inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
         progress = Math.max(0, Math.min(PROCESS_TICKS, tag.getInt("Progress")));
         sourcePaid = tag.getBoolean("SourcePaid");
+        sourceBuffer = Math.max(0, Math.min(SOURCE_BUFFER_CAPACITY, tag.getInt("SourceBuffer")));
+        lastSourceRefillTick = Long.MIN_VALUE;
+        lastFailedSourceRefillTick = Long.MIN_VALUE;
         networkReserved = tag.getBoolean("NetworkReserved");
     }
 
@@ -236,7 +305,8 @@ public final class SourceStoneFurnaceBlockEntity extends BlockEntity implements 
                     ? inventory.insertItem(0, stack, simulate) : stack;
         }
         @Override public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return !input && slot == 0 ? inventory.extractItem(1, amount, simulate) : ItemStack.EMPTY;
+            return !input && slot == 0 && !networkReserved
+                    ? inventory.extractItem(1, amount, simulate) : ItemStack.EMPTY;
         }
         @Override public int getSlotLimit(int slot) { return inventory.getSlotLimit(input ? 0 : 1); }
         @Override public boolean isItemValid(int slot, ItemStack stack) { return input && slot == 0; }

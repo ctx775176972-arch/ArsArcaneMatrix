@@ -37,6 +37,20 @@ public final class ModDocumentation {
         DocCategory misc = sub(root, "tools_misc", ModItems.ARCANE_AMPLIFIER.get(), 70);
         DocumentationRegistry.registerMainCategory(root);
 
+        Item pocketWatch = ModItems.ENCHANTERS_POCKET_WATCH.get();
+        DocEntryBuilder pocketWatchBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, DocumentationRegistry.ITEMS, pocketWatch)
+                .withSortNum(100)
+                .withIntroPageNoIncrement(
+                        Component.translatable("documentation.ars_arcane_matrix.enchanters_pocket_watch.summary"),
+                        Component.translatable("item.ars_arcane_matrix.enchanters_pocket_watch"),
+                        pocketWatch.getDefaultInstance())
+                .withTextPage(Component.translatable(
+                        "documentation.ars_arcane_matrix.enchanters_pocket_watch.operation"))
+                .withCraftingPages()
+                .addConnectedSearch(pocketWatch);
+        DocumentationRegistry.registerEntry(DocumentationRegistry.ITEMS, pocketWatchBuilder.build());
+
         DocEntryBuilder roadmap = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID, gettingStarted, ModItems.MATRIX_CONSTRUCTION_WAND.get())
                 .withSortNum(0)
@@ -54,6 +68,18 @@ public final class ModDocumentation {
                 .withCraftingPages()
                 .addConnectedSearch(ModItems.MATRIX_CONSTRUCTION_WAND.get());
         DocumentationRegistry.registerEntry(gettingStarted, roadmap.build());
+
+        DocEntryBuilder automationStart = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, gettingStarted, "automation_start")
+                .withSortNum(5)
+                .withTitle(Component.translatable("documentation.ars_arcane_matrix.automation_start.title"))
+                .withIcon(ModItems.WIXIE_ORDER_TERMINAL.get().getDefaultInstance());
+        for (String page : new String[]{"setup", "patterns", "planning", "stations", "fluids", "troubleshooting"}) {
+            automationStart.withHeaderPage(
+                    Component.translatable("documentation.ars_arcane_matrix.automation_start." + page + ".text"),
+                    Component.translatable("documentation.ars_arcane_matrix.automation_start." + page + ".title"));
+        }
+        DocumentationRegistry.registerEntry(gettingStarted, automationStart.build());
 
         DocEntryBuilder builder = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID,
@@ -202,10 +228,11 @@ public final class ModDocumentation {
                         reactionVessel.getDefaultInstance())
                 .withTextPage(Component.translatable(
                         "documentation.ars_arcane_matrix.arcane_reaction_vessel.operation"))
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_reaction_vessel.resources"))
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_reaction_vessel.nature"))
                 .withCraftingPages()
-                .addConnectedSearch(reactionVessel)
-                .addConnectedSearch(ModItems.ARCANE_FLUID_RESERVOIR.get())
-                .addConnectedSearch(ModItems.ARCANE_FLUID_TANK.get());
+                .addConnectedSearch(reactionVessel);
+        reactionBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_reaction_vessel.operation.details"));
         DocumentationRegistry.registerEntry(gettingStarted, reactionBuilder.build());
 
         Item smelter = ModItems.ARCANE_SMELTER_CORE.get();
@@ -223,6 +250,7 @@ public final class ModDocumentation {
                 .addConnectedSearch(smelter)
                 .addConnectedSearch(ModItems.ENCHANTED_ARCHWOOD_CHARCOAL.get())
                 .addConnectedSearch(ModItems.CASTING_CRYSTAL.get());
+        smelterBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_smelter.overview.details"));
         DocumentationRegistry.registerEntry(minerals, smelterBuilder.build());
 
         Item crusher = ModItems.ARCANE_CRUSHER_CORE.get();
@@ -239,6 +267,7 @@ public final class ModDocumentation {
                 .withCraftingPages()
                 .addConnectedSearch(crusher)
                 .addConnectedSearch(ModItems.ENRICHED_MINERAL_CRYSTAL.get());
+        crusherBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_crusher.overview.details"));
         DocumentationRegistry.registerEntry(minerals, crusherBuilder.build());
 
         Item metalDust = ModItems.IRON_DUST.get();
@@ -266,12 +295,7 @@ public final class ModDocumentation {
                         sourceboundAlloy.getDefaultInstance())
                 .withTextPage(Component.translatable("documentation.ars_arcane_matrix.sourcebound_alloy.operation"))
                 .withCraftingPages()
-                .withCraftingPages(
-                        ResourceLocation.fromNamespaceAndPath(
-                                ArsArcaneMatrix.MOD_ID, "sourcebound_copper_alloy_dust"),
-                        ModItems.SOURCEBOUND_COPPER_ALLOY_DUST.get())
-                .addConnectedSearch(sourceboundAlloy)
-                .addConnectedSearch(ModItems.SOURCEBOUND_COPPER_ALLOY_DUST.get());
+                .addConnectedSearch(sourceboundAlloy);
         DocumentationRegistry.registerEntry(minerals, sourceboundAlloyBuilder.build());
 
         Item orderTerminal = ModItems.WIXIE_ORDER_TERMINAL.get();
@@ -294,10 +318,7 @@ public final class ModDocumentation {
                         Component.translatable("documentation.ars_arcane_matrix.crafting_network.workflow.text"),
                         Component.translatable("documentation.ars_arcane_matrix.crafting_network.workflow.title"))
                 .withCraftingPages()
-                .addConnectedSearch(orderTerminal)
-                .addConnectedSearch(ModItems.CRAFTING_GUIDE.get())
-                .addConnectedSearch(ModItems.WIXIE_PATTERN_PROVIDER.get())
-                .addConnectedSearch(ModItems.ARCANE_ORDER_PEDESTAL.get());
+                .addConnectedSearch(orderTerminal);
 
         DocumentationRegistry.registerEntry(crafting, craftingNetworkBuilder.build());
 
@@ -348,6 +369,24 @@ public final class ModDocumentation {
                 .addConnectedSearch(ModItems.WIXIE_PATTERN_PROVIDER.get());
         DocumentationRegistry.registerEntry(crafting, providerBuilder.build());
 
+        DocEntryBuilder upgradeBuilder = new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, crafting, "machine_upgrades")
+                .withSortNum(45)
+                .withTitle(Component.translatable("documentation.ars_arcane_matrix.machine_upgrades.title"))
+                .withIcon(ModItems.ENCHANTED_MACHINE_UPGRADE_COMPONENT.get().getDefaultInstance())
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.machine_upgrades.overview"))
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.machine_upgrades.devices"))
+                .withCraftingPages(ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID,
+                        "enchanted_machine_upgrade_component"), ModItems.ENCHANTED_MACHINE_UPGRADE_COMPONENT.get())
+                .withCraftingPages(ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID,
+                        "casting_machine_upgrade_component"), ModItems.CASTING_MACHINE_UPGRADE_COMPONENT.get())
+                .withCraftingPages(ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID,
+                        "enriched_machine_upgrade_component"), ModItems.ENRICHED_MACHINE_UPGRADE_COMPONENT.get())
+                .addConnectedSearch(ModItems.ENCHANTED_MACHINE_UPGRADE_COMPONENT.get())
+                .addConnectedSearch(ModItems.CASTING_MACHINE_UPGRADE_COMPONENT.get())
+                .addConnectedSearch(ModItems.ENRICHED_MACHINE_UPGRADE_COMPONENT.get());
+        DocumentationRegistry.registerEntry(crafting, upgradeBuilder.build());
+
         Item sourceStoneFurnace = ModItems.SOURCE_STONE_FURNACE.get();
         DocEntryBuilder sourceStoneFurnaceBuilder = new DocEntryBuilder(
                 ArsArcaneMatrix.MOD_ID, crafting, sourceStoneFurnace)
@@ -359,9 +398,7 @@ public final class ModDocumentation {
                 .withTextPage(Component.translatable(
                         "documentation.ars_arcane_matrix.source_stone_furnace.operation"))
                 .withCraftingPages()
-                .addConnectedSearch(sourceStoneFurnace)
-                .addConnectedSearch(ModItems.WIXIE_ORDER_TERMINAL.get())
-                .addConnectedSearch(ModItems.WIXIE_PATTERN_PROVIDER.get());
+                .addConnectedSearch(sourceStoneFurnace);
         DocumentationRegistry.registerEntry(crafting, sourceStoneFurnaceBuilder.build());
 
         Item amethystGolemCharm = ItemsRegistry.AMETHYST_GOLEM_CHARM.get();
@@ -464,10 +501,14 @@ public final class ModDocumentation {
                 .withHeaderPage(
                         Component.translatable("documentation.ars_arcane_matrix.storage.lectern.text"),
                         Component.translatable("documentation.ars_arcane_matrix.storage.lectern.title"))
+                .withHeaderPage(
+                        Component.translatable("documentation.ars_arcane_matrix.storage.proxy.text"),
+                        Component.translatable("documentation.ars_arcane_matrix.storage.proxy.title"))
+                .withHeaderPage(
+                        Component.translatable("documentation.ars_arcane_matrix.storage.fluids.text"),
+                        Component.translatable("documentation.ars_arcane_matrix.storage.fluids.title"))
                 .withCraftingPages()
-                .addConnectedSearch(ModItems.ADVANCED_STORAGE_LECTERN.get())
-                .addConnectedSearch(ModItems.STORAGE_GRID_DIRECTORY.get())
-                .addConnectedSearch(ModItems.GRID_EXPANSION_WAREHOUSE.get());
+                .addConnectedSearch(ModItems.ADVANCED_STORAGE_LECTERN.get());
         DocumentationRegistry.registerEntry(storage, storageBuilder.build());
 
         DocEntryBuilder gridBuilder = new DocEntryBuilder(
@@ -518,6 +559,8 @@ public final class ModDocumentation {
                 .withTextPage(Component.translatable(
                         "documentation.ars_arcane_matrix.arcane_fluid_controller.operation"))
                 .withTextPage(Component.translatable(
+                        "documentation.ars_arcane_matrix.arcane_fluid_controller.lectern"))
+                .withTextPage(Component.translatable(
                         "documentation.ars_arcane_matrix.arcane_fluid_controller.upgrades"))
                 .withCraftingPages()
                 .withCraftingPages(
@@ -530,11 +573,10 @@ public final class ModDocumentation {
                         ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "fluid_speed_upgrade"),
                         ModItems.FLUID_SPEED_UPGRADE.get())
                 .addConnectedSearch(fluidController)
-                .addConnectedSearch(ModItems.ARCANE_FLUID_TANK.get())
                 .addConnectedSearch(ModItems.FLUID_CAPACITY_UPGRADE.get())
                 .addConnectedSearch(ModItems.FLUID_RANGE_UPGRADE.get())
-                .addConnectedSearch(ModItems.FLUID_SPEED_UPGRADE.get())
-                .addConnectedSearch(ModItems.ARCANE_REACTION_VESSEL.get());
+                .addConnectedSearch(ModItems.FLUID_SPEED_UPGRADE.get());
+        fluidControllerBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_fluid_controller.operation.details"));
         DocumentationRegistry.registerEntry(storage, fluidControllerBuilder.build());
 
         Item fluidTank = ModItems.ARCANE_FLUID_TANK.get();
@@ -550,8 +592,7 @@ public final class ModDocumentation {
                 .withCraftingPages(
                         ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "arcane_fluid_tank"),
                         fluidTank)
-                .addConnectedSearch(fluidTank)
-                .addConnectedSearch(fluidController);
+                .addConnectedSearch(fluidTank);
         DocumentationRegistry.registerEntry(storage, fluidTankBuilder.build());
 
         Item vacuumHopper = ModItems.ARCANE_VACUUM_HOPPER.get();
@@ -566,6 +607,7 @@ public final class ModDocumentation {
                         "documentation.ars_arcane_matrix.arcane_vacuum_hopper.operation"))
                 .withCraftingPages()
                 .addConnectedSearch(vacuumHopper);
+        vacuumBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_vacuum_hopper.operation.details"));
         DocumentationRegistry.registerEntry(storage, vacuumBuilder.build());
 
         DocEntryBuilder sourceNetworkBuilder = new DocEntryBuilder(
@@ -579,9 +621,7 @@ public final class ModDocumentation {
                         Component.translatable("documentation.ars_arcane_matrix.source_network.nodes.text"),
                         Component.translatable("documentation.ars_arcane_matrix.source_network.nodes.title"))
                 .withCraftingPages()
-                .addConnectedSearch(ModItems.SUPER_SOURCE_JAR_CORE.get())
-                .addConnectedSearch(ModItems.INTEGRATED_SOURCE_RELAY.get())
-                .addConnectedSearch(ModItems.DIMENSION_ANCHOR.get());
+                .addConnectedSearch(ModItems.SUPER_SOURCE_JAR_CORE.get());
         DocumentationRegistry.registerEntry(source, sourceNetworkBuilder.build());
 
         Item arcaneSourceJar = ModItems.ARCANE_SOURCE_JAR.get();
@@ -608,9 +648,7 @@ public final class ModDocumentation {
                 .withTextPage(Component.translatable(
                         "documentation.ars_arcane_matrix.integrated_source_relay.operation"))
                 .withCraftingPages()
-                .addConnectedSearch(ModItems.INTEGRATED_SOURCE_RELAY.get())
-                .addConnectedSearch(ModItems.SUPER_SOURCE_JAR_CORE.get())
-                .addConnectedSearch(ModItems.ADVANCED_STORAGE_LECTERN.get());
+                .addConnectedSearch(ModItems.INTEGRATED_SOURCE_RELAY.get());
         DocumentationRegistry.registerEntry(source, relayBuilder.build());
 
         DocEntryBuilder anchorBuilder = new DocEntryBuilder(

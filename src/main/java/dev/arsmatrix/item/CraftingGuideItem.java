@@ -21,7 +21,10 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.Level;
 
@@ -40,6 +43,7 @@ public final class CraftingGuideItem extends Item {
     private static final String FUZZY_KEY = "FuzzyTags";
     private static final String WORKSTATION_KEY = "Workstation";
     private static final String RESULT_ITEM_KEY = "ResultItem";
+    private static final String RESULT_STACK_KEY = "ResultStack";
 
     public CraftingGuideItem(Properties properties) {
         super(properties);
@@ -102,7 +106,8 @@ public final class CraftingGuideItem extends Item {
                 }
                 return InteractionResult.SUCCESS;
             }
-            encode(context.getItemInHand(), match.get(), sample);
+            encode(context.getItemInHand(), match.get(), sample,
+                    context.getLevel().registryAccess());
             if (context.getPlayer() != null) {
                 context.getPlayer().displayClientMessage(Component.translatable(
                         "message.ars_arcane_matrix.crafting_guide.recorded",
@@ -141,23 +146,66 @@ public final class CraftingGuideItem extends Item {
         ResourceLocation recipe = getRecipeId(stack);
         ItemStack recordedResult = recipe == null ? ItemStack.EMPTY : getRecordedResult(stack);
         if (recordedResult.isEmpty() && recipe != null && Minecraft.getInstance().level != null) {
-            recordedResult = Minecraft.getInstance().level.getRecipeManager().byKey(recipe)
-                    .filter(holder -> holder.value() instanceof CraftingRecipe)
-                    .map(holder -> DynamicCraftingRecipeSupport.result(
-                            (CraftingRecipe) holder.value(), Minecraft.getInstance().level.registryAccess())
-                            .copyWithCount(1))
+            recordedResult = RecipeAutomationSupport.find(
+                            Minecraft.getInstance().level.getRecipeManager(), recipe)
+                    .filter(holder -> RecipeAutomationSupport.supports(holder.value()))
+                    .map(holder -> RecipeAutomationSupport.result(
+                            holder.value(), Minecraft.getInstance().level.registryAccess()).copyWithCount(1))
                     .orElse(ItemStack.EMPTY);
         }
         tooltip.add(recipe == null
                 ? Component.translatable("tooltip.ars_arcane_matrix.crafting_guide.blank")
                 : Component.translatable("tooltip.ars_arcane_matrix.crafting_guide.recipe",
                         recordedResult.getHoverName()));
+        if (!recordedResult.isEmpty()) {
+            for (var entry : EnchantmentHelper.getEnchantmentsForCrafting(recordedResult).entrySet()) {
+                tooltip.add(Enchantment.getFullname(entry.getKey(), entry.getIntValue()));
+            }
+        }
         if (recipe != null) {
+            tooltip.add(Component.translatable(
+                    "tooltip.ars_arcane_matrix.crafting_guide.workstation",
+                    Component.translatable(workstationTranslation(
+                            Minecraft.getInstance().level == null
+                                    ? getWorkstationId(stack)
+                                    : getWorkstationId(stack,
+                                            Minecraft.getInstance().level.getRecipeManager())))));
             tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.crafting_guide.mode",
                     Component.translatable(isFuzzy(stack)
                             ? "tooltip.ars_arcane_matrix.crafting_guide.mode.fuzzy"
                             : "tooltip.ars_arcane_matrix.crafting_guide.mode.strict")));
         }
+    }
+
+    private static String workstationTranslation(ResourceLocation workstation) {
+        if (RecipeAutomationSupport.SOURCE_STONE_FURNACE.equals(workstation)) {
+            return "screen.ars_arcane_matrix.order_terminal.workstation.furnace";
+        }
+        if (RecipeAutomationSupport.ENCHANTING_APPARATUS.equals(workstation)) {
+            return "screen.ars_arcane_matrix.order_terminal.workstation.apparatus";
+        }
+        if (RecipeAutomationSupport.IMBUEMENT_CHAMBER.equals(workstation)) {
+            return "screen.ars_arcane_matrix.order_terminal.workstation.imbuement";
+        }
+        if (RecipeAutomationSupport.STONECUTTER.equals(workstation)) {
+            return "screen.ars_arcane_matrix.order_terminal.workstation.stonecutter";
+        }
+        if (RecipeAutomationSupport.ARCANE_REACTION_VESSEL.equals(workstation)) {
+            return "screen.ars_arcane_matrix.order_terminal.workstation.reaction_vessel";
+        }
+        if (RecipeAutomationSupport.FARMERS_DELIGHT_COOKING_POT.equals(workstation)) {
+            return "screen.ars_arcane_matrix.order_terminal.workstation.cooking_pot";
+        }
+        if (RecipeAutomationSupport.AVARITIA_NEUTRON_COMPRESSOR.equals(workstation)) {
+            return "screen.ars_arcane_matrix.order_terminal.workstation.avaritia_compressor";
+        }
+        if (RecipeAutomationSupport.AVARITIA_SCULK_CRAFTING_TABLE.equals(workstation)
+                || RecipeAutomationSupport.AVARITIA_NETHER_CRAFTING_TABLE.equals(workstation)
+                || RecipeAutomationSupport.AVARITIA_END_CRAFTING_TABLE.equals(workstation)
+                || RecipeAutomationSupport.AVARITIA_EXTREME_CRAFTING_TABLE.equals(workstation)) {
+            return "screen.ars_arcane_matrix.order_terminal.workstation.avaritia_table";
+        }
+        return "screen.ars_arcane_matrix.order_terminal.workstation.crafting";
     }
 
     public static ResourceLocation getRecipeId(ItemStack stack) {
@@ -186,7 +234,61 @@ public final class CraftingGuideItem extends Item {
         return parsed == null ? ResourceLocation.withDefaultNamespace("crafting_table") : parsed;
     }
 
+    /**
+     * Resolves the workstation from the live recipe when possible. This also
+     * repairs the presentation of guides encoded by older versions whose
+     * compatibility tier mapping was incorrect.
+     */
+    public static ResourceLocation getWorkstationId(ItemStack stack, RecipeManager recipes) {
+        ResourceLocation recipeId = getRecipeId(stack);
+        if (recipeId == null || recipes == null) return getWorkstationId(stack);
+        return RecipeAutomationSupport.find(recipes, recipeId)
+                .filter(holder -> RecipeAutomationSupport.supports(holder.value()))
+                .map(holder -> RecipeAutomationSupport.workstation(holder.value()))
+                .orElseGet(() -> getWorkstationId(stack));
+    }
+
     public static ItemStack getRecordedResult(ItemStack stack) {
+        if (Minecraft.getInstance().level != null) {
+            var level = Minecraft.getInstance().level;
+            ResourceLocation currentRecipeId = getRecipeId(stack);
+            if (currentRecipeId != null) {
+                var current = RecipeAutomationSupport.find(level.getRecipeManager(), currentRecipeId);
+                if (current.isPresent() && RecipeAutomationSupport.isAvaritiaCompressor(current.get().value())) {
+                    ItemStack actual = RecipeAutomationSupport.result(current.get().value(), level.registryAccess());
+                    if (!actual.isEmpty()) return actual.copyWithCount(1);
+                }
+            }
+            CustomData data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+            if (data.copyTag().contains(RESULT_STACK_KEY, Tag.TAG_COMPOUND)) {
+                return getRecordedResult(stack, level.registryAccess());
+            }
+            ResourceLocation recipeId = getRecipeId(stack);
+            if (recipeId != null) {
+                ItemStack rebuilt = RecipeAutomationSupport.find(level.getRecipeManager(), recipeId)
+                        .filter(holder -> RecipeAutomationSupport.supports(holder.value()))
+                        .map(holder -> RecipeAutomationSupport.result(
+                                holder.value(), level.registryAccess()).copyWithCount(1))
+                        .orElse(ItemStack.EMPTY);
+                if (!rebuilt.isEmpty()) return rebuilt;
+            }
+        }
+        return getLegacyRecordedResult(stack);
+    }
+
+    public static ItemStack getRecordedResult(
+            ItemStack stack, net.minecraft.core.HolderLookup.Provider registries
+    ) {
+        CustomData data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+        CompoundTag tag = data.copyTag();
+        if (tag.contains(RESULT_STACK_KEY, Tag.TAG_COMPOUND)) {
+            ItemStack result = ItemStack.parseOptional(registries, tag.getCompound(RESULT_STACK_KEY));
+            if (!result.isEmpty()) return result;
+        }
+        return getLegacyRecordedResult(stack);
+    }
+
+    private static ItemStack getLegacyRecordedResult(ItemStack stack) {
         CustomData data = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         ResourceLocation id = ResourceLocation.tryParse(data.copyTag().getString(RESULT_ITEM_KEY));
         return id == null ? ItemStack.EMPTY : BuiltInRegistries.ITEM.getOptional(id)
@@ -199,16 +301,29 @@ public final class CraftingGuideItem extends Item {
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
 
-    public static void encode(ItemStack stack, RecipeHolder<CraftingRecipe> recipe, ItemStack result) {
-        encodeRecipe(stack, recipe, result);
+    public static void encode(
+            ItemStack stack,
+            RecipeHolder<CraftingRecipe> recipe,
+            ItemStack result,
+            net.minecraft.core.HolderLookup.Provider registries
+    ) {
+        encodeRecipe(stack, recipe, result, registries);
     }
 
-    public static void encodeRecipe(ItemStack stack, RecipeHolder<?> recipe, ItemStack result) {
+    public static void encodeRecipe(
+            ItemStack stack,
+            RecipeHolder<?> recipe,
+            ItemStack result,
+            net.minecraft.core.HolderLookup.Provider registries
+    ) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         tag.putString(RECIPE_KEY, recipe.id().toString());
         tag.putString(WORKSTATION_KEY, RecipeAutomationSupport.workstation(recipe.value()).toString());
         if (!result.isEmpty()) {
-            tag.putString(RESULT_ITEM_KEY, BuiltInRegistries.ITEM.getKey(result.getItem()).toString());
+            ItemStack recordedResult = result.copyWithCount(1);
+            tag.putString(RESULT_ITEM_KEY,
+                    BuiltInRegistries.ITEM.getKey(recordedResult.getItem()).toString());
+            tag.put(RESULT_STACK_KEY, recordedResult.saveOptional(registries));
         }
         tag.putBoolean(FUZZY_KEY, !(recipe.value() instanceof CraftingRecipe crafting)
                 || !requiresStrictComponents(crafting));

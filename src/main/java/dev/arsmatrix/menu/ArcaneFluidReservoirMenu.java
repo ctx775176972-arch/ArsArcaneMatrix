@@ -4,6 +4,7 @@ import dev.arsmatrix.blockentity.ArcaneFluidReservoirBlockEntity;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModItems;
 import dev.arsmatrix.registry.ModMenus;
+import dev.arsmatrix.util.RemoteMenuAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -106,6 +107,6 @@ public final class ArcaneFluidReservoirMenu extends AbstractContainerMenu {
     }
     @Override public boolean stillValid(Player player) {
         return player.level().getBlockState(pos).is(ModBlocks.ARCANE_FLUID_RESERVOIR.get())
-                && player.distanceToSqr(pos.getCenter()) <= 64.0D;
+                && RemoteMenuAccess.isWithinUseRange(player, pos);
     }
 }

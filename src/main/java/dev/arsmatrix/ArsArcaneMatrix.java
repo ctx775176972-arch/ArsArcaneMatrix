@@ -72,6 +72,9 @@ public class ArsArcaneMatrix {
         NeoForge.EVENT_BUS.addListener(StarbuncleLogisticsProtectionEvents::onLevelSound);
         NeoForge.EVENT_BUS.addListener(SpellBookPedestalInteractionEvents::onRightClickBlock);
         NeoForge.EVENT_BUS.addListener(DeviceTierDebugInteractionEvents::onRightClickBlock);
+        NeoForge.EVENT_BUS.addListener(dev.arsmatrix.world.MatrixSkyblock::onLogin);
+        NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,
+                dev.arsmatrix.world.SkyblockFinalCleanup::onChunkLoad);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             modContainer.registerConfig(ModConfig.Type.CLIENT, MatrixClientConfig.SPEC,
                     "ars_arcane_matrix-client.toml");

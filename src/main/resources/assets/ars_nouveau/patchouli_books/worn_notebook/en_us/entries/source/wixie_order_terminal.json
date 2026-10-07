@@ -1,0 +1,26 @@
+{
+  "name": "block.ars_arcane_matrix.wixie_order_terminal",
+  "icon": "ars_arcane_matrix:wixie_order_terminal",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 17,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.crafting_network.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.crafting_network.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.crafting_network.minimum.text",
+      "title": "documentation.ars_arcane_matrix.crafting_network.minimum.title"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.crafting_network.workflow.text",
+      "title": "documentation.ars_arcane_matrix.crafting_network.workflow.title"
+    }
+  ]
+}

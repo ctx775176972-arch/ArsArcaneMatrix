@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"item": "ars_nouveau:magebloom", "count": 1},
+    {"item": "minecraft:ender_eye", "count": 1}
+  ],
+  "output": {"item": "minecraft:chorus_flower", "amount": 1},
+  "source_cost": 500,
+  "processing_ticks": 100
+}

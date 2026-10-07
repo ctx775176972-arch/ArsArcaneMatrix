@@ -44,7 +44,7 @@ import java.util.Optional;
 
 /** Essence-driven automatic crusher with common-tag ore compatibility. */
 public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements IWandable {
-    public static final int MAX_BATCH = 16;
+    public static final int MAX_BATCH = 64;
     public static final int CYCLE_TICKS = 100;
     private static final int OUTPUT_SLOTS = 36;
     private static final int WATER_ROLL_ITEMS = 16;

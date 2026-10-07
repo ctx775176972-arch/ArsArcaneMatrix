@@ -1,31 +1,13 @@
+param([string[]]$Only = @())
 $ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 $textureRoot = Join-Path $PSScriptRoot '..\src\main\resources\assets\ars_arcane_matrix\textures\block'
 $textureRoot = [System.IO.Path]::GetFullPath($textureRoot)
 
-$arsJar = Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot '..\libs') -Filter 'ars_nouveau-*.jar' -File |
-    Sort-Object Name -Descending | Select-Object -First 1
-if (-not $arsJar) { throw 'An Ars Nouveau jar is required in libs to rebuild native-style block textures.' }
-
-function Read-ArsTexture([string]$path) {
-    $archive = [System.IO.Compression.ZipFile]::OpenRead($arsJar.FullName)
-    try {
-        $entry = $archive.GetEntry("assets/ars_nouveau/textures/$path")
-        if (-not $entry) { throw "Missing Ars Nouveau texture: $path" }
-        $stream = $entry.Open()
-        try {
-            $temporary = [System.Drawing.Bitmap]::FromStream($stream)
-            try { return [System.Drawing.Bitmap]::new($temporary) } finally { $temporary.Dispose() }
-        } finally { $stream.Dispose() }
-    } finally { $archive.Dispose() }
-}
-
-$script:arsSourcestone = Read-ArsTexture 'block/sourcestone.png'
-$script:arsMosaic = Read-ArsTexture 'block/smooth_sourcestone_mosaic.png'
-$script:arsGilded = Read-ArsTexture 'block/gilded_sourcestone_mosaic.png'
+# All artwork below is drawn from geometric primitives. No upstream assets
+# are read, recolored, traced, or composited into the generated textures.
 
 function Color([string]$hex) {
     return [System.Drawing.ColorTranslator]::FromHtml($hex)
@@ -74,7 +56,10 @@ function Line([int]$x0, [int]$y0, [int]$x1, [int]$y1, [string]$color, [int]$widt
 }
 
 function End-Texture {
-    $script:bitmap.Save($script:target, [System.Drawing.Imaging.ImageFormat]::Png)
+    if ($Only.Count -eq 0 -or [IO.Path]::GetFileName($script:target) -in $Only) {
+        $script:bitmap.Save($script:target, [System.Drawing.Imaging.ImageFormat]::Png)
+        Write-Output ([IO.Path]::GetFileName($script:target))
+    }
     $script:graphics.Dispose()
     $script:bitmap.Dispose()
     $script:graphics = $null
@@ -96,9 +81,20 @@ function Draw-Casing([string]$accent = '#7C43A5', [string]$metal = '#B5633D', [s
 }
 
 function Draw-ArsCasing {
-    $script:graphics.DrawImage($script:arsGilded, [System.Drawing.Rectangle]::new(0, 0, 32, 32))
-    $script:graphics.DrawImage($script:arsMosaic, [System.Drawing.Rectangle]::new(3, 3, 26, 26))
-    $script:graphics.DrawImage($script:arsSourcestone, [System.Drawing.Rectangle]::new(6, 6, 20, 20))
+    # Historical function name retained for script compatibility.
+    Rect 0 0 32 32 '#302837'
+    Rect 2 2 28 28 '#69566F'
+    Rect 4 4 24 24 '#44394D'
+    Rect 6 6 20 20 '#514459'
+    Rect 2 2 28 2 '#958199'
+    Rect 2 4 2 26 '#7B6983'
+    Rect 4 28 26 2 '#302837'
+    foreach ($x in @(3, 25)) {
+        foreach ($y in @(3, 25)) {
+            Rect $x $y 4 4 '#9A684D'
+            Rect $x $y 3 1 '#C29570'
+        }
+    }
 }
 
 function Draw-MachinePanel([string]$accent) {
@@ -179,8 +175,20 @@ Rect 13 23 6 2 '#D6E2E5'
 Pixel 9 14 '#C9D9DE'; Pixel 11 12 '#91B7C7'; Pixel 23 15 '#E4EEF0'
 End-Texture
 
-# The advanced chamber texture is already a hand-authored 32x32 animation atlas.
-# Do not replace it with a cube face: Ars Nouveau's rotating Geo model reads the atlas directly.
+# Independently drawn low-detail material atlas for the animated chamber.
+# Deliberately uses broad bands instead of the original texture's pixel layout.
+Begin-Texture 'advanced_imbuement_chamber.png' '#44394D'
+Rect 0 0 32 6 '#69566F'; Rect 0 0 32 2 '#958199'
+Rect 0 6 32 3 '#9A684D'; Rect 0 6 32 1 '#C29570'
+Rect 0 14 32 2 '#302837'; Rect 0 16 32 6 '#69566F'
+Rect 0 22 32 3 '#9A684D'; Rect 0 22 32 1 '#C29570'
+Rect 0 30 32 2 '#302837'
+foreach ($x in @(4, 20)) {
+    Rect $x 10 8 2 '#825F9B'
+    Rect ($x + 3) 9 2 4 '#B595CC'
+    Rect $x 26 8 2 '#825F9B'
+}
+End-Texture
 Begin-Texture 'arcane_amplifier.png'
 Draw-Casing '#B65CE2' '#C48E42' '#3C1C50'
 Line 16 7 16 25 '#D86FFF' 2; Line 7 16 25 16 '#D86FFF' 2
@@ -257,19 +265,13 @@ Line 16 7 20 16 '#E7D477' 2; Line 16 25 12 16 '#7E5A2E' 2
 Draw-Gem 16 16 '#356F53' '#79D79F'
 End-Texture
 
-# Starbuncle hub: closely follows Ars Nouveau's 16px charm silhouette.
+# Starbuncle hub: independent parcel-and-star emblem.
 Begin-Texture 'starbuncle_logistics_hub.png'
 Draw-ArsCasing
-Rect 4 5 8 8 '#FFDA35'; Rect 20 5 8 8 '#FFDA35'
-Rect 6 7 8 9 '#E88938'; Rect 18 7 8 9 '#E88938'
-Rect 9 9 14 4 '#F8A85B'
-Rect 7 13 18 11 '#E9893B'
-Rect 9 11 14 12 '#171014'
-Rect 12 10 8 5 '#FFC192'
-Rect 11 16 3 3 '#F4F4E8'; Rect 18 16 3 3 '#F4F4E8'
-Rect 8 22 16 4 '#C56C2F'; Rect 11 24 10 3 '#E9913C'
-Rect 4 8 2 17 '#FFE23B'; Rect 26 8 2 17 '#D8A92D'
-Rect 6 24 4 3 '#FFD937'; Rect 22 24 4 3 '#D7A72A'
+Rect 9 14 14 11 '#9A684D'; Rect 10 15 12 8 '#C29570'
+Rect 15 14 2 11 '#69566F'; Rect 9 18 14 2 '#69566F'
+Line 16 7 16 13 '#E7C875' 2; Line 13 10 19 10 '#E7C875' 2
+Pixel 12 8 '#B595CC'; Pixel 21 12 '#B595CC'
 End-Texture
 
 # Mine core: fewer, larger ore/channel markers.
@@ -308,8 +310,41 @@ Rect 9 15 14 8 '#7D3CB0'; Rect 10 17 12 5 '#B75DE0'; Rect 12 18 8 3 '#D998F2'
 Rect 4 28 24 3 '#6C4B7C'; Rect 7 5 3 22 '#8A67A0'; Rect 22 5 3 22 '#493854'
 End-Texture
 
-$script:arsSourcestone.Dispose()
-$script:arsMosaic.Dispose()
-$script:arsGilded.Dispose()
+# Order pedestal: a restrained stone body and large parchment order emblem.
+Begin-Texture 'arcane_order_pedestal_stone.png' '#635D69'
+Rect 0 0 32 2 '#958D9A'
+Rect 0 2 2 28 '#817988'
+Rect 0 30 32 2 '#413A49'
+Rect 30 2 2 28 '#413A49'
+End-Texture
 
-Write-Output "Redrew all block textures as 32x32 PNGs in $textureRoot"
+Begin-Texture 'arcane_order_pedestal_trim.png' '#644481'
+Rect 0 0 32 3 '#9B76B5'
+Rect 0 27 32 5 '#402D54'
+Rect 0 23 32 3 '#C3A36B'
+End-Texture
+
+Begin-Texture 'arcane_order_pedestal_order.png' '#635D69'
+Rect 0 0 3 32 '#817988'
+Rect 29 0 3 32 '#413A49'
+Rect 6 3 21 27 '#413A49'
+Rect 5 2 21 27 '#C3A36B'
+Rect 7 4 17 23 '#E8D6AC'
+Rect 5 2 21 3 '#F4E5C4'
+Rect 5 26 21 3 '#C3A36B'
+Rect 10 9 11 2 '#80664D'
+Rect 10 14 11 2 '#80664D'
+Rect 10 19 6 2 '#80664D'
+Rect 19 20 5 5 '#644481'
+Rect 20 20 3 2 '#9B76B5'
+End-Texture
+
+Begin-Texture 'arcane_order_pedestal_top.png' '#644481'
+Rect 2 2 28 28 '#9B76B5'
+Rect 4 4 24 24 '#413A49'
+Rect 6 6 20 20 '#635D69'
+Rect 11 11 10 10 '#C3A36B'
+Rect 13 13 6 6 '#644481'
+End-Texture
+
+Write-Output "Generated selected independent 32x32 textures in $textureRoot"

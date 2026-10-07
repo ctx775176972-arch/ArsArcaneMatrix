@@ -1,0 +1,16 @@
+{
+  "type": "ars_nouveau:imbuement",
+  "input": {
+    "item": "minecraft:bucket"
+  },
+  "output": {
+    "count": 1,
+    "id": "minecraft:milk_bucket"
+  },
+  "pedestalItems": [
+    {
+      "type": "ars_arcane_matrix:cow_mob_jar"
+    }
+  ],
+  "source": 20
+}

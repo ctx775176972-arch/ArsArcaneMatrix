@@ -27,9 +27,14 @@ import java.util.List;
 
 /** Client-local range diagnostics for the Wixie crafting network. */
 public final class WixieRangeRenderer {
+    private static final int RANGE_NONE = 0;
+    private static final int RANGE_PROVIDER = 1;
+    private static final int RANGE_TERMINAL = 2;
+    private static final int RANGE_PEDESTAL = 3;
+    private static final int RANGE_LECTERN = 4;
     private static BlockPos activePos;
     private static ResourceKey<Level> activeDimension;
-    private static RangeType activeType;
+    private static int activeType = RANGE_NONE;
     private static long lastScanTime = Long.MIN_VALUE;
     private static List<BlockPos> detected = List.of();
 
@@ -38,8 +43,8 @@ public final class WixieRangeRenderer {
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!event.getLevel().isClientSide || event.getHand() != InteractionHand.MAIN_HAND
                 || !event.getItemStack().isEmpty() || !event.getEntity().isShiftKeyDown()) return;
-        RangeType type = typeOf(event.getLevel().getBlockState(event.getPos()).getBlock());
-        if (type == null) return;
+        int type = typeOf(event.getLevel().getBlockState(event.getPos()).getBlock());
+        if (type == RANGE_NONE) return;
         boolean closing = event.getPos().equals(activePos)
                 && event.getLevel().dimension().equals(activeDimension) && type == activeType;
         if (closing) {
@@ -78,9 +83,9 @@ public final class WixieRangeRenderer {
         }
         int horizontal = horizontalRadius();
         int vertical = verticalRadius();
-        float[] color = activeType == RangeType.PROVIDER
+        float[] color = activeType == RANGE_PROVIDER
                 ? new float[]{0.25F, 0.65F, 1.0F}
-                : activeType == RangeType.PEDESTAL
+                : activeType == RANGE_PEDESTAL
                     ? new float[]{1.0F, 0.68F, 0.15F}
                     : new float[]{0.72F, 0.30F, 1.0F};
 
@@ -106,7 +111,7 @@ public final class WixieRangeRenderer {
     }
 
     private static void refreshDetected(Level level) {
-        if (activePos == null || activeType == null) return;
+        if (activePos == null || activeType == RANGE_NONE) return;
         if (!MatrixClientConfig.WIXIE_HIGHLIGHT_DEVICES.get()) {
             detected = List.of();
             lastScanTime = Long.MIN_VALUE;
@@ -121,11 +126,12 @@ public final class WixieRangeRenderer {
                 .forEach(pos -> {
                     BlockEntity blockEntity = level.getBlockEntity(pos);
                     boolean matches = switch (activeType) {
-                        case PROVIDER -> blockEntity instanceof WixieCauldronTile;
-                        case TERMINAL, LECTERN -> level.getBlockState(pos).is(ModBlocks.WIXIE_PATTERN_PROVIDER.get())
+                        case RANGE_PROVIDER -> blockEntity instanceof WixieCauldronTile;
+                        case RANGE_TERMINAL, RANGE_LECTERN -> level.getBlockState(pos).is(ModBlocks.WIXIE_PATTERN_PROVIDER.get())
                                 || level.getBlockState(pos).is(ModBlocks.ARCANE_ORDER_PEDESTAL.get());
-                        case PEDESTAL -> level.getBlockState(pos).is(ModBlocks.WIXIE_ORDER_TERMINAL.get())
+                        case RANGE_PEDESTAL -> level.getBlockState(pos).is(ModBlocks.WIXIE_ORDER_TERMINAL.get())
                                 || level.getBlockState(pos).is(ModBlocks.ADVANCED_STORAGE_LECTERN.get());
+                        default -> false;
                     };
                     if (matches) found.add(pos.immutable());
                 });
@@ -134,23 +140,23 @@ public final class WixieRangeRenderer {
     }
 
     private static int horizontalRadius() {
-        return activeType == RangeType.PROVIDER
+        return activeType == RANGE_PROVIDER
                 ? WixiePatternProviderBlockEntity.WORKSTATION_RADIUS
                 : WixieOrderTerminalBlockEntity.NETWORK_RADIUS;
     }
 
     private static int verticalRadius() {
-        return activeType == RangeType.PROVIDER
+        return activeType == RANGE_PROVIDER
                 ? WixiePatternProviderBlockEntity.WORKSTATION_VERTICAL_RADIUS
                 : WixieOrderTerminalBlockEntity.NETWORK_RADIUS;
     }
 
-    private static RangeType typeOf(Block block) {
-        if (block == ModBlocks.WIXIE_PATTERN_PROVIDER.get()) return RangeType.PROVIDER;
-        if (block == ModBlocks.WIXIE_ORDER_TERMINAL.get()) return RangeType.TERMINAL;
-        if (block == ModBlocks.ARCANE_ORDER_PEDESTAL.get()) return RangeType.PEDESTAL;
-        if (block == ModBlocks.ADVANCED_STORAGE_LECTERN.get()) return RangeType.LECTERN;
-        return null;
+    private static int typeOf(Block block) {
+        if (block == ModBlocks.WIXIE_PATTERN_PROVIDER.get()) return RANGE_PROVIDER;
+        if (block == ModBlocks.WIXIE_ORDER_TERMINAL.get()) return RANGE_TERMINAL;
+        if (block == ModBlocks.ARCANE_ORDER_PEDESTAL.get()) return RANGE_PEDESTAL;
+        if (block == ModBlocks.ADVANCED_STORAGE_LECTERN.get()) return RANGE_LECTERN;
+        return RANGE_NONE;
     }
 
     private static void display(String key) {
@@ -161,10 +167,8 @@ public final class WixieRangeRenderer {
     private static void clear() {
         activePos = null;
         activeDimension = null;
-        activeType = null;
+        activeType = RANGE_NONE;
         detected = List.of();
         lastScanTime = Long.MIN_VALUE;
     }
-
-    private enum RangeType { PROVIDER, TERMINAL, PEDESTAL, LECTERN }
 }

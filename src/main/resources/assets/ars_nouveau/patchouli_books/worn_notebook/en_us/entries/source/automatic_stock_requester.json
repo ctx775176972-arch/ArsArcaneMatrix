@@ -1,0 +1,20 @@
+{
+  "name": "block.ars_arcane_matrix.automatic_stock_requester",
+  "icon": "ars_arcane_matrix:automatic_stock_requester",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 26,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.stock_requester.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.stock_requester.setup"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.stock_requester.upgrades"
+    }
+  ]
+}

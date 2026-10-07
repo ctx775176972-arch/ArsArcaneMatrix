@@ -1,0 +1,24 @@
+{
+  "name": "block.ars_arcane_matrix.arcane_processor_core",
+  "icon": "ars_arcane_matrix:arcane_processor_core",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 11,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_processor.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_processor.operation"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_processor.tools"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.multiblock.prototype"
+    }
+  ]
+}

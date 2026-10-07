@@ -1,0 +1,19 @@
+{
+  "category": "ars_nouveau:rituals",
+  "icon": "ars_arcane_matrix:chunk_excavation",
+  "name": "Deep Excavation",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Deep Excavation starts below the Ritual Brazier and mines one complete layer of its chunk each second. Each layer containing mineable blocks costs 1,000 Source. The ritual pauses when Source or nearby storage is insufficient, continues to the bottom of the world, and leaves Bedrock and other unbreakable blocks in place."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ars_arcane_matrix:chunk_excavation"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The ritual uses iron-tier mining by default, enough for ordinary Overworld ores. Add an Emerald to preserve ores for Fortune processing, a Sponge to remove fluids such as lava seas, and a Diamond for diamond-tier blocks such as Obsidian and Ancient Debris. All three augments may be combined. Containers, machines, and other data-bearing blocks are preserved."
+    }
+  ]
+}

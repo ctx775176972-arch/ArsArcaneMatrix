@@ -15,7 +15,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Place one Mob Jar above the Grounds and at least two Arcane Pedestals within two horizontal blocks. Conjuration Essence supplies 10 points and a Condensed Summoning Core supplies 100. The creature only selects the target."
+      "text": "Place one Mob Jar above the Grounds and at least one ordinary inventory nearby. The Grounds consumes catalysts directly from it: Conjuration Essence supplies 10 points and a Condensed Summoning Core supplies 100. The creature only selects the target."
     },
     {
       "type": "patchouli:text",

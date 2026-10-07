@@ -41,7 +41,13 @@ public final class ArcaneReactionVesselBlock extends BaseEntityBlock {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (stack.is(ItemsRegistry.DOMINION_ROD.get())) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (stack.is(ItemsRegistry.DOMINION_ROD.get())) {
+            if (!level.isClientSide
+                    && level.getBlockEntity(pos) instanceof ArcaneReactionVesselBlockEntity vessel) {
+                vessel.toggleWixieAutomation(player);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (level.getBlockEntity(pos) instanceof ArcaneReactionVesselBlockEntity vessel
                 && FluidUtil.interactWithFluidHandler(player, hand, vessel.fluidHandler(hit.getDirection())))
             return ItemInteractionResult.sidedSuccess(level.isClientSide);

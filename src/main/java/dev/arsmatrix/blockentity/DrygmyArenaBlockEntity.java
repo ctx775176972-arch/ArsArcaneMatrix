@@ -1,7 +1,6 @@
 package dev.arsmatrix.blockentity;
 
 import com.hollingsworth.arsnouveau.api.util.BlockUtil;
-import com.hollingsworth.arsnouveau.common.block.tile.ArcanePedestalTile;
 import com.hollingsworth.arsnouveau.common.block.tile.MobJarTile;
 import com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry;
 import dev.arsmatrix.data.ArcaneHuntingRule;
@@ -9,6 +8,7 @@ import dev.arsmatrix.data.ArcaneHuntingRuleManager;
 import dev.arsmatrix.config.MatrixConfig;
 import dev.arsmatrix.registry.ModBlockEntities;
 import dev.arsmatrix.registry.ModItems;
+import dev.arsmatrix.util.StructureInventoryAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
@@ -38,8 +38,6 @@ import java.util.List;
 /** Produces data-driven special rewards for the single Mob Jar directly above it. */
 public final class DrygmyArenaBlockEntity extends BlockEntity {
     private static final int OUTPUT_SLOTS = 128;
-    private static final int PEDESTAL_RADIUS = 2;
-    private static final int REQUIRED_PEDESTALS = 2;
     private static final int NORMAL_CATALYST_POINTS = 10;
     private static final int CONDENSED_CATALYST_POINTS = 100;
 
@@ -47,6 +45,10 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
     private final IItemHandler outputHandler = new OutputHandler();
     private int progressTicks;
     private int catalystPoints;
+    /** Portion of catalystPoints supplied by Condensed Summoning Cores. */
+    private int condensedCatalystPoints;
+    /** Catalyst mode is fixed when a cycle starts so its duration cannot jump mid-cycle. */
+    private boolean condensedCycleActive;
     private long tickCounter;
     private OperatingState operatingState = OperatingState.NO_JAR;
     @Nullable private ResourceLocation targetEntityId;
@@ -61,14 +63,17 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
         tickCounter++;
         if (tickCounter % 20 == 0) flushOutputs();
 
-        if (level.hasNeighborSignal(worldPosition)) {
+        // The Mob Jar is directly above the Grounds. Read a virtual control line around the
+        // block below instead of powering the Grounds and accidentally activating that jar.
+        if (level.hasNeighborSignal(worldPosition.below())) {
             setOperatingState(OperatingState.REDSTONE_PAUSED);
             return;
         }
 
-        List<ArcanePedestalTile> pedestals = nearbyPedestals();
-        if (pedestals.size() < REQUIRED_PEDESTALS) {
+        List<IItemHandler> catalystContainers = nearbyCatalystContainers(level, worldPosition);
+        if (catalystContainers.isEmpty()) {
             progressTicks = 0;
+            condensedCycleActive = false;
             setOperatingState(OperatingState.UNFORMED);
             return;
         }
@@ -76,6 +81,7 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
         Entity target = findJarTarget();
         if (target == null) {
             progressTicks = 0;
+            condensedCycleActive = false;
             updateTarget(null, 0);
             setOperatingState(level.getBlockEntity(worldPosition.above()) instanceof MobJarTile
                     ? OperatingState.INVALID_TARGET : OperatingState.NO_JAR);
@@ -86,6 +92,7 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
         updateTarget(EntityType.getKey(target.getType()), rule == null ? 0 : rule.pointCost());
         if (rule == null) {
             progressTicks = 0;
+            condensedCycleActive = false;
             setOperatingState(OperatingState.NO_RULE);
             return;
         }
@@ -96,13 +103,32 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
 
         if (catalystPoints < rule.pointCost()) {
             progressTicks = 0;
-            if (tickCounter % 20 == 0) consumeCatalysts(pedestals, rule.pointCost());
+            condensedCycleActive = false;
+            if (tickCounter % 20 == 0) {
+                // Always look for the advanced catalyst first, independent of container order.
+                consumeCatalysts(catalystContainers, rule.pointCost(), true);
+                if (catalystPoints < rule.pointCost()) {
+                    consumeCatalysts(catalystContainers, rule.pointCost(), false);
+                }
+            }
             setOperatingState(catalystPoints >= rule.pointCost()
                     ? OperatingState.PROCESSING : OperatingState.NEEDS_CATALYST);
             return;
         }
 
-        int cycleTicks = getCycleTicks();
+        if (progressTicks == 0) {
+            // Begin cycles on the catalyst scan boundary. This gives a newly supplied advanced
+            // catalyst the same priority even when ordinary points remain buffered from before.
+            if (tickCounter % 20 != 0) {
+                setOperatingState(OperatingState.PROCESSING);
+                return;
+            }
+            if (condensedCatalystPoints < rule.pointCost()) {
+                consumeCatalysts(catalystContainers, rule.pointCost(), true);
+            }
+            condensedCycleActive = condensedCatalystPoints >= rule.pointCost();
+        }
+        int cycleTicks = effectiveCycleTicks(condensedCycleActive);
         if (++progressTicks < cycleTicks) {
             setOperatingState(OperatingState.PROCESSING);
             if (progressTicks % 20 == 0) setChangedAndSyncClient();
@@ -119,42 +145,59 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
             setOperatingState(OperatingState.OUTPUT_BLOCKED);
             return;
         }
-        catalystPoints -= rule.pointCost();
-        outputs.forEach(this::mergePendingDrop);
+        consumeCyclePoints(rule.pointCost(), condensedCycleActive);
+        int outputMultiplier = condensedCycleActive
+                ? MatrixConfig.DRYGMY_ARENA_CONDENSED_OUTPUT_MULTIPLIER.get() : 1;
+        outputs.forEach(stack -> mergePendingDrop(multiplied(stack, outputMultiplier)));
         progressTicks = 0;
+        condensedCycleActive = false;
         flushOutputs();
         playCompletionEffect(serverLevel);
         setOperatingState(OperatingState.PROCESSING);
         setChangedAndSyncClient();
     }
 
-    private List<ArcanePedestalTile> nearbyPedestals() {
-        List<ArcanePedestalTile> found = new ArrayList<>();
+    private static List<IItemHandler> nearbyCatalystContainers(Level level, BlockPos center) {
+        List<IItemHandler> found = new ArrayList<>();
         if (level == null) return found;
-        for (int y = -1; y <= 2; y++) {
-            for (int x = -PEDESTAL_RADIUS; x <= PEDESTAL_RADIUS; x++) {
-                for (int z = -PEDESTAL_RADIUS; z <= PEDESTAL_RADIUS; z++) {
+        // Only the 26 blocks immediately surrounding the Grounds may supply catalysts.
+        // A wider scan could accidentally consume Conjuration Essence from nearby automation.
+        for (int y = -1; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
                     if (x == 0 && y == 0 && z == 0) continue;
-                    if (level.getBlockEntity(worldPosition.offset(x, y, z)) instanceof ArcanePedestalTile pedestal) {
-                        found.add(pedestal);
-                    }
+                    IItemHandler handler = StructureInventoryAccess.at(level, center.offset(x, y, z));
+                    if (handler != null) found.add(handler);
                 }
             }
         }
         return found;
     }
 
-    private void consumeCatalysts(List<ArcanePedestalTile> pedestals, int targetPoints) {
-        int consumed = 0;
-        for (ArcanePedestalTile pedestal : pedestals) {
-            if (catalystPoints >= targetPoints || consumed >= REQUIRED_PEDESTALS) break;
-            ItemStack stack = pedestal.getStack();
-            int value = catalystValue(stack);
-            if (value <= 0) continue;
-            pedestal.removeItem(0, 1);
-            consumed++;
-            catalystPoints = Math.min(Integer.MAX_VALUE - value, catalystPoints) + value;
-            pedestal.setChanged();
+    private void consumeCatalysts(List<IItemHandler> containers, int targetPoints,
+                                  boolean condensedOnly) {
+        for (IItemHandler container : containers) {
+            for (int slot = 0; slot < container.getSlots()
+                    && (condensedOnly ? condensedCatalystPoints : catalystPoints) < targetPoints; slot++) {
+                ItemStack stack = container.getStackInSlot(slot);
+                boolean condensed = stack.is(ModItems.CONDENSED_SUMMONING_CATALYST.get());
+                if (condensedOnly != condensed) continue;
+                int value = catalystValue(stack);
+                if (value <= 0) continue;
+                int availablePoints = condensedOnly ? condensedCatalystPoints : catalystPoints;
+                int missingPoints = targetPoints - availablePoints;
+                int requestedItems = Math.max(1, Math.ceilDiv(missingPoints, value));
+                ItemStack extracted = container.extractItem(slot, requestedItems, false);
+                if (extracted.isEmpty()) continue;
+                long suppliedPoints = (long) extracted.getCount() * value;
+                catalystPoints = (int) Math.min(Integer.MAX_VALUE,
+                        (long) catalystPoints + suppliedPoints);
+                if (condensed) {
+                    condensedCatalystPoints = (int) Math.min(Integer.MAX_VALUE,
+                            (long) condensedCatalystPoints + suppliedPoints);
+                }
+            }
+            if ((condensedOnly ? condensedCatalystPoints : catalystPoints) >= targetPoints) break;
         }
         setChangedAndSyncClient();
     }
@@ -163,6 +206,30 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
         if (stack.is(ModItems.CONDENSED_SUMMONING_CATALYST.get())) return CONDENSED_CATALYST_POINTS;
         if (stack.is(ItemsRegistry.CONJURATION_ESSENCE.get())) return NORMAL_CATALYST_POINTS;
         return 0;
+    }
+
+    private void consumeCyclePoints(int cost, boolean condensedCycle) {
+        if (condensedCycle) {
+            condensedCatalystPoints = Math.max(0, condensedCatalystPoints - cost);
+        } else {
+            int normalPoints = Math.max(0, catalystPoints - condensedCatalystPoints);
+            int condensedUsed = Math.max(0, cost - normalPoints);
+            condensedCatalystPoints = Math.max(0, condensedCatalystPoints - condensedUsed);
+        }
+        catalystPoints = Math.max(0, catalystPoints - cost);
+    }
+
+    private static ItemStack multiplied(ItemStack stack, int multiplier) {
+        if (stack.isEmpty() || multiplier <= 1) return stack;
+        long count = (long) stack.getCount() * multiplier;
+        return stack.copyWithCount((int) Math.min(Integer.MAX_VALUE, count));
+    }
+
+    private static int effectiveCycleTicks(boolean condensedCycle) {
+        int base = MatrixConfig.DRYGMY_ARENA_CYCLE_TICKS.get();
+        return condensedCycle
+                ? Math.max(20, Math.ceilDiv(base, MatrixConfig.DRYGMY_ARENA_CONDENSED_SPEED_DIVISOR.get()))
+                : base;
     }
 
     @Nullable
@@ -229,18 +296,16 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
 
     public static boolean isStructureFormed(Level level, BlockPos pos) {
         if (!(level.getBlockEntity(pos.above()) instanceof MobJarTile)) return false;
-        int count = 0;
-        for (int y = -1; y <= 2; y++) for (int x = -PEDESTAL_RADIUS; x <= PEDESTAL_RADIUS; x++)
-            for (int z = -PEDESTAL_RADIUS; z <= PEDESTAL_RADIUS; z++)
-                if (!(x == 0 && y == 0 && z == 0)
-                        && level.getBlockEntity(pos.offset(x, y, z)) instanceof ArcanePedestalTile
-                        && ++count >= REQUIRED_PEDESTALS) return true;
-        return false;
+        return !nearbyCatalystContainers(level, pos).isEmpty();
     }
 
     public IItemHandler getItemHandler() { return outputHandler; }
     public int getProgressTicks() { return progressTicks; }
-    public int getCycleTicks() { return MatrixConfig.DRYGMY_ARENA_CYCLE_TICKS.get(); }
+    public int getCycleTicks() {
+        return effectiveCycleTicks(progressTicks > 0
+                ? condensedCycleActive
+                : requiredPoints > 0 && condensedCatalystPoints >= requiredPoints);
+    }
     public int getBufferedItemCount() { return pendingDrops.stream().mapToInt(ItemStack::getCount).sum(); }
     public OperatingState getOperatingState() { return operatingState; }
     public int getCatalystPoints() { return catalystPoints; }
@@ -263,6 +328,8 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
         super.saveAdditional(tag, registries);
         tag.putInt("ProgressTicks", progressTicks);
         tag.putInt("CatalystPoints", catalystPoints);
+        tag.putInt("CondensedCatalystPoints", condensedCatalystPoints);
+        tag.putBoolean("CondensedCycleActive", condensedCycleActive);
         tag.putInt("RequiredPoints", requiredPoints);
         tag.putString("OperatingState", operatingState.name());
         if (targetEntityId != null) tag.putString("TargetEntity", targetEntityId.toString());
@@ -275,6 +342,9 @@ public final class DrygmyArenaBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         progressTicks = Math.max(0, tag.getInt("ProgressTicks"));
         catalystPoints = Math.max(0, tag.getInt("CatalystPoints"));
+        condensedCatalystPoints = Math.min(catalystPoints,
+                Math.max(0, tag.getInt("CondensedCatalystPoints")));
+        condensedCycleActive = tag.getBoolean("CondensedCycleActive");
         requiredPoints = Math.max(0, tag.getInt("RequiredPoints"));
         try { operatingState = OperatingState.valueOf(tag.getString("OperatingState")); }
         catch (IllegalArgumentException ignored) { operatingState = OperatingState.NO_JAR; }

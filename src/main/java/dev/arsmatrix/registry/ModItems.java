@@ -12,6 +12,7 @@ import dev.arsmatrix.item.StarbuncleLogisticsHubItem;
 import dev.arsmatrix.item.ArcaneOrderPedestalItem;
 import dev.arsmatrix.item.AutomaticStockRequesterItem;
 import dev.arsmatrix.item.DeviceTierDebugToolItem;
+import dev.arsmatrix.item.MachineUpgradeComponentItem;
 import dev.arsmatrix.ritual.RareCreatureSummoningRitual;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -28,9 +29,8 @@ public final class ModItems {
 
     public static final DeferredRegister.Items ITEMS =
             DeferredRegister.createItems(ArsArcaneMatrix.MOD_ID);
-    // Unreleased prototype: intentionally absent from recipes and the creative tab.
-    public static final DeferredItem<dev.arsmatrix.item.WizardsPocketWatchItem> WIZARDS_POCKET_WATCH =
-            ITEMS.register("wizards_pocket_watch", dev.arsmatrix.item.WizardsPocketWatchItem::new);
+    public static final DeferredItem<dev.arsmatrix.item.EnchantersPocketWatchItem> ENCHANTERS_POCKET_WATCH =
+            ITEMS.register("enchanters_pocket_watch", dev.arsmatrix.item.EnchantersPocketWatchItem::new);
 
     public static final DeferredItem<BlockItem> MATRIX_CORE =
             ITEMS.registerSimpleBlockItem("matrix_core", ModBlocks.MATRIX_CORE, new Item.Properties());
@@ -49,6 +49,16 @@ public final class ModItems {
 
     public static final DeferredItem<DeviceTierDebugToolItem> DEVICE_TIER_DEBUG_TOOL = ITEMS.register(
             "device_tier_debug_tool", () -> new DeviceTierDebugToolItem(new Item.Properties()));
+
+    public static final DeferredItem<MachineUpgradeComponentItem> ENCHANTED_MACHINE_UPGRADE_COMPONENT = ITEMS.register(
+            "enchanted_machine_upgrade_component",
+            () -> new MachineUpgradeComponentItem(new Item.Properties(), 1));
+    public static final DeferredItem<MachineUpgradeComponentItem> CASTING_MACHINE_UPGRADE_COMPONENT = ITEMS.register(
+            "casting_machine_upgrade_component",
+            () -> new MachineUpgradeComponentItem(new Item.Properties(), 2));
+    public static final DeferredItem<MachineUpgradeComponentItem> ENRICHED_MACHINE_UPGRADE_COMPONENT = ITEMS.register(
+            "enriched_machine_upgrade_component",
+            () -> new MachineUpgradeComponentItem(new Item.Properties(), 3));
 
     public static final DeferredItem<BlockItem> ARCANE_PROCESSOR_CORE = ITEMS.registerSimpleBlockItem(
             "arcane_processor_core", ModBlocks.ARCANE_PROCESSOR_CORE, new Item.Properties());
@@ -209,6 +219,10 @@ public final class ModItems {
     );
 
     public static void register(IEventBus eventBus) {
+        ITEMS.addAlias(
+                ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "wizards_pocket_watch"),
+                ResourceLocation.fromNamespaceAndPath(ArsArcaneMatrix.MOD_ID, "enchanters_pocket_watch")
+        );
         // Ars Nouveau automatically creates the ritual tablet at the ritual registry id.
         // Keep the old, manually registered id as an alias so existing saves migrate safely.
         ITEMS.addAlias(

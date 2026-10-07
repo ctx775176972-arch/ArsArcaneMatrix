@@ -8,7 +8,6 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
@@ -17,15 +16,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-/** Encodes smelting or smoking recipes from an Advanced Storage Lectern. */
+/** Encodes smelting or smoking recipes from either Wixie ordering interface. */
 public final class CookingGuideRecipeTransferHandler<T extends AbstractCookingRecipe>
         implements IRecipeTransferHandler<WixieOrderTerminalMenu, RecipeHolder<T>> {
-    private final IRecipeTransferHandlerHelper helper;
     private final RecipeType<RecipeHolder<T>> recipeType;
 
     public CookingGuideRecipeTransferHandler(
             IRecipeTransferHandlerHelper helper, RecipeType<RecipeHolder<T>> recipeType) {
-        this.helper = helper;
         this.recipeType = recipeType;
     }
 
@@ -44,17 +41,8 @@ public final class CookingGuideRecipeTransferHandler<T extends AbstractCookingRe
     public IRecipeTransferError transferRecipe(
             WixieOrderTerminalMenu menu, RecipeHolder<T> recipe, IRecipeSlotsView recipeSlots,
             Player player, boolean maxTransfer, boolean doTransfer) {
-        if (!menu.isAdvancedStorage()) {
-            return helper.createUserErrorWithTooltip(Component.translatable(
-                    "jei.ars_arcane_matrix.crafting_guide.advanced_required"));
-        }
         if (doTransfer) {
-            int buttonId = WixieOrderTerminalMenu.recipeEncodingButton(recipe.id());
-            menu.clickMenuButton(player, buttonId);
-            Minecraft minecraft = Minecraft.getInstance();
-            if (minecraft.gameMode != null) {
-                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, buttonId);
-            }
+            GuideEncodingTransfer.submit(menu, player, recipe.id());
         }
         return null;
     }

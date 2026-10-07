@@ -164,7 +164,11 @@ public final class SuperSourceJarCoreBlockEntity extends BlockEntity
     @Override public int getSource() { return storage.getSource(); }
     @Override public int getMaxSource() { return structureFormed ? CAPACITY : 0; }
     @Override public int setSource(int source) {
+        int before = storage.getSource();
         storage.setSource(Math.max(0, Math.min(CAPACITY, source)));
+        // SourceStorage#setSource bypasses onContentsChanged; the network
+        // extraction path therefore needs an explicit client/HUD update.
+        if (storage.getSource() != before) sync();
         return storage.getSource();
     }
     @Override public int addSource(int amount) {

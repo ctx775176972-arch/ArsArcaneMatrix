@@ -84,6 +84,16 @@ public abstract class DrygmyTileEnhancementMixin {
         if (tile.getLevel() instanceof ServerLevel level) {
             ANFakePlayer.getPlayer(level).setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
+            // Loot/enchantment hooks may mutate the real tool stack on the
+            // pedestal without notifying its block entity. Force the pedestal
+            // update after every Drygmy payout so its rendered durability and
+            // inspection data do not remain stale until the next interaction.
+            ArcanePedestalTile pedestal = arsMatrix$adjacentToolPedestal(level, tile);
+            if (pedestal != null) {
+                pedestal.setChanged();
+                pedestal.updateBlock();
+            }
+
             // Vanilla only retries every 80 ticks. Prepay the next operation
             // immediately so Sharpness acceleration does not introduce idle time
             // or a misleading transient "needs Source" status.
@@ -101,16 +111,22 @@ public abstract class DrygmyTileEnhancementMixin {
 
     @Unique
     private static ItemStack arsMatrix$adjacentTool(ServerLevel level, DrygmyTile tile) {
+        ArcanePedestalTile pedestal = arsMatrix$adjacentToolPedestal(level, tile);
+        return pedestal == null ? ItemStack.EMPTY : pedestal.getItem(0);
+    }
+
+    @Unique
+    private static ArcanePedestalTile arsMatrix$adjacentToolPedestal(ServerLevel level, DrygmyTile tile) {
         // Direction.values() deliberately matches Ars Delight's pedestal choice.
         for (Direction direction : Direction.values()) {
             if (level.getBlockEntity(tile.getBlockPos().relative(direction))
                     instanceof ArcanePedestalTile pedestal) {
                 ItemStack stack = pedestal.getItem(0);
                 if (!stack.isEmpty() && !stack.isStackable()) {
-                    return stack;
+                    return pedestal;
                 }
             }
         }
-        return ItemStack.EMPTY;
+        return null;
     }
 }

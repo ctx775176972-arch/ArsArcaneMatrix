@@ -3,6 +3,7 @@ package dev.arsmatrix.menu;
 import dev.arsmatrix.blockentity.AutomaticStockRequesterBlockEntity;
 import dev.arsmatrix.registry.ModBlocks;
 import dev.arsmatrix.registry.ModMenus;
+import dev.arsmatrix.util.RemoteMenuAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -161,7 +162,6 @@ public final class AutomaticStockRequesterMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return player.level().getBlockState(requesterPos).is(ModBlocks.AUTOMATIC_STOCK_REQUESTER.get())
-                && player.distanceToSqr(requesterPos.getX() + 0.5D,
-                        requesterPos.getY() + 0.5D, requesterPos.getZ() + 0.5D) <= 64.0D;
+                && RemoteMenuAccess.isWithinUseRange(player, requesterPos);
     }
 }

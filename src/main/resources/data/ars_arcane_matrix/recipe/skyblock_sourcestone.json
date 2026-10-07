@@ -1,0 +1,10 @@
+{
+  "neoforge:conditions": [{ "type": "ars_arcane_matrix:optional_recipe", "feature": "skyblock" }],
+  "type": "ars_nouveau:crush",
+  "input": { "item": "ars_nouveau:sourcestone" },
+  "skip_block_place": true,
+  "output": [
+    { "chance": 1, "maxRange": 1, "stack": { "id": "minecraft:redstone", "count": 1 } },
+    { "chance": 0.01, "maxRange": 1, "stack": { "id": "minecraft:diamond", "count": 1 } }
+  ]
+}

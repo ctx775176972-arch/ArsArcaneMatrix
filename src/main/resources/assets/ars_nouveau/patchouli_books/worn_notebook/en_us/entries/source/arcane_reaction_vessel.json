@@ -1,9 +1,31 @@
 {
-  "name":"Arcane Reaction Vessel","icon":"ars_arcane_matrix:arcane_reaction_vessel","category":"ars_nouveau:ars_arcane_matrix",
-  "pages":[
-    {"type":"patchouli:text","text":"documentation.ars_arcane_matrix.arcane_reaction_vessel"},
-    {"type":"patchouli:text","text":"The vessel has two item inputs, one item output, and one fluid tank. Required items, fluid, and Source are reserved when a recipe starts and consumed together when it finishes. Items and fluids may enter or leave from any side."},
-    {"type":"patchouli:text","text":"An empty bucket can package 1,000 mB of water, lava, or milk in one second without Source. Filled buckets do not stack, so remove them with a hopper or similar device. See Arcane Reaction in JEI for exact recipes and costs."},
-    {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_reaction_vessel"}
+  "name": "block.ars_arcane_matrix.arcane_reaction_vessel",
+  "icon": "ars_arcane_matrix:arcane_reaction_vessel",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.operation"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.operation.details"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.resources"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.nature"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ars_arcane_matrix:arcane_reaction_vessel"
+    }
   ]
 }

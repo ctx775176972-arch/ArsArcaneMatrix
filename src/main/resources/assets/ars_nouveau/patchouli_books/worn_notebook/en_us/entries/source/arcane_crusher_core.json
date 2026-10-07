@@ -1,0 +1,20 @@
+{
+  "name": "block.ars_arcane_matrix.arcane_crusher_core",
+  "icon": "ars_arcane_matrix:arcane_crusher_core",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 13,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_crusher.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_crusher.overview.details"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.multiblock.prototype"
+    }
+  ]
+}

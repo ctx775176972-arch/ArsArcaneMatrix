@@ -1,0 +1,26 @@
+{
+  "name": "documentation.ars_arcane_matrix.roadmap.title",
+  "icon": "ars_arcane_matrix:matrix_construction_wand",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.roadmap.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.roadmap.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.roadmap.progression.text",
+      "title": "documentation.ars_arcane_matrix.roadmap.progression.title"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.construction_wand.text",
+      "title": "documentation.ars_arcane_matrix.construction_wand.title"
+    }
+  ]
+}

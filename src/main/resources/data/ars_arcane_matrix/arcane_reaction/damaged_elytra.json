@@ -1,0 +1,13 @@
+{
+  "ingredients": [
+    {"item": "minecraft:phantom_membrane", "count": 64},
+    {"item": "minecraft:shulker_shell", "count": 16}
+  ],
+  "output": {
+    "item": "minecraft:elytra",
+    "amount": 1,
+    "damage": 431
+  },
+  "source_cost": 160000,
+  "processing_ticks": 1200
+}

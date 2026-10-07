@@ -79,7 +79,7 @@ public final class WixieOrderTerminalBlock extends BaseEntityBlock {
                 ), false);
             } else {
                 serverPlayer.openMenu(terminal, data -> WixieOrderTerminalMenu.writeOpeningData(
-                        data, pos, terminal.getCraftableRecipeInfos()));
+                        data, pos, level.dimension(), terminal.getCraftableRecipeInfos()));
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

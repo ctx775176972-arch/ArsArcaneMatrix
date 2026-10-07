@@ -50,6 +50,8 @@ public final class MatrixConfig {
     public static final ModConfigSpec.IntValue GENERATOR_DEFAULT_PROCESSING_COST;
     public static final ModConfigSpec.IntValue GENERATOR_PASSIVE_PROGRESS_PER_SECOND;
     public static final ModConfigSpec.IntValue DRYGMY_ARENA_CYCLE_TICKS;
+    public static final ModConfigSpec.IntValue DRYGMY_ARENA_CONDENSED_SPEED_DIVISOR;
+    public static final ModConfigSpec.IntValue DRYGMY_ARENA_CONDENSED_OUTPUT_MULTIPLIER;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -233,6 +235,14 @@ public final class MatrixConfig {
                 .comment("Ticks per special-output cycle. 6000 ticks equals five minutes. / 每次猎场生产的工作时间，单位为刻；6000刻约为5分钟。")
                 .translation("config.ars_arcane_matrix.drygmy_arena.cycleTicks")
                 .defineInRange("cycleTicks", 6_000, 20, 1_728_000);
+        DRYGMY_ARENA_CONDENSED_SPEED_DIVISOR = builder
+                .comment("Cycle speed divisor when the full point cost is paid with Condensed Summoning Cores. / 一次周期完全由凝魂召唤核心支付时的工作速度倍率。")
+                .translation("config.ars_arcane_matrix.drygmy_arena.condensedSpeedDivisor")
+                .defineInRange("condensedSpeedDivisor", 4, 1, 64);
+        DRYGMY_ARENA_CONDENSED_OUTPUT_MULTIPLIER = builder
+                .comment("Output multiplier when the full point cost is paid with Condensed Summoning Cores. / 一次周期完全由凝魂召唤核心支付时的产物倍率。")
+                .translation("config.ars_arcane_matrix.drygmy_arena.condensedOutputMultiplier")
+                .defineInRange("condensedOutputMultiplier", 4, 1, 64);
         builder.pop();
         builder.push("creatures");
         ENABLE_ALAKARKINOS_EXPEDITIONS = builder

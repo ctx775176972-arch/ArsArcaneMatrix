@@ -310,9 +310,10 @@ public final class ModBlocks {
                     () -> new DrygmyArenaBlock(
                             BlockBehaviour.Properties.of()
                                     .strength(50.0F, 1200.0F)
-                                    .requiresCorrectToolForDrops()
-                                    .noOcclusion()
-                                    .sound(SoundType.NETHERITE_BLOCK)
+                                     .requiresCorrectToolForDrops()
+                                     .noOcclusion()
+                                     .isRedstoneConductor((state, level, pos) -> false)
+                                     .sound(SoundType.NETHERITE_BLOCK)
                     )
             );
 

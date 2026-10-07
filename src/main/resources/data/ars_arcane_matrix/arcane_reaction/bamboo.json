@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"item": "minecraft:stick", "count": 1},
+    {"item": "ars_nouveau:earth_essence", "count": 1}
+  ],
+  "output": {"item": "minecraft:bamboo", "amount": 1},
+  "source_cost": 300,
+  "processing_ticks": 100
+}

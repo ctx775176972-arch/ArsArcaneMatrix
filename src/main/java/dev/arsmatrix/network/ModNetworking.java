@@ -12,5 +12,21 @@ public final class ModNetworking {
                 StorageEntriesDeltaPayload.TYPE,
                 StorageEntriesDeltaPayload.STREAM_CODEC,
                 StorageEntriesDeltaPayload::handle);
+        registrar.playToClient(
+                OrderDiagnosticsPayload.TYPE,
+                OrderDiagnosticsPayload.STREAM_CODEC,
+                OrderDiagnosticsPayload::handle);
+        registrar.playToServer(
+                StorageCraftingFillPayload.TYPE,
+                StorageCraftingFillPayload.STREAM_CODEC,
+                StorageCraftingFillPayload::handle);
+        registrar.playToServer(
+                StorageExtractionPayload.TYPE,
+                StorageExtractionPayload.STREAM_CODEC,
+                StorageExtractionPayload::handle);
+        registrar.playToServer(
+                GuideChainEncodePayload.TYPE,
+                GuideChainEncodePayload.STREAM_CODEC,
+                GuideChainEncodePayload::handle);
     }
 }

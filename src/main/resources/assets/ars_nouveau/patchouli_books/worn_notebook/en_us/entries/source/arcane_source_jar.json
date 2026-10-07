@@ -1,0 +1,16 @@
+{
+  "name": "block.ars_arcane_matrix.arcane_source_jar",
+  "icon": "ars_arcane_matrix:arcane_source_jar",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 30,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_source_jar.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_source_jar.operation"
+    }
+  ]
+}

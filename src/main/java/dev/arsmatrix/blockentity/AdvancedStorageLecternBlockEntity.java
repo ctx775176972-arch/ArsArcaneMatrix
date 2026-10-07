@@ -2,6 +2,8 @@ package dev.arsmatrix.blockentity;
 
 import com.hollingsworth.arsnouveau.common.block.tile.StorageLecternTile;
 import com.hollingsworth.arsnouveau.api.item.IWandable;
+import com.hollingsworth.arsnouveau.client.particle.ColorPos;
+import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
 import dev.arsmatrix.menu.WixieOrderTerminalMenu;
 import dev.arsmatrix.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -10,6 +12,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +21,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.Containers;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -26,12 +31,15 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import org.jetbrains.annotations.Nullable;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import dev.arsmatrix.source.SourceNetworkSavedData;
 import dev.arsmatrix.source.SourceNetworkLinking;
 
@@ -43,12 +51,15 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
 
     private static final String ORDER_ENGINE_TAG = "OrderEngine";
     private final WixieOrderTerminalBlockEntity orderEngine;
+    /** The manual 3x3 grid belongs to the lectern, so closing a remote menu never ejects it. */
+    private final List<ItemStack> craftingGrid = new ArrayList<>(java.util.Collections.nCopies(9, ItemStack.EMPTY));
     private int sourceNetworkTick;
     private long cachedNetworkSource;
     private long cachedNetworkCapacity;
     private int cachedSourceJars;
     private int cachedSourceRelays;
-    private GlobalPos linkedFluidReservoir;
+    /** Fluid storage uses the same external-node budget as native Bookwyrm item storage. */
+    private final List<FluidStorageNode> linkedFluidNodes = new ArrayList<>();
 
     public AdvancedStorageLecternBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ADVANCED_STORAGE_LECTERN.get(), pos, state);
@@ -110,8 +121,8 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         }
         // The second Source endpoint owns the symmetric link. Suppress the lectern's native
         // inventory binding only when the other endpoint belongs to the Source network.
-        if (isFluidReservoir(target, player)) return linkFluidReservoir(target, player);
         if (SourceNetworkLinking.isSourceEndpoint(target, player)) return IWandable.Result.NONE;
+        if (hasFluidCapability(target, face, player)) return toggleFluidNode(target, face, player);
         return super.onFirstConnection(target, face, entity, player);
     }
 
@@ -121,9 +132,17 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         if (isStorageLectern(target, player)) {
             return super.onLastConnection(target, face, entity, player);
         }
-        if (isFluidReservoir(target, player)) return linkFluidReservoir(target, player);
         if (SourceNetworkLinking.isSourceEndpoint(target, player)) {
             return SourceNetworkLinking.connect(this, target, player);
+        }
+        if (hasFluidCapability(target, face, player)) {
+            boolean itemStorage = hasItemCapability(target, face, player);
+            if (itemStorage) {
+                IWandable.Result result = super.onLastConnection(target, face, entity, player);
+                syncFluidNodeWithNativeStorage(target, face);
+                return result;
+            }
+            return toggleFluidNode(target, face, player);
         }
         return super.onLastConnection(target, face, entity, player);
     }
@@ -138,33 +157,57 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
 
     @Override
     public IWandable.Result onClearConnections(Player player) {
-        linkedFluidReservoir = null;
+        linkedFluidNodes.clear();
         SourceNetworkLinking.clear(this);
         return super.onClearConnections(player);
     }
 
-    private boolean isFluidReservoir(GlobalPos target, Player player) {
+    private boolean hasFluidCapability(GlobalPos target, @Nullable Direction face, Player player) {
         if (target == null || !(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
                 || serverPlayer.getServer() == null) return false;
         ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
-        return targetLevel != null
-                && targetLevel.getBlockEntity(target.pos()) instanceof ArcaneFluidReservoirBlockEntity;
+        return targetLevel != null && targetLevel.hasChunkAt(target.pos())
+                && targetLevel.getCapability(Capabilities.FluidHandler.BLOCK, target.pos(), face) != null;
     }
 
-    private IWandable.Result linkFluidReservoir(GlobalPos target, Player player) {
+    private boolean hasItemCapability(GlobalPos target, @Nullable Direction face, Player player) {
+        if (target == null || !(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+                || serverPlayer.getServer() == null) return false;
+        ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
+        return targetLevel != null && targetLevel.hasChunkAt(target.pos())
+                && targetLevel.getCapability(Capabilities.ItemHandler.BLOCK, target.pos(), face) != null;
+    }
+
+    private IWandable.Result toggleFluidNode(GlobalPos target, @Nullable Direction face, Player player) {
         if (target == null || !(player instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
                 || serverPlayer.getServer() == null || level == null) {
             return IWandable.Result.FAIL;
         }
         ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
-        if (targetLevel == null || !(targetLevel.getBlockEntity(target.pos())
-                instanceof ArcaneFluidReservoirBlockEntity reservoir)
-                || !reservoir.canWirelessReach(GlobalPos.of(level.dimension(), worldPosition))) {
+        if (targetLevel == null || !target.dimension().equals(level.dimension())
+                || !targetLevel.hasChunkAt(target.pos())
+                || targetLevel.getCapability(Capabilities.FluidHandler.BLOCK, target.pos(), face) == null
+                || worldPosition.distSqr(target.pos()) > (double) getLecternLinkRange() * getLecternLinkRange()) {
             player.displayClientMessage(Component.translatable(
                     "message.ars_arcane_matrix.advanced_lectern.fluid_out_of_range"), true);
             return IWandable.Result.FAIL;
         }
-        linkedFluidReservoir = target;
+
+        int existing = fluidNodeIndex(target);
+        if (existing >= 0) {
+            linkedFluidNodes.remove(existing);
+            setChanged();
+            player.displayClientMessage(Component.translatable(
+                    "message.ars_arcane_matrix.advanced_lectern.fluid_removed"), true);
+            return IWandable.Result.SUCCESS;
+        }
+
+        if (!player.isCreative() && connectedStorageNodeCount() >= super.getMaxConnectedInventories()) {
+            player.displayClientMessage(Component.translatable(
+                    "message.ars_arcane_matrix.advanced_lectern.storage_full"), true);
+            return IWandable.Result.FAIL;
+        }
+        linkedFluidNodes.add(new FluidStorageNode(target, face));
         setChanged();
         player.displayClientMessage(Component.translatable(
                 "message.ars_arcane_matrix.advanced_lectern.fluid_linked",
@@ -172,22 +215,130 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         return IWandable.Result.SUCCESS;
     }
 
-    private ArcaneFluidReservoirBlockEntity linkedReservoir() {
-        if (!(level instanceof ServerLevel serverLevel) || linkedFluidReservoir == null) return null;
-        ServerLevel targetLevel = serverLevel.getServer().getLevel(linkedFluidReservoir.dimension());
-        if (targetLevel == null || !targetLevel.hasChunkAt(linkedFluidReservoir.pos())) return null;
-        return targetLevel.getBlockEntity(linkedFluidReservoir.pos())
-                instanceof ArcaneFluidReservoirBlockEntity reservoir
-                && reservoir.canWirelessReach(GlobalPos.of(level.dimension(), worldPosition)) ? reservoir : null;
+    private int getLecternLinkRange() {
+        return com.hollingsworth.arsnouveau.setup.config.ServerConfig.LECTERN_LINK_RANGE.get();
+    }
+
+    private int fluidNodeIndex(GlobalPos target) {
+        for (int index = 0; index < linkedFluidNodes.size(); index++) {
+            if (linkedFluidNodes.get(index).pos().equals(target)) return index;
+        }
+        return -1;
+    }
+
+    private boolean isNativeStoragePosition(GlobalPos target) {
+        if (level == null || !target.dimension().equals(level.dimension())) return false;
+        StorageLecternTile main = getMainLectern();
+        return main != null && main.handlerPosList.stream().anyMatch(entry -> entry.pos().equals(target.pos()));
+    }
+
+    private int connectedStorageNodeCount() {
+        StorageLecternTile main = getMainLectern();
+        int itemNodes = main == null ? 0 : main.handlerPosList.size();
+        int fluidOnlyNodes = (int) linkedFluidNodes.stream()
+                .filter(node -> !isNativeStoragePosition(node.pos())).count();
+        return itemNodes + fluidOnlyNodes;
+    }
+
+    private void syncFluidNodeWithNativeStorage(GlobalPos target, @Nullable Direction face) {
+        int existing = fluidNodeIndex(target);
+        if (isNativeStoragePosition(target)) {
+            if (existing < 0) linkedFluidNodes.add(new FluidStorageNode(target, face));
+        } else if (existing >= 0) {
+            linkedFluidNodes.remove(existing);
+        }
+        setChanged();
+    }
+
+    @Override
+    public int getMaxConnectedInventories() {
+        int fluidOnlyNodes = (int) linkedFluidNodes.stream()
+                .filter(node -> !isNativeStoragePosition(node.pos())).count();
+        return Math.max(0, super.getMaxConnectedInventories() - fluidOnlyNodes);
+    }
+
+    @Override
+    public List<ColorPos> getWandHighlight(List<ColorPos> highlights) {
+        super.getWandHighlight(highlights);
+        if (level == null) return highlights;
+        for (FluidStorageNode node : linkedFluidNodes) {
+            if (node.pos().dimension().equals(level.dimension()) && !isNativeStoragePosition(node.pos())) {
+                highlights.add(ColorPos.centered(node.pos().pos(), ParticleColor.FROM_HIGHLIGHT));
+            }
+        }
+        return highlights;
+    }
+
+    @Override
+    public void getTooltip(List<Component> tooltip) {
+        if (mainLecternPos != null) {
+            tooltip.add(Component.translatable("ars_nouveau.storage.lectern_chained",
+                    mainLecternPos.getX(), mainLecternPos.getY(), mainLecternPos.getZ()));
+            return;
+        }
+        tooltip.add(Component.translatable("ars_nouveau.storage.num_connected", connectedStorageNodeCount()));
+        tooltip.add(Component.translatable("ars_nouveau.storage.num_bookwyrms", bookwyrmUUIDs.size()));
+    }
+
+    private List<IFluidHandler> getConnectedFluidHandlers() {
+        if (!(level instanceof ServerLevel serverLevel)) return List.of();
+        List<IFluidHandler> result = new ArrayList<>();
+        java.util.Set<BlockPos> visited = new java.util.HashSet<>();
+        for (FluidStorageNode node : linkedFluidNodes) {
+            ServerLevel targetLevel = serverLevel.getServer().getLevel(node.pos().dimension());
+            if (targetLevel == null || !targetLevel.hasChunkAt(node.pos().pos())) continue;
+            IFluidHandler handler = fluidHandlerAt(targetLevel, node.pos().pos(), node.face());
+            if (handler != null && visited.add(node.pos().pos())) result.add(handler);
+        }
+        // A reservoir also exposes upgrade item slots. Depending on which endpoint
+        // the Dominion Wand selected first, Ars may record it only in the native
+        // lectern inventory list. Treat every native node with a fluid capability as
+        // fluid storage too, so the connection order cannot hide buckets from orders.
+        StorageLecternTile main = getMainLectern();
+        if (main != null) {
+            for (var entry : main.handlerPosList) {
+                BlockPos pos = entry.pos();
+                if (!serverLevel.hasChunkAt(pos) || visited.contains(pos)) continue;
+                IFluidHandler handler = fluidHandlerAt(serverLevel, pos, null);
+                if (handler != null) {
+                    visited.add(pos);
+                    result.add(handler);
+                }
+            }
+        }
+        return result;
+    }
+
+    private static IFluidHandler fluidHandlerAt(
+            ServerLevel level, BlockPos pos, @Nullable Direction preferredFace
+    ) {
+        IFluidHandler handler = level.getCapability(
+                Capabilities.FluidHandler.BLOCK, pos, preferredFace);
+        if (handler != null) return handler;
+        handler = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, null);
+        if (handler != null) return handler;
+        for (Direction direction : Direction.values()) {
+            handler = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, direction);
+            if (handler != null) return handler;
+        }
+        return null;
+    }
+
+    private List<FluidStack> getStoredFluids() {
+        Map<net.minecraft.world.level.material.Fluid, Integer> totals = new LinkedHashMap<>();
+        for (IFluidHandler handler : getConnectedFluidHandlers()) {
+            for (int tank = 0; tank < handler.getTanks(); tank++) {
+                FluidStack stack = handler.getFluidInTank(tank);
+                if (!stack.isEmpty()) totals.merge(stack.getFluid(), stack.getAmount(),
+                        (left, right) -> (int) Math.min(Integer.MAX_VALUE, (long) left + right));
+            }
+        }
+        return totals.entrySet().stream().map(entry -> new FluidStack(entry.getKey(), entry.getValue())).toList();
     }
 
     public List<ItemStack> getVirtualFluidContainers() {
-        ArcaneFluidReservoirBlockEntity reservoir = linkedReservoir();
-        if (reservoir == null) return List.of();
         List<ItemStack> result = new ArrayList<>();
-        IFluidHandler handler = reservoir.getFluidHandler(null);
-        for (int tank = 0; tank < handler.getTanks(); tank++) {
-            FluidStack fluid = handler.getFluidInTank(tank);
+        for (FluidStack fluid : getStoredFluids()) {
             if (fluid.isEmpty() || fluid.getFluid().getBucket() == net.minecraft.world.item.Items.AIR) continue;
             ItemStack bucket = new ItemStack(fluid.getFluid().getBucket());
             int unit = FluidUtil.getFluidContained(bucket).map(FluidStack::getAmount).orElse(1000);
@@ -198,37 +349,90 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
     }
 
     public boolean consumeVirtualFluidContainer(ItemStack container) {
-        ArcaneFluidReservoirBlockEntity reservoir = linkedReservoir();
-        if (reservoir == null || container.isEmpty()) return false;
+        if (container.isEmpty()) return false;
         FluidStack wanted = FluidUtil.getFluidContained(container).orElse(FluidStack.EMPTY);
         if (wanted.isEmpty()) return false;
-        IFluidHandler handler = reservoir.getFluidHandler(null);
-        FluidStack simulated = handler.drain(wanted, IFluidHandler.FluidAction.SIMULATE);
-        if (simulated.getAmount() < wanted.getAmount()) return false;
-        return handler.drain(wanted, IFluidHandler.FluidAction.EXECUTE).getAmount() == wanted.getAmount();
+        return drainConnectedFluid(wanted);
     }
 
     public void restoreVirtualFluidContainer(ItemStack container) {
-        ArcaneFluidReservoirBlockEntity reservoir = linkedReservoir();
-        if (reservoir == null || container.isEmpty()) return;
+        if (container.isEmpty()) return;
         FluidStack fluid = FluidUtil.getFluidContained(container).orElse(FluidStack.EMPTY);
-        if (!fluid.isEmpty()) reservoir.getFluidHandler(null).fill(fluid, IFluidHandler.FluidAction.EXECUTE);
+        if (!fluid.isEmpty()) fillConnectedFluid(fluid);
+    }
+
+    /** Atomically moves one requested fluid amount from the linked controller into a machine. */
+    public boolean supplyLinkedFluid(IFluidHandler target, ResourceLocation fluidId, int amount) {
+        if (amount <= 0) return true;
+        if (target == null) return false;
+        var fluid = BuiltInRegistries.FLUID.getOptional(fluidId).orElse(null);
+        if (fluid == null) return false;
+        FluidStack requested = new FluidStack(fluid, amount);
+        if (countConnectedFluid(requested) < amount
+                || target.fill(requested, IFluidHandler.FluidAction.SIMULATE) != amount
+                || !drainConnectedFluid(requested)) return false;
+        int filled = target.fill(requested, IFluidHandler.FluidAction.EXECUTE);
+        if (filled != amount) {
+            if (filled > 0) target.drain(new FluidStack(fluid, filled), IFluidHandler.FluidAction.EXECUTE);
+            fillConnectedFluid(requested);
+            return false;
+        }
+        return true;
+    }
+
+    /** Server-authoritative amount visible to orders and crafting-plan validation. */
+    public int countLinkedFluid(ResourceLocation fluidId) {
+        var fluid = BuiltInRegistries.FLUID.getOptional(fluidId).orElse(null);
+        return fluid == null ? 0 : countConnectedFluid(new FluidStack(fluid, Integer.MAX_VALUE));
     }
 
     public int getLinkedFluidType(int tank) {
-        ArcaneFluidReservoirBlockEntity reservoir = linkedReservoir();
-        if (reservoir == null) return -1;
-        IFluidHandler handler = reservoir.getFluidHandler(null);
-        if (tank < 0 || tank >= handler.getTanks()) return -1;
-        FluidStack fluid = handler.getFluidInTank(tank);
+        List<FluidStack> fluids = getStoredFluids();
+        if (tank < 0 || tank >= fluids.size()) return -1;
+        FluidStack fluid = fluids.get(tank);
         return fluid.isEmpty() ? -1 : BuiltInRegistries.FLUID.getId(fluid.getFluid());
     }
 
     public int getLinkedFluidAmount(int tank) {
-        ArcaneFluidReservoirBlockEntity reservoir = linkedReservoir();
-        if (reservoir == null) return 0;
-        IFluidHandler handler = reservoir.getFluidHandler(null);
-        return tank < 0 || tank >= handler.getTanks() ? 0 : handler.getFluidInTank(tank).getAmount();
+        List<FluidStack> fluids = getStoredFluids();
+        return tank < 0 || tank >= fluids.size() ? 0 : fluids.get(tank).getAmount();
+    }
+
+    private int countConnectedFluid(FluidStack wanted) {
+        int total = 0;
+        for (IFluidHandler handler : getConnectedFluidHandlers()) {
+            total = (int) Math.min(Integer.MAX_VALUE, (long) total
+                    + handler.drain(wanted, IFluidHandler.FluidAction.SIMULATE).getAmount());
+        }
+        return total;
+    }
+
+    private boolean drainConnectedFluid(FluidStack wanted) {
+        if (countConnectedFluid(wanted) < wanted.getAmount()) return false;
+        int remaining = wanted.getAmount();
+        List<FluidStack> drained = new ArrayList<>();
+        for (IFluidHandler handler : getConnectedFluidHandlers()) {
+            if (remaining <= 0) break;
+            FluidStack part = handler.drain(new FluidStack(wanted.getFluid(), remaining),
+                    IFluidHandler.FluidAction.EXECUTE);
+            if (!part.isEmpty()) {
+                drained.add(part);
+                remaining -= part.getAmount();
+            }
+        }
+        if (remaining <= 0) return true;
+        drained.forEach(this::fillConnectedFluid);
+        return false;
+    }
+
+    private int fillConnectedFluid(FluidStack fluid) {
+        int remaining = fluid.getAmount();
+        for (IFluidHandler handler : getConnectedFluidHandlers()) {
+            if (remaining <= 0) break;
+            remaining -= handler.fill(new FluidStack(fluid.getFluid(), remaining),
+                    IFluidHandler.FluidAction.EXECUTE);
+        }
+        return fluid.getAmount() - remaining;
     }
 
     public long getNetworkSource() {
@@ -286,6 +490,27 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
 
     public void dropBufferedContents() {
         getOrderEngine().dropBufferedContents();
+        if (level != null) {
+            for (int slot = 0; slot < craftingGrid.size(); slot++) {
+                ItemStack stack = craftingGrid.get(slot);
+                if (!stack.isEmpty()) {
+                    Containers.dropItemStack(level, worldPosition.getX() + 0.5,
+                            worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, stack);
+                    craftingGrid.set(slot, ItemStack.EMPTY);
+                }
+            }
+        }
+    }
+
+    public List<ItemStack> getCraftingGrid() {
+        return craftingGrid.stream().map(ItemStack::copy).toList();
+    }
+
+    public void setCraftingGrid(List<ItemStack> stacks) {
+        for (int slot = 0; slot < craftingGrid.size(); slot++) {
+            craftingGrid.set(slot, slot < stacks.size() ? stacks.get(slot).copy() : ItemStack.EMPTY);
+        }
+        setChanged();
     }
 
     @Override
@@ -305,7 +530,8 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
     @Override
     public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf data) {
         WixieOrderTerminalMenu.writeOpeningData(
-                data, worldPosition, getCraftableRecipeInfos(), getStoredStacks());
+                data, worldPosition, level == null ? Level.OVERWORLD : level.dimension(),
+                getCraftableRecipeInfos(), getStoredStacks());
     }
 
     public List<StoredStack> getStoredStacks() {
@@ -377,27 +603,40 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
 
     /** Extracts one matching network item for an internal lectern action. */
     public ItemStack extractOneStoredInternal(ItemStack template) {
-        if (level == null || level.isClientSide || template.isEmpty()) return ItemStack.EMPTY;
+        return extractStoredInternal(template, 1);
+    }
+
+    /** Extracts matching network items without routing them through a player's inventory. */
+    public ItemStack extractStoredInternal(ItemStack template, int requested) {
+        if (level == null || level.isClientSide || template.isEmpty() || requested <= 0) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack gathered = template.copyWithCount(0);
+        int remaining = requested;
         for (IItemHandler handler : getConnectedHandlers()) {
             if (handler instanceof StorageGridDirectoryBlockEntity.GridItemHandler grid) {
-                if (grid.extractMatching(template, 1) > 0) {
-                    updateItems = true;
-                    setChanged();
-                    return template.copyWithCount(1);
+                int extracted = grid.extractMatching(template, remaining);
+                if (extracted > 0) {
+                    gathered.grow(extracted);
+                    remaining -= extracted;
                 }
+                if (remaining <= 0) break;
                 continue;
             }
-            for (int slot = 0; slot < handler.getSlots(); slot++) {
+            for (int slot = 0; slot < handler.getSlots() && remaining > 0; slot++) {
                 if (!ItemStack.isSameItemSameComponents(handler.getStackInSlot(slot), template)) continue;
-                ItemStack extracted = handler.extractItem(slot, 1, false);
+                ItemStack extracted = handler.extractItem(slot, remaining, false);
                 if (!extracted.isEmpty()) {
-                    updateItems = true;
-                    setChanged();
-                    return extracted;
+                    gathered.grow(extracted.getCount());
+                    remaining -= extracted.getCount();
                 }
             }
         }
-        return ItemStack.EMPTY;
+        if (!gathered.isEmpty()) {
+            updateItems = true;
+            setChanged();
+        }
+        return gathered;
     }
 
     /** Inserts into the connected storage network without buffering a duplicate in the lectern. */
@@ -429,10 +668,25 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         tag.putLong("SourceNetworkCapacity", cachedNetworkCapacity);
         tag.putInt("SourceNetworkJars", cachedSourceJars);
         tag.putInt("SourceNetworkRelays", cachedSourceRelays);
-        if (linkedFluidReservoir != null) {
-            tag.putString("FluidReservoirDimension", linkedFluidReservoir.dimension().location().toString());
-            tag.putLong("FluidReservoirPos", linkedFluidReservoir.pos().asLong());
+        ListTag crafting = new ListTag();
+        for (int slot = 0; slot < craftingGrid.size(); slot++) {
+            ItemStack stack = craftingGrid.get(slot);
+            if (stack.isEmpty()) continue;
+            CompoundTag entry = new CompoundTag();
+            entry.putByte("Slot", (byte) slot);
+            entry.put("Stack", stack.saveOptional(registries));
+            crafting.add(entry);
         }
+        tag.put("CraftingGrid", crafting);
+        ListTag fluidNodes = new ListTag();
+        for (FluidStorageNode node : linkedFluidNodes) {
+            CompoundTag nodeTag = new CompoundTag();
+            nodeTag.putString("Dimension", node.pos().dimension().location().toString());
+            nodeTag.putLong("Pos", node.pos().pos().asLong());
+            if (node.face() != null) nodeTag.putString("Face", node.face().getName());
+            fluidNodes.add(nodeTag);
+        }
+        tag.put("FluidStorageNodes", fluidNodes);
     }
 
     @Override
@@ -448,12 +702,36 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         cachedNetworkCapacity = Math.max(0L, tag.getLong("SourceNetworkCapacity"));
         cachedSourceJars = Math.max(0, tag.getInt("SourceNetworkJars"));
         cachedSourceRelays = Math.max(0, tag.getInt("SourceNetworkRelays"));
-        ResourceLocation fluidDimension = ResourceLocation.tryParse(tag.getString("FluidReservoirDimension"));
-        if (fluidDimension != null && tag.contains("FluidReservoirPos")) {
-            linkedFluidReservoir = GlobalPos.of(net.minecraft.resources.ResourceKey.create(
-                    net.minecraft.core.registries.Registries.DIMENSION, fluidDimension),
-                    BlockPos.of(tag.getLong("FluidReservoirPos")));
-        } else linkedFluidReservoir = null;
+        java.util.Collections.fill(craftingGrid, ItemStack.EMPTY);
+        ListTag crafting = tag.getList("CraftingGrid", CompoundTag.TAG_COMPOUND);
+        for (int index = 0; index < crafting.size(); index++) {
+            CompoundTag entry = crafting.getCompound(index);
+            int slot = entry.getByte("Slot") & 255;
+            if (slot < craftingGrid.size()) {
+                craftingGrid.set(slot, ItemStack.parseOptional(registries, entry.getCompound("Stack")));
+            }
+        }
+        linkedFluidNodes.clear();
+        ListTag fluidNodes = tag.getList("FluidStorageNodes", CompoundTag.TAG_COMPOUND);
+        for (int index = 0; index < fluidNodes.size(); index++) {
+            CompoundTag nodeTag = fluidNodes.getCompound(index);
+            ResourceLocation dimension = ResourceLocation.tryParse(nodeTag.getString("Dimension"));
+            if (dimension == null || !nodeTag.contains("Pos")) continue;
+            linkedFluidNodes.add(new FluidStorageNode(GlobalPos.of(
+                    net.minecraft.resources.ResourceKey.create(
+                            net.minecraft.core.registries.Registries.DIMENSION, dimension),
+                    BlockPos.of(nodeTag.getLong("Pos"))), Direction.byName(nodeTag.getString("Face"))));
+        }
+        // Migrate the pre-0.5.6 single-controller link without invalidating existing worlds.
+        if (linkedFluidNodes.isEmpty()) {
+            ResourceLocation fluidDimension = ResourceLocation.tryParse(tag.getString("FluidReservoirDimension"));
+            if (fluidDimension != null && tag.contains("FluidReservoirPos")) {
+                linkedFluidNodes.add(new FluidStorageNode(GlobalPos.of(
+                        net.minecraft.resources.ResourceKey.create(
+                                net.minecraft.core.registries.Registries.DIMENSION, fluidDimension),
+                        BlockPos.of(tag.getLong("FluidReservoirPos"))), null));
+            }
+        }
     }
 
     @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
@@ -465,4 +743,6 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
     }
 
     public record StoredStack(ItemStack stack, int count) {}
+
+    private record FluidStorageNode(GlobalPos pos, @Nullable Direction face) {}
 }

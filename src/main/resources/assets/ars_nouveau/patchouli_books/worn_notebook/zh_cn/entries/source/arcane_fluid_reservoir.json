@@ -1,13 +1,31 @@
 {
-  "name":"奥术流体控制器","icon":"ars_arcane_matrix:arcane_fluid_reservoir","category":"ars_nouveau:ars_arcane_matrix",
-  "pages":[
-    {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_fluid_reservoir"},
-    {"type":"patchouli:crafting","recipe":"ars_arcane_matrix:arcane_fluid_tank"},
-    {"type":"patchouli:text","text":"奥术流体控制器内置1个流体槽；在扩展槽安装独立的奥术流体储罐，可增加到3槽。每个储罐只能保存一种流体。输入时优先归入同类储罐，再占用空储罐；内部仍有流体时不能拆下对应储罐。"},
-    {"type":"patchouli:text","text":"界面中的“范围抽取”选择要从世界收集的流体，“输出槽”决定管道与无线连接输出哪一种流体。正面窗口会显示当前输出流体的颜色。"},
-    {"type":"patchouli:text","text":"水、熔岩以及储罐已经识别的可放置流体都能被范围收集。先输入一桶样本即可选择该流体；不能放置到世界中的流体仍须从容器或管道输入。"},
-    {"type":"patchouli:text","text":"支配之杖先点控制器、再点容器可绑定输出；反向操作可绑定输入。基础保存1个输入和1个输出目标，每个范围升级各增加1个，上限4个。"},
-    {"type":"patchouli:text","text":"绑定输出时会记录当前选中的储罐，因此不同流体可送往不同设备。无线距离依次为32格、128格、同维度不限距离和跨维度；目标区块必须保持加载。"},
-    {"type":"patchouli:text","text":"容量、范围和速度升级安装在普通升级槽；奥术流体储罐安装在独立扩展槽。控制器只负责保存、收集和输送流体，不再自行生成熔岩；需要加工流体时请使用奥术反应釜。"}
+  "name": "block.ars_arcane_matrix.arcane_fluid_reservoir",
+  "icon": "ars_arcane_matrix:arcane_fluid_reservoir",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_fluid_controller.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_fluid_controller.operation"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_fluid_controller.operation.details"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_fluid_controller.lectern"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_fluid_controller.upgrades"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ars_arcane_matrix:arcane_fluid_reservoir"
+    }
   ]
 }

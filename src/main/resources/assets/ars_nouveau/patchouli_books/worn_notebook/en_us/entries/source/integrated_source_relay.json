@@ -1,0 +1,16 @@
+{
+  "name": "block.ars_arcane_matrix.integrated_source_relay",
+  "icon": "ars_arcane_matrix:integrated_source_relay",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 31,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.integrated_source_relay.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.integrated_source_relay.operation"
+    }
+  ]
+}

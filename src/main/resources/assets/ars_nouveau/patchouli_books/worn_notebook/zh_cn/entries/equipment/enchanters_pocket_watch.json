@@ -1,0 +1,10 @@
+{
+  "category":"ars_nouveau:equipment",
+  "icon":"ars_arcane_matrix:enchanters_pocket_watch",
+  "name":"item.ars_arcane_matrix.enchanters_pocket_watch",
+  "pages":[
+    {"type":"patchouli:text","text":"documentation.ars_arcane_matrix.enchanters_pocket_watch.summary"},
+    {"type":"patchouli:text","text":"documentation.ars_arcane_matrix.enchanters_pocket_watch.operation"},
+    {"type":"ars_nouveau:apparatus_recipe","recipe":"ars_arcane_matrix:enchanters_pocket_watch"}
+  ]
+}

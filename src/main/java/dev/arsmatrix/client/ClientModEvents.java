@@ -87,7 +87,7 @@ public final class ClientModEvents {
     }
 
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {
-        event.register(ModMenus.WIZARDS_POCKET_WATCH.get(), WizardsPocketWatchScreen::new);
+        event.register(ModMenus.ENCHANTERS_POCKET_WATCH.get(), EnchantersPocketWatchScreen::new);
         event.register(dev.arsmatrix.registry.ModMenus.WIXIE_ORDER_TERMINAL.get(),
                 WixieOrderTerminalScreen::new);
         event.register(dev.arsmatrix.registry.ModMenus.WIXIE_PATTERN_PROVIDER.get(),

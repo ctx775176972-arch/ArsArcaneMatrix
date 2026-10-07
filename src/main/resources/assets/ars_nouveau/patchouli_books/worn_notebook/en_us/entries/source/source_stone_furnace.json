@@ -1,0 +1,16 @@
+{
+  "name": "block.ars_arcane_matrix.source_stone_furnace",
+  "icon": "ars_arcane_matrix:source_stone_furnace",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 21,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.source_stone_furnace.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.source_stone_furnace.operation"
+    }
+  ]
+}

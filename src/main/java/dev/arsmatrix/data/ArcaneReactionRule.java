@@ -14,7 +14,7 @@ import java.util.List;
 
 public record ArcaneReactionRule(ResourceLocation id, List<ArcaneReactionIngredient> ingredients,
         ResourceLocation inputFluid, int inputFluidAmount, ResourceLocation outputItem,
-        int outputItemCount, ResourceLocation outputFluid, int outputFluidAmount,
+        int outputItemCount, int outputDamage, ResourceLocation outputFluid, int outputFluidAmount,
         int sourceCost, int processingTicks, boolean enabled) {
 
     public ArcaneReactionRule { ingredients = List.copyOf(ingredients); }
@@ -58,7 +58,12 @@ public record ArcaneReactionRule(ResourceLocation id, List<ArcaneReactionIngredi
     public ItemStack createItemOutput() {
         if (outputItemCount <= 0) return ItemStack.EMPTY;
         Item item = BuiltInRegistries.ITEM.getOptional(outputItem).orElse(Items.AIR);
-        return item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item, outputItemCount);
+        if (item == Items.AIR) return ItemStack.EMPTY;
+        ItemStack stack = new ItemStack(item, outputItemCount);
+        if (outputDamage > 0 && stack.isDamageableItem()) {
+            stack.setDamageValue(Math.min(outputDamage, stack.getMaxDamage() - 1));
+        }
+        return stack;
     }
 
     public FluidStack createFluidOutput() {

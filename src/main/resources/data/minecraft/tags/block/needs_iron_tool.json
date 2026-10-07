@@ -5,6 +5,7 @@
     "ars_arcane_matrix:source_stone_furnace",
     "ars_arcane_matrix:arcane_source_jar",
     "ars_arcane_matrix:arcane_reaction_vessel",
-    "ars_arcane_matrix:arcane_vacuum_hopper"
+    "ars_arcane_matrix:arcane_vacuum_hopper",
+    "ars_arcane_matrix:arcane_fluid_reservoir"
   ]
 }

@@ -1,0 +1,8 @@
+{
+  "neoforge:conditions":[{"type":"ars_arcane_matrix:optional_recipe","feature":"skyblock"}],
+  "type":"ars_nouveau:imbuement",
+  "input":{"item":"minecraft:bucket"},
+  "output":{"id":"minecraft:lava_bucket","count":1},
+  "pedestalItems":[{"item":"minecraft:cobblestone"}],
+  "source":500
+}

@@ -1,0 +1,8 @@
+{
+  "ingredients": [
+    {"item": "minecraft:wheat_seeds", "count": 1}
+  ],
+  "output": {"item": "minecraft:beetroot_seeds", "amount": 1},
+  "source_cost": 100,
+  "processing_ticks": 100
+}

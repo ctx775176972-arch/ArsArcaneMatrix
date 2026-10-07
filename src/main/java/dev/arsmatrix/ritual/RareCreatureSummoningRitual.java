@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
 /** One-shot ritual that summons one difficult-to-renew creature and then ends. */
@@ -32,8 +33,10 @@ public final class RareCreatureSummoningRitual extends AbstractRitual {
     }
 
     private EntityType<?> selectedType() {
+        if (didConsumeItem(Items.ROTTEN_FLESH)) return EntityType.ZOMBIE_VILLAGER;
+        if (didConsumeItem(Items.PRISMARINE_SHARD)) return EntityType.GUARDIAN;
         if (didConsumeItem(Blocks.REINFORCED_DEEPSLATE)) return EntityType.WARDEN;
-        if (didConsumeItem(Blocks.PRISMARINE_BRICKS)) return EntityType.ELDER_GUARDIAN;
+        if (didConsumeItem(Items.NAUTILUS_SHELL)) return EntityType.ELDER_GUARDIAN;
         if (didConsumeItem(Blocks.GILDED_BLACKSTONE)) return EntityType.PIGLIN_BRUTE;
         if (didConsumeItem(Blocks.PURPUR_BLOCK)) return EntityType.SHULKER;
         return EntityType.BREEZE;
@@ -56,13 +59,15 @@ public final class RareCreatureSummoningRitual extends AbstractRitual {
     @Override
     public boolean canConsumeItem(ItemStack stack) {
         if (!getConsumedItems().isEmpty()) return false;
-        return stack.is(Blocks.REINFORCED_DEEPSLATE.asItem())
-                || stack.is(Blocks.PRISMARINE_BRICKS.asItem())
+        return stack.is(Items.ROTTEN_FLESH)
+                || stack.is(Items.PRISMARINE_SHARD)
+                || stack.is(Blocks.REINFORCED_DEEPSLATE.asItem())
+                || stack.is(Items.NAUTILUS_SHELL)
                 || stack.is(Blocks.GILDED_BLACKSTONE.asItem())
                 || stack.is(Blocks.PURPUR_BLOCK.asItem());
     }
 
-    @Override public int getSourceCost() { return 10_000; }
+    @Override public int getSourceCost() { return 1_000; }
     @Override public ResourceLocation getRegistryName() { return ID; }
     @Override public String getLangName() { return "Ritual of Rare Summoning"; }
     @Override public String getLangDescription() {

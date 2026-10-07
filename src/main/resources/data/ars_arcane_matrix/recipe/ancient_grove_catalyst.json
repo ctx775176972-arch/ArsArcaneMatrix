@@ -5,7 +5,7 @@
     { "item": "ars_nouveau:earth_essence" },
     { "item": "minecraft:torchflower" },
     { "item": "minecraft:pitcher_plant" },
-    { "item": "ars_arcane_matrix:enriched_mineral_crystal" }
+    { "item": "ars_arcane_matrix:enchanted_crystal" }
   ],
   "result": {
     "id": "ars_arcane_matrix:ancient_grove_catalyst",

@@ -1,0 +1,8 @@
+{
+  "ingredients": [
+    {"item": "minecraft:seagrass", "count": 1}
+  ],
+  "output": {"item": "minecraft:kelp", "amount": 1},
+  "source_cost": 100,
+  "processing_ticks": 100
+}

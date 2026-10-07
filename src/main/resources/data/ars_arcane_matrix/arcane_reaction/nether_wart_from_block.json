@@ -1,0 +1,8 @@
+{
+  "ingredients": [
+    { "item": "minecraft:nether_wart_block", "count": 1 }
+  ],
+  "output": { "item": "minecraft:nether_wart", "amount": 1 },
+  "source_cost": 2000,
+  "processing_ticks": 100
+}

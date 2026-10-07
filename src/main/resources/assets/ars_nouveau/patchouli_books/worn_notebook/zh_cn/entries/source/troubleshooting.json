@@ -1,0 +1,21 @@
+{
+  "name": "documentation.ars_arcane_matrix.troubleshooting.title",
+  "icon": "ars_arcane_matrix:arcane_amplifier",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 32,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.troubleshooting.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.troubleshooting.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.troubleshooting.links.text",
+      "title": "documentation.ars_arcane_matrix.troubleshooting.links.title"
+    }
+  ]
+}

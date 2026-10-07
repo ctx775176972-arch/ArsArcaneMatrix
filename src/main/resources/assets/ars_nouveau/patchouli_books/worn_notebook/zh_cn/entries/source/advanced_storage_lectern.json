@@ -1,0 +1,36 @@
+{
+  "name": "block.ars_arcane_matrix.advanced_storage_lectern",
+  "icon": "ars_arcane_matrix:advanced_storage_lectern",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 61,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.storage.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.storage.overview"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.storage.grid.text"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.storage.lectern.text"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.storage.proxy.text"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.storage.fluids.text"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ars_arcane_matrix:advanced_storage_lectern"
+    }
+  ]
+}

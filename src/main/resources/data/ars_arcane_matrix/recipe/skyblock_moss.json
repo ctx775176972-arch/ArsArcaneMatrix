@@ -1,0 +1,10 @@
+{
+  "neoforge:conditions": [{ "type": "ars_arcane_matrix:optional_recipe", "feature": "skyblock" }],
+  "type": "ars_nouveau:crush",
+  "input": { "item": "minecraft:moss_block" },
+  "skip_block_place": true,
+  "output": [
+    { "chance": 0.5, "maxRange": 1, "stack": { "id": "minecraft:lapis_lazuli", "count": 1 } },
+    { "chance": 0.25, "maxRange": 1, "stack": { "id": "minecraft:raw_copper", "count": 1 } }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "neoforge:conditions": [
+    {"type": "ars_arcane_matrix:optional_recipe", "feature": "skyblock"}
+  ],
+  "type": "ars_nouveau:crush",
+  "input": {"item": "ars_nouveau:green_archwood_sapling"},
+  "skip_block_place": true,
+  "output": [
+    {"chance": 1.0, "maxRange": 1, "stack": {"id": "minecraft:wheat_seeds", "count": 2}}
+  ]
+}

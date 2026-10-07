@@ -1,0 +1,16 @@
+{
+  "name": "item.ars_arcane_matrix.grid_expansion_warehouse",
+  "icon": "ars_arcane_matrix:grid_expansion_warehouse",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "sortnum": 28,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.grid_expansion.summary"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.grid_expansion.operation"
+    }
+  ]
+}
