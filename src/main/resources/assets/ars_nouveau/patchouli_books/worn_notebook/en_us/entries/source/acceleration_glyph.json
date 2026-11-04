@@ -1,0 +1,8 @@
+{
+  "name": "item.ars_arcane_matrix.glyph_acceleration",
+  "icon": "ars_arcane_matrix:glyph_acceleration",
+  "category": "ars_nouveau:ars_arcane_matrix",
+  "pages": [
+    { "type": "patchouli:text", "text": "ars_arcane_matrix.glyph_desc.glyph_acceleration" }
+  ]
+}

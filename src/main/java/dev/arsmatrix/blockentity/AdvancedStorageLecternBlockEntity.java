@@ -1,6 +1,6 @@
 package dev.arsmatrix.blockentity;
 
-import com.hollingsworth.arsnouveau.common.block.tile.StorageLecternTile;
+import com.hollingsworth.arsnouveau.common.block.tile.CraftingLecternTile;
 import com.hollingsworth.arsnouveau.api.item.IWandable;
 import com.hollingsworth.arsnouveau.client.particle.ColorPos;
 import com.hollingsworth.arsnouveau.client.particle.ParticleColor;
@@ -47,7 +47,7 @@ import dev.arsmatrix.source.SourceNetworkLinking;
  * An Ars storage lectern with an embedded Wixie order engine. Extending the native tile is
  * intentional: BookwyrmCharm and EntityBookwyrm require this exact base type.
  */
-public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile {
+public final class AdvancedStorageLecternBlockEntity extends CraftingLecternTile {
 
     private static final String ORDER_ENGINE_TAG = "OrderEngine";
     private final WixieOrderTerminalBlockEntity orderEngine;
@@ -62,7 +62,7 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
     private final List<FluidStorageNode> linkedFluidNodes = new ArrayList<>();
 
     public AdvancedStorageLecternBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.ADVANCED_STORAGE_LECTERN.get(), pos, state);
+        super(pos, state);
         // This is a detached logic delegate, but BlockEntity still validates its registered
         // type against the supplied block state during construction. Use the advanced lectern
         // type so loading an existing lectern never trips vanilla's invalid-state guard.
@@ -135,14 +135,20 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         if (SourceNetworkLinking.isSourceEndpoint(target, player)) {
             return SourceNetworkLinking.connect(this, target, player);
         }
+        boolean itemStorage = hasItemCapability(target, face, player);
+        if (target != null && level != null && target.dimension().equals(level.dimension())
+                && !player.isCreative() && !isNativeStoragePosition(target)
+                && itemStorage
+                && connectedStorageNodeCount() >= nativeStorageLimit()) {
+            player.displayClientMessage(Component.translatable(
+                    "message.ars_arcane_matrix.advanced_lectern.storage_full"), true);
+            return IWandable.Result.FAIL;
+        }
         if (hasFluidCapability(target, face, player)) {
-            boolean itemStorage = hasItemCapability(target, face, player);
-            if (itemStorage) {
-                IWandable.Result result = super.onLastConnection(target, face, entity, player);
-                syncFluidNodeWithNativeStorage(target, face);
-                return result;
-            }
-            return toggleFluidNode(target, face, player);
+            if (!itemStorage) return toggleFluidNode(target, face, player);
+            IWandable.Result result = super.onLastConnection(target, face, entity, player);
+            syncFluidNodeWithNativeStorage(target, face);
+            return result;
         }
         return super.onLastConnection(target, face, entity, player);
     }
@@ -152,7 +158,8 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
                 || serverPlayer.getServer() == null) return false;
         ServerLevel targetLevel = serverPlayer.getServer().getLevel(target.dimension());
         return targetLevel != null
-                && targetLevel.getBlockEntity(target.pos()) instanceof StorageLecternTile;
+                && targetLevel.hasChunkAt(target.pos())
+                && targetLevel.getBlockEntity(target.pos()) instanceof CraftingLecternTile;
     }
 
     @Override
@@ -202,7 +209,7 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
             return IWandable.Result.SUCCESS;
         }
 
-        if (!player.isCreative() && connectedStorageNodeCount() >= super.getMaxConnectedInventories()) {
+        if (!player.isCreative() && connectedStorageNodeCount() >= nativeStorageLimit()) {
             player.displayClientMessage(Component.translatable(
                     "message.ars_arcane_matrix.advanced_lectern.storage_full"), true);
             return IWandable.Result.FAIL;
@@ -228,12 +235,12 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
 
     private boolean isNativeStoragePosition(GlobalPos target) {
         if (level == null || !target.dimension().equals(level.dimension())) return false;
-        StorageLecternTile main = getMainLectern();
-        return main != null && main.handlerPosList.stream().anyMatch(entry -> entry.pos().equals(target.pos()));
+        CraftingLecternTile main = getMainLectern();
+        return main != null && main.handlerPosList.stream().anyMatch(entry -> entry.pos.equals(target.pos()));
     }
 
     private int connectedStorageNodeCount() {
-        StorageLecternTile main = getMainLectern();
+        CraftingLecternTile main = getMainLectern();
         int itemNodes = main == null ? 0 : main.handlerPosList.size();
         int fluidOnlyNodes = (int) linkedFluidNodes.stream()
                 .filter(node -> !isNativeStoragePosition(node.pos())).count();
@@ -250,11 +257,9 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         setChanged();
     }
 
-    @Override
-    public int getMaxConnectedInventories() {
-        int fluidOnlyNodes = (int) linkedFluidNodes.stream()
-                .filter(node -> !isNativeStoragePosition(node.pos())).count();
-        return Math.max(0, super.getMaxConnectedInventories() - fluidOnlyNodes);
+    private int nativeStorageLimit() {
+        return getBookwyrmEntities().size()
+                * com.hollingsworth.arsnouveau.setup.config.Config.BOOKWYRM_LIMIT.get();
     }
 
     @Override
@@ -294,10 +299,10 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         // the Dominion Wand selected first, Ars may record it only in the native
         // lectern inventory list. Treat every native node with a fluid capability as
         // fluid storage too, so the connection order cannot hide buckets from orders.
-        StorageLecternTile main = getMainLectern();
+        CraftingLecternTile main = getMainLectern();
         if (main != null) {
             for (var entry : main.handlerPosList) {
-                BlockPos pos = entry.pos();
+                BlockPos pos = entry.pos;
                 if (!serverLevel.hasChunkAt(pos) || visited.contains(pos)) continue;
                 IFluidHandler handler = fluidHandlerAt(serverLevel, pos, null);
                 if (handler != null) {
@@ -324,21 +329,26 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         return null;
     }
 
-    private List<FluidStack> getStoredFluids() {
-        Map<net.minecraft.world.level.material.Fluid, Integer> totals = new LinkedHashMap<>();
+    public List<FluidStack> getStoredFluids() {
+        List<FluidStack> totals = new ArrayList<>();
         for (IFluidHandler handler : getConnectedFluidHandlers()) {
             for (int tank = 0; tank < handler.getTanks(); tank++) {
                 FluidStack stack = handler.getFluidInTank(tank);
-                if (!stack.isEmpty()) totals.merge(stack.getFluid(), stack.getAmount(),
-                        (left, right) -> (int) Math.min(Integer.MAX_VALUE, (long) left + right));
+                if (stack.isEmpty()) continue;
+                FluidStack existing = totals.stream().filter(value ->
+                        FluidStack.isSameFluidSameComponents(value, stack)).findFirst().orElse(null);
+                if (existing == null) totals.add(stack.copy());
+                else existing.setAmount((int) Math.min(Integer.MAX_VALUE,
+                        (long) existing.getAmount() + stack.getAmount()));
             }
         }
-        return totals.entrySet().stream().map(entry -> new FluidStack(entry.getKey(), entry.getValue())).toList();
+        return totals;
     }
 
     public List<ItemStack> getVirtualFluidContainers() {
         List<ItemStack> result = new ArrayList<>();
         for (FluidStack fluid : getStoredFluids()) {
+            if (!fluid.getComponentsPatch().isEmpty()) continue;
             if (fluid.isEmpty() || fluid.getFluid().getBucket() == net.minecraft.world.item.Items.AIR) continue;
             ItemStack bucket = new ItemStack(fluid.getFluid().getBucket());
             int unit = FluidUtil.getFluidContained(bucket).map(FluidStack::getAmount).orElse(1000);
@@ -413,7 +423,7 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         List<FluidStack> drained = new ArrayList<>();
         for (IFluidHandler handler : getConnectedFluidHandlers()) {
             if (remaining <= 0) break;
-            FluidStack part = handler.drain(new FluidStack(wanted.getFluid(), remaining),
+            FluidStack part = handler.drain(wanted.copyWithAmount(remaining),
                     IFluidHandler.FluidAction.EXECUTE);
             if (!part.isEmpty()) {
                 drained.add(part);
@@ -429,7 +439,7 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
         int remaining = fluid.getAmount();
         for (IFluidHandler handler : getConnectedFluidHandlers()) {
             if (remaining <= 0) break;
-            remaining -= handler.fill(new FluidStack(fluid.getFluid(), remaining),
+            remaining -= handler.fill(fluid.copyWithAmount(remaining),
                     IFluidHandler.FluidAction.EXECUTE);
         }
         return fluid.getAmount() - remaining;
@@ -525,7 +535,7 @@ public final class AdvancedStorageLecternBlockEntity extends StorageLecternTile 
 
     /**
      * Supplies the extended opening payload even when Ars Nouveau opens this inherited
-     * StorageLecternTile through one of its own interaction paths.
+     * CraftingLecternTile through one of its own interaction paths.
      */
     @Override
     public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf data) {

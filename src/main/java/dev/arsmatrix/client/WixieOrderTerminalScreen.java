@@ -401,7 +401,7 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
             for (int tank = 0; tank < WixieOrderTerminalMenu.MAX_LINKED_FLUID_TYPES; tank++) {
                 int fluidType = menu.getLinkedFluidType(tank);
                 int amount = menu.getLinkedFluidAmount(tank);
-                if (fluidType >= 0 && amount > 0 && matchesFluid(fluidType, query)) result.add(-tank - 1);
+                if (fluidType >= 0 && amount > 0 && matchesFluid(tank, query)) result.add(-tank - 1);
             }
             if (menu.getNetworkSourceCapacity() > 0L && matchesSource(query)) result.add(SOURCE_INDEX);
             Comparator<Integer> byName = Comparator.comparing(this::storageName);
@@ -441,11 +441,12 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
                 || BuiltInRegistries.ITEM.getKey(stack.getItem()).toString().toLowerCase(Locale.ROOT).contains(query);
     }
 
-    private boolean matchesFluid(int registryId, String query) {
-        Fluid fluid = BuiltInRegistries.FLUID.byId(registryId);
+    private boolean matchesFluid(int tank, String query) {
+        FluidStack fluidStack = menu.getLinkedFluidStack(tank);
+        Fluid fluid = fluidStack.getFluid();
         if (fluid == Fluids.EMPTY) return false;
         ResourceLocation id = BuiltInRegistries.FLUID.getKey(fluid);
-        String name = new FluidStack(fluid, 1).getHoverName().getString().toLowerCase(Locale.ROOT);
+        String name = fluidStack.getHoverName().getString().toLowerCase(Locale.ROOT);
         return query.isEmpty() || JustEnoughCharactersCompat.contains(name, query)
                 || id.toString().toLowerCase(Locale.ROOT).contains(query);
     }
@@ -466,7 +467,7 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
                 "screen.ars_arcane_matrix.advanced_storage_lectern.source_resource")
                 .getString().toLowerCase(Locale.ROOT);
         Fluid fluid = fluidForIndex(index);
-        return fluid == Fluids.EMPTY ? "" : new FluidStack(fluid, 1).getHoverName()
+        return fluid == Fluids.EMPTY ? "" : menu.getLinkedFluidStack(-index - 1).getHoverName()
                 .getString().toLowerCase(Locale.ROOT);
     }
 
@@ -588,7 +589,7 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
                 graphics.fill(x - 1, y - 1, x + 17, y + 17, 0xA060C8FF);
             if (storageTab && sourceIndex == SOURCE_INDEX)
                 graphics.renderItem(new ItemStack(ItemsRegistry.SOURCE_GEM.get()), x, y);
-            else if (storageTab && sourceIndex < 0) drawFluidCell(graphics, fluidForIndex(sourceIndex), x, y);
+            else if (storageTab && sourceIndex < 0) drawFluidCell(graphics, menu.getLinkedFluidStack(-sourceIndex - 1), x, y);
             else graphics.renderItem(stack, x, y);
             if (!storageTab) drawRecipeTypeBadge(graphics, menu.getCraftableRecipeInfo(sourceIndex), x, y);
             if (storageTab) {
@@ -720,10 +721,13 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
             int tank = -hoveredSourceIndex - 1;
             Fluid fluid = fluidForIndex(hoveredSourceIndex);
             int amount = menu.getLinkedFluidAmount(tank);
-            graphics.renderTooltip(font, List.of(
-                    new FluidStack(fluid, 1).getHoverName(),
+            List<Component> fluidTooltip = new ArrayList<>(List.of(
+                    menu.getLinkedFluidStack(tank).getHoverName(),
                     Component.translatable("screen.ars_arcane_matrix.advanced_storage_lectern.fluid_amount",
-                            amount, formatBuckets(amount))), Optional.empty(), ItemStack.EMPTY, mouseX, mouseY);
+                            amount, formatBuckets(amount))));
+            var contents = menu.getLinkedFluidStack(tank).get(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
+            if (contents != null) contents.addPotionTooltip(fluidTooltip::add, 1.0F, 20.0F);
+            graphics.renderTooltip(font, fluidTooltip, Optional.empty(), ItemStack.EMPTY, mouseX, mouseY);
         }
 
         // The catalogue uses virtual cells and draws its own tooltips above. Preserve the
@@ -878,6 +882,7 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
         // Mirror those fluids as virtual filled containers for the crafting-plan
         // precheck, matching the server-side extraction performed by the lectern.
         for (int tank = 0; tank < WixieOrderTerminalMenu.MAX_LINKED_FLUID_TYPES; tank++) {
+            if (!menu.getLinkedFluidStack(tank).getComponentsPatch().isEmpty()) continue;
             Fluid fluid = BuiltInRegistries.FLUID.byId(menu.getLinkedFluidType(tank));
             int amount = menu.getLinkedFluidAmount(tank);
             if (fluid == Fluids.EMPTY || amount <= 0 || fluid.getBucket() == Items.AIR) continue;
@@ -1502,9 +1507,9 @@ public final class WixieOrderTerminalScreen extends AbstractContainerScreen<Wixi
         return String.format(Locale.ROOT, amount % 1000 == 0 ? "%.0f" : "%.3f", amount / 1000.0D);
     }
 
-    private static void drawFluidCell(GuiGraphics graphics, Fluid fluid, int x, int y) {
+    private static void drawFluidCell(GuiGraphics graphics, FluidStack stack, int x, int y) {
+        Fluid fluid = stack.getFluid();
         if (fluid == Fluids.EMPTY) return;
-        FluidStack stack = new FluidStack(fluid, 1);
         IClientFluidTypeExtensions properties = IClientFluidTypeExtensions.of(fluid);
         ResourceLocation texture = properties.getStillTexture(stack);
         TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager()

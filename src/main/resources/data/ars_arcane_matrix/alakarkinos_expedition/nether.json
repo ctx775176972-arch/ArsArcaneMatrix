@@ -1,21 +1,16 @@
 {
   "inputs": [
-    { "item": "minecraft:netherrack", "count": 64 }
+    { "item": "minecraft:netherrack", "count": 1728 }
   ],
   "work_ticks": 160,
   "source_cost": 10000,
   "loot_tables": [
-    { "id": "minecraft:chests/nether_bridge" },
-    { "id": "minecraft:chests/bastion_bridge" },
-    { "id": "minecraft:chests/bastion_hoglin_stable" },
-    { "id": "minecraft:chests/bastion_other" },
-    { "id": "minecraft:chests/bastion_treasure" },
-    { "id": "minecraft:chests/ruined_portal" }
+    { "id": "minecraft:chests/nether_bridge" }
   ],
   "display_outputs": [
-    { "item": "minecraft:ancient_debris" },
-    { "item": "minecraft:netherite_scrap" },
-    { "item": "minecraft:netherite_upgrade_smithing_template" },
-    { "item": "minecraft:snout_armor_trim_smithing_template" }
+    { "item": "minecraft:diamond" },
+    { "item": "minecraft:gold_ingot" },
+    { "item": "minecraft:iron_ingot" },
+    { "item": "minecraft:obsidian" }
   ]
 }

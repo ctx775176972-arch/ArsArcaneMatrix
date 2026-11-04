@@ -17,6 +17,10 @@
     },
     {
       "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_fluid_controller.components"
+    },
+    {
+      "type": "patchouli:text",
       "text": "documentation.ars_arcane_matrix.arcane_fluid_controller.lectern"
     },
     {

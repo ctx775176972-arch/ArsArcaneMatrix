@@ -1,0 +1,5 @@
+{
+  "pedestal_items": [{ "item": "minecraft:basalt" }],
+  "result": { "id": "minecraft:basalt", "count": 64 },
+  "processing_cost": 200
+}

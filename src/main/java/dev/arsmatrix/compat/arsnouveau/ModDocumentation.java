@@ -47,7 +47,6 @@ public final class ModDocumentation {
                         pocketWatch.getDefaultInstance())
                 .withTextPage(Component.translatable(
                         "documentation.ars_arcane_matrix.enchanters_pocket_watch.operation"))
-                .withCraftingPages()
                 .addConnectedSearch(pocketWatch);
         DocumentationRegistry.registerEntry(DocumentationRegistry.ITEMS, pocketWatchBuilder.build());
 
@@ -230,6 +229,7 @@ public final class ModDocumentation {
                         "documentation.ars_arcane_matrix.arcane_reaction_vessel.operation"))
                 .withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_reaction_vessel.resources"))
                 .withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_reaction_vessel.nature"))
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_reaction_vessel.milk"))
                 .withCraftingPages()
                 .addConnectedSearch(reactionVessel);
         reactionBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_reaction_vessel.operation.details"));
@@ -268,6 +268,7 @@ public final class ModDocumentation {
                 .addConnectedSearch(crusher)
                 .addConnectedSearch(ModItems.ENRICHED_MINERAL_CRYSTAL.get());
         crusherBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_crusher.overview.details"));
+        crusherBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_crusher.passthrough"));
         DocumentationRegistry.registerEntry(minerals, crusherBuilder.build());
 
         Item metalDust = ModItems.IRON_DUST.get();
@@ -459,6 +460,9 @@ public final class ModDocumentation {
                 .withHeaderPage(
                         Component.translatable("documentation.ars_arcane_matrix.alakarkinos_expedition.routes.text"),
                         Component.translatable("documentation.ars_arcane_matrix.alakarkinos_expedition.routes.title"))
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.alakarkinos_expedition.routes.extra"))
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.alakarkinos_expedition.routes.generator"))
+                .withTextPage(Component.translatable("documentation.ars_arcane_matrix.alakarkinos_expedition.routes.ocean"))
                 .addConnectedSearch(alakarkinosCharm);
         DocumentationRegistry.registerEntry(creatures, expeditionBuilder.build());
 
@@ -577,6 +581,7 @@ public final class ModDocumentation {
                 .addConnectedSearch(ModItems.FLUID_RANGE_UPGRADE.get())
                 .addConnectedSearch(ModItems.FLUID_SPEED_UPGRADE.get());
         fluidControllerBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_fluid_controller.operation.details"));
+        fluidControllerBuilder.withTextPage(Component.translatable("documentation.ars_arcane_matrix.arcane_fluid_controller.components"));
         DocumentationRegistry.registerEntry(storage, fluidControllerBuilder.build());
 
         Item fluidTank = ModItems.ARCANE_FLUID_TANK.get();
@@ -662,6 +667,15 @@ public final class ModDocumentation {
                 .withCraftingPages()
                 .addConnectedSearch(ModItems.DIMENSION_ANCHOR.get());
         DocumentationRegistry.registerEntry(source, anchorBuilder.build());
+
+        Item accelerationGlyph = dev.arsmatrix.spell.EffectAcceleration.INSTANCE.getGlyph();
+        DocumentationRegistry.registerEntry(misc, new DocEntryBuilder(
+                ArsArcaneMatrix.MOD_ID, misc, accelerationGlyph)
+                .withSortNum(5)
+                .withIntroPageNoIncrement(Component.translatable("ars_arcane_matrix.glyph_desc.glyph_acceleration"),
+                        Component.translatable("item.ars_arcane_matrix.glyph_acceleration"),
+                        accelerationGlyph.getDefaultInstance())
+                .withCraftingPages().addConnectedSearch(accelerationGlyph).build());
 
         Item captureGlyph = EffectCapture.INSTANCE.getGlyph();
         DocEntryBuilder captureGlyphBuilder = new DocEntryBuilder(

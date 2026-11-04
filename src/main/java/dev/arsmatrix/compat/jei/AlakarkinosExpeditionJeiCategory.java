@@ -36,7 +36,7 @@ public final class AlakarkinosExpeditionJeiCategory
     }
     @Override public IDrawable getIcon() { return icon; }
     @Override public int getWidth() { return 166; }
-    @Override public int getHeight() { return 94; }
+    @Override public int getHeight() { return 118; }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, AlakarkinosExpeditionRule recipe,
@@ -56,26 +56,50 @@ public final class AlakarkinosExpeditionJeiCategory
         var displays = recipe.inputDisplayStacks();
         for (int index = 0; index < displays.size(); index++) {
             builder.addInputSlot(4 + index % 4 * 20, 30 + index / 4 * 20)
-                    .setStandardSlotBackground().addItemStacks(displays.get(index));
+                    .setStandardSlotBackground().addItemStacks(displays.get(index).stream()
+                            .map(stack -> stack.copyWithCount(Math.min(stack.getCount(), stack.getMaxStackSize())))
+                            .toList())
+                    .addRichTooltipCallback((slot, tooltip) -> tooltip.add(Component.translatable(
+                            "jei.ars_arcane_matrix.alakarkinos_expedition.materials",
+                            recipe.inputs().stream().mapToInt(AlakarkinosExpeditionRule.IngredientCost::count).sum())));
         }
         builder.addOutputSlot(143, 32).setOutputSlotBackground()
-                .addItemStacks(recipe.displayOutputStacks());
+                .addItemStacks(recipe.displayOutputStacks())
+                .addRichTooltipCallback((slot, tooltip) -> {
+                    tooltip.add(Component.translatable("jei.ars_arcane_matrix.alakarkinos_expedition.examples")
+                            .withStyle(ChatFormatting.GOLD));
+                    for (var choice : recipe.lootTables()) {
+                        String key = "jei.ars_arcane_matrix.expedition_chest."
+                                + choice.id().getPath().replace('/', '.');
+                        tooltip.add(net.minecraft.client.resources.language.I18n.exists(key)
+                                ? Component.translatable(key) : Component.literal(choice.id().toString()));
+                    }
+                });
     }
 
     @Override
     public void draw(AlakarkinosExpeditionRule recipe, IRecipeSlotsView slots,
             GuiGraphics graphics, double mouseX, double mouseY) {
         var font = Minecraft.getInstance().font;
-        graphics.drawString(font, Component.translatable(
-                "jei.ars_arcane_matrix.alakarkinos_expedition.route." + recipe.id().getPath()),
-                26, 8, 0x404040, false);
+        Component title = Component.translatable(
+                "jei.ars_arcane_matrix.alakarkinos_expedition.route." + recipe.id().getPath());
+        graphics.pose().pushPose();
+        graphics.pose().translate(26, 8, 0);
+        float scale = Math.min(1.0F, 136.0F / Math.max(1, font.width(title)));
+        graphics.pose().scale(scale, scale, 1);
+        graphics.drawString(font, title, 0, 0, 0x404040, false);
+        graphics.pose().popPose();
         graphics.drawString(font, Component.literal("→"), 130, 37, 0x8050A0, false);
         graphics.drawString(font, Component.translatable(
                 "jei.ars_arcane_matrix.alakarkinos_expedition.time",
-                Math.ceilDiv(recipe.workTicks(), 20)), 4, 72, 0x404040, false);
+                Math.ceilDiv(recipe.workTicks(), 20)), 4, 100, 0x404040, false);
         graphics.drawString(font, Component.translatable(
                 "jei.ars_arcane_matrix.alakarkinos_expedition.source",
-                recipe.sourceCost()), 82, 72, 0x404040, false);
+                recipe.sourceCost()), 82, 100, 0x404040, false);
+        graphics.drawString(font, Component.translatable(
+                "jei.ars_arcane_matrix.alakarkinos_expedition.materials",
+                recipe.inputs().stream().mapToInt(AlakarkinosExpeditionRule.IngredientCost::count).sum()),
+                4, 57, 0x404040, false);
     }
 
     @Override public ResourceLocation getRegistryName(AlakarkinosExpeditionRule recipe) {

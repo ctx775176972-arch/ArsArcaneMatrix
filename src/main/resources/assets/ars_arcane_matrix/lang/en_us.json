@@ -1,4 +1,74 @@
 {
+"jei.ars_arcane_matrix.alakarkinos_expedition.materials": "Blocks consumed: %s",
+"jei.ars_arcane_matrix.alakarkinos_expedition.examples": "Examples only; one chest pool is rolled per expedition",
+"jei.ars_arcane_matrix.alakarkinos_expedition.chest_hint": "Hover reward for chest sources",
+"jei.ars_arcane_matrix.expedition_chest.chests.ancient_city": "Ancient City Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.ancient_city_ice_box": "Ancient City Ice Box",
+"jei.ars_arcane_matrix.expedition_chest.chests.end_city_treasure": "End City Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.nether_bridge": "Nether Fortress Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.bastion_bridge": "Bastion: Bridge Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.bastion_hoglin_stable": "Bastion: Hoglin Stable Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.bastion_other": "Bastion: Generic Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.bastion_treasure": "Bastion: Treasure Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.ruined_portal": "Ruined Portal Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.abandoned_mineshaft": "Abandoned Mineshaft Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.desert_pyramid": "Desert Pyramid Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.igloo_chest": "Igloo Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.jungle_temple": "Jungle Temple Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.pillager_outpost": "Pillager Outpost Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.simple_dungeon": "Dungeon Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.spawn_bonus_chest": "Bonus Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.stronghold_corridor": "Stronghold Corridor Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.stronghold_crossing": "Stronghold Crossing Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.stronghold_library": "Stronghold Library Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.woodland_mansion": "Woodland Mansion Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.corridor": "Trial Chambers: Corridor Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.entrance": "Trial Chambers: Entrance Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.intersection": "Trial Chambers: Intersection Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.intersection_barrel": "Trial Chambers: Intersection Barrel",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.supply": "Trial Chambers: Supply Chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.reward": "Trial Chambers: Vault Reward",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.reward_ominous": "Trial Chambers: Ominous Vault Reward",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_armorer": "Village: armorer chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_butcher": "Village: butcher chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_cartographer": "Village: cartographer chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_desert_house": "Village: desert house chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_fisher": "Village: fisher chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_fletcher": "Village: fletcher chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_mason": "Village: mason chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_plains_house": "Village: plains house chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_savanna_house": "Village: savanna house chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_shepherd": "Village: shepherd chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_snowy_house": "Village: snowy house chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_taiga_house": "Village: taiga house chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_tannery": "Village: tannery chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_temple": "Village: temple chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_toolsmith": "Village: toolsmith chest",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_weaponsmith": "Village: weaponsmith chest",
+  "documentation.ars_arcane_matrix.arcane_reaction_vessel.milk": "A Containment Jar holding a cow supplies up to 1,000 mB of milk per second directly downward without Source. Rejected milk is not stored. Place it above a reaction vessel and supply empty buckets to obtain milk buckets. The older imbuement recipe remains available.",
+  "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.extra": "Dirt: villages. Sculk: Ancient City chests and ice boxes. Netherrack: Nether Fortress. Blackstone: Bastions. End stone: End City, excluding item-frame elytra. Tuff: Trial Chambers; pedestal keys select the route without consumption. Hover JEI rewards for specific chest pools.",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.bastion": "Bastion Remnant Chests",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.desert_pyramid": "Desert Pyramid Chest",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.jungle_temple": "Jungle Temple Chest",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.stronghold": "Stronghold Chests",
+  "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.generator": "Place mossy cobblestone, sandstone, red sand or red sandstone on a nearby generator pedestal to produce that block in batches of 64. Samples are not consumed. Each expedition costs 27 stacks and 10,000 Source. Ordinary sand and gravel archaeology is unchanged.",
+  "config.ars_arcane_matrix.acceleration": "Acceleration Glyph",
+  "config.ars_arcane_matrix.acceleration.blockBlacklist": "Acceleration Block Blacklist",
+  "config.ars_arcane_matrix.acceleration.blockBlacklist.tooltip": "Block IDs excluded from this mod's acceleration glyph. Defaults to the Matrix Core. An empty list adds no exclusions. Server-authoritative.",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.buried_treasure": "Buried Treasure",
+  "jei.ars_arcane_matrix.expedition_chest.chests.buried_treasure": "Buried Treasure Chest",
+  "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.ocean": "Prismarine: Buried Treasure. Each expedition consumes 1,728 prismarine and 10,000 Source for one chest loot roll, including a Heart of the Sea. Obtain prismarine from ocean monuments or craft it from guardian drops.",
+  "documentation.ars_arcane_matrix.arcane_crusher.passthrough": "Raw materials without a crushing recipe pass from the bound input to the output unchanged, without consuming essence or generating crystals. A full output buffer stops extraction. Redstone pause and incomplete structures stop forwarding; unrelated items are not forwarded.",
+  "config.ars_arcane_matrix.arcane_mine.operation.requireModdedOreWhitelist": "Require Modded Ore Whitelist Samples",
+  "config.ars_arcane_matrix.arcane_mine.operation.requireModdedOreWhitelist.tooltip": "Disabled by default. Non-vanilla ores require an ore block in a whitelist position. Samples are not consumed and do not permanently unlock ores. Layer, cost and blacklist restrictions still apply.",
+  "jei.ars_arcane_matrix.arcane_mining.whitelist_required": "Requires an ore whitelist sample",
+  "tooltip.ars_arcane_matrix.arcane_fluid_reservoir.fluid_contents": "Tank %s: %s · %s mB",
+  "documentation.ars_arcane_matrix.arcane_fluid_controller.components": "Tanks and controllers preserve fluid components such as potion effects. Different variants occupy separate tanks instead of mixing. Wireless transfers, saving and lectern displays preserve their identity. This supports storage and transport; it does not add potion brewing or bottling recipes.",
+  "hud.ars_arcane_matrix.acceleration": "Accelerated ×%s · %s s remaining",
+  "ars_arcane_matrix.glyph_name.glyph_acceleration": "Acceleration",
+  "item.ars_arcane_matrix.glyph_acceleration": "Acceleration Glyph",
+  "ars_arcane_matrix.glyph_desc.glyph_acceleration": "Accelerates a machine or random-ticking block for 30 seconds at 2x speed. Each Amplify doubles the rate, up to eight for 512x. Duration augments are unsupported; recasting refreshes rather than stacks. World-time-based cooldowns may not accelerate. Unloading or replacing the target ends the effect.",
+  "ars_nouveau.augment_desc.glyph_acceleration_glyph_amplify": "Doubles acceleration, up to 512x.",
   "generator.ars_arcane_matrix.skyblock": "Arcane Matrix Skyblock",
   "config.ars_arcane_matrix.enableSkyblock": "Enable skyblock starters and recipes",
   "config.ars_arcane_matrix.enableSkyblock.tooltip": "No game restart required. Saving in singleplayer reloads recipes; menu changes apply when entering a world. Existing terrain is unchanged.",
@@ -650,12 +720,12 @@
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.source": "Source: %s"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.info": "Place a Brush on an Arcane Pedestal within three blocks of an Alakarkinos home to enable container exploration. It only extracts blocks from nearby inventories and never breaks placed blocks; the home receives rewards."
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.automation": "Sand and gravel use Ars Nouveau's archaeology rewards. Other blocks represent different exploration destinations. When a route needs a key or other proof, place it on another nearby pedestal."
-  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.overworld_ruins": "Overworld Ruins"
+  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.overworld_ruins": "Mineshafts and Dungeons"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.village": "Village Circuit"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.ocean": "Ocean Treasure"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.ancient_city": "Ancient City"
-  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.nether": "Nether Expedition"
-  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.end": "End Expedition"
+  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.nether": "Nether Fortress Chest"
+  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.end": "End City Chest"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.trial_chambers": "Trial Chambers"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.ominous_trial": "Ominous Trial"
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.title": "Alakarkinos Expeditions"
@@ -663,7 +733,7 @@
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.layout.title": "Home and Logistics"
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.layout.text": "Tame an Alakarkinos normally, give it a pottery sherd to wear, and bind a container as its home. Put a Brush on an Arcane Pedestal within three blocks and place exploration blocks in inventories within the same range. The home receives rewards. Nothing is charged early when materials, Source, or output space are insufficient."
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.routes.title": "Expedition Routes"
-  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.routes.text": "Cobblestone, dirt, sculk, netherrack with blackstone, end stone, and tuff simulate chests from different destinations; JEI shows only example rewards. Rewards added to those chests by other mods may also appear. Ancient City sculk can be produced by the Source Stone Generator. Trial routes also read a nearby Trial Key or Ominous Trial Key."
+  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.routes.text": "Cobblestone: mineshafts and dungeons. Sandstone: desert pyramids. Mossy cobblestone: jungle temples. Stone bricks: stronghold corridors, crossings and libraries. Each run rolls one chest pool. Ruined Portal and Bonus Chests are excluded."
   ,"ars_arcane_matrix.section.getting_started": "Getting Started & Progression"
   ,"ars_arcane_matrix.section.source_network": "Source & Networks"
   ,"ars_arcane_matrix.section.mineral_processing": "Mining & Processing"
@@ -721,7 +791,7 @@
   ,"documentation.ars_arcane_matrix.crafting_network.workflow.text": "Record supported recipes through JEI or EMI on the ordering page and store guides in a Provider. Each intermediate needs a guide and a workstation in range. Review the plan before submitting. Check the active device and completed quantity while running. Intermediates return to shared input storage; final items go to output."
   ,"documentation.ars_arcane_matrix.roadmap.summary": "New players should begin here for device order, material loops, and multiblock construction."
   ,"documentation.ars_arcane_matrix.whirlisprig.summary": "Enable grove mode with Earth Essence or Ancient Grove Catalyst in an inventory, then gain speed from nearby plant diversity; without a catalyst, native behavior remains unchanged."
-  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.summary": "Alakarkinos consume bulk terrain and metal blocks to simulate vanilla structure chests."
+  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.summary": "Alakarkinos consume 1,728 building blocks (27 stacks) and 10,000 Source per expedition to roll one chest pool. Ordinary sand and gravel archaeology is unchanged."
   ,"documentation.ars_arcane_matrix.storage.summary": "The Advanced Storage Lectern unifies linked inventories, grid directories, and autocrafting access."
   ,"documentation.ars_arcane_matrix.troubleshooting.summary": "When a device stops, check structure, redstone, Source, links, output space, and recipe support first."
   ,"documentation.ars_arcane_matrix.order_pedestal.summary": "The Order Pedestal marks a virtual crafting task sent by the terminal; players never place or retrieve output samples on it."
@@ -888,8 +958,9 @@
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.mode.below_only": "Below only"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.mode.off": "Off"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.destroy": "Void: %s"
-  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt": "NBT: %s"
-  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt.ignore": "Ignore"
+  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt": "Match: %s"
+  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt.ignore": "Item"
+  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt.mod": "Mod"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt.strict": "Strict"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.range": "Range: %s"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.range.4": "4 blocks"

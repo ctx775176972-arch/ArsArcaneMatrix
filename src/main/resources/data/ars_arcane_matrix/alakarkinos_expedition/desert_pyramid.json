@@ -1,0 +1,29 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:sandstone",
+      "count": 1728
+    }
+  ],
+  "work_ticks": 100,
+  "source_cost": 10000,
+  "loot_tables": [
+    {
+      "id": "minecraft:chests/desert_pyramid"
+    }
+  ],
+  "display_outputs": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:enchanted_book"
+    },
+    {
+      "item": "minecraft:golden_apple"
+    }
+  ]
+}

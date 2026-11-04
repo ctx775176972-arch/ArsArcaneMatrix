@@ -67,7 +67,7 @@ public final class ClientModEvents {
                         var fluid = reservoir.outputTankFluid();
                         if (fluid == Fluids.EMPTY) return 0x28212F;
                         return IClientFluidTypeExtensions.of(fluid).getTintColor(
-                                fluid.defaultFluidState(), level, pos) & 0x00FFFFFF;
+                                reservoir.storedFluid(reservoir.outputFluid())) & 0x00FFFFFF;
                     }
                     return 0x28212F;
                 },

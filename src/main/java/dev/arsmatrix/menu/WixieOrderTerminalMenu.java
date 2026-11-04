@@ -83,6 +83,18 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
     private final List<StorageEntry> lastSyncedStoredEntries = new ArrayList<>();
     private final boolean advancedStorage;
     private final Player menuPlayer;
+    private List<net.neoforged.neoforge.fluids.FluidStack> fluidContents = List.of();
+    private boolean fluidContentsSynced;
+    private long lastFluidContentsSync = Long.MIN_VALUE;
+
+    public void applyFluidContents(List<net.neoforged.neoforge.fluids.FluidStack> fluids) {
+        fluidContents = fluids.stream().map(net.neoforged.neoforge.fluids.FluidStack::copy).toList();
+        fluidContentsSynced = true;
+    }
+    public net.neoforged.neoforge.fluids.FluidStack getLinkedFluidStack(int tank) {
+        return tank < 0 || tank >= fluidContents.size() ? net.neoforged.neoforge.fluids.FluidStack.EMPTY
+                : fluidContents.get(tank).copy();
+    }
     private final ContainerData sourceData;
     private final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
     private final ResultContainer resultSlots = new ResultContainer();
@@ -714,6 +726,15 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
         super.broadcastChanges();
         if (menuPlayer.level().isClientSide || !(menuPlayer instanceof ServerPlayer serverPlayer)) return;
         long gameTime = menuPlayer.level().getGameTime();
+        if (advancedLectern != null && (lastFluidContentsSync == Long.MIN_VALUE || gameTime - lastFluidContentsSync >= 5)) {
+            lastFluidContentsSync = gameTime;
+            var fluids = advancedLectern.getStoredFluids().stream().limit(MAX_LINKED_FLUID_TYPES).toList();
+            if (!dev.arsmatrix.network.FluidContentsPayload.same(fluidContents, fluids)) {
+                applyFluidContents(fluids);
+                PacketDistributor.sendToPlayer(serverPlayer,
+                        new dev.arsmatrix.network.FluidContentsPayload(containerId, fluids));
+            }
+        }
         if (terminal != null && (lastDiagnosticsRefreshTime == Long.MIN_VALUE
                 || gameTime - lastDiagnosticsRefreshTime >= 20L)) {
             lastDiagnosticsRefreshTime = gameTime;
@@ -1122,10 +1143,15 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
     }
 
     public int getLinkedFluidType(int tank) {
+        if (fluidContentsSynced) {
+            var stack = getLinkedFluidStack(tank);
+            return stack.isEmpty() ? -1 : net.minecraft.core.registries.BuiltInRegistries.FLUID.getId(stack.getFluid());
+        }
         return tank < 0 || tank >= MAX_LINKED_FLUID_TYPES ? -1 : sourceData.get(6 + tank * 2);
     }
 
     public int getLinkedFluidAmount(int tank) {
+        if (fluidContentsSynced) return getLinkedFluidStack(tank).getAmount();
         return tank < 0 || tank >= MAX_LINKED_FLUID_TYPES ? 0 : Math.max(0, sourceData.get(7 + tank * 2));
     }
 

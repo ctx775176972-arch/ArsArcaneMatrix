@@ -107,7 +107,7 @@ public final class ArcaneVacuumHopperScreen extends AbstractContainerScreen<Arca
                 Math.floorMod(menu.gemMode(), ArcaneVacuumHopperBlockEntity.GemMode.values().length)].name()));
         nbtMode.setMessage(Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt",
                 Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt."
-                        + (menu.strictComponents() ? "strict" : "ignore"))));
+                        + (menu.matchingMode() == 2 ? "mod" : menu.strictComponents() ? "strict" : "ignore"))));
         ArcaneVacuumHopperBlockEntity.RangeMode selectedRange = ArcaneVacuumHopperBlockEntity.RangeMode.values()[
                 Math.floorMod(menu.rangeMode(), ArcaneVacuumHopperBlockEntity.RangeMode.values().length)];
         rangeMode.setMessage(Component.translatable("screen.ars_arcane_matrix.arcane_vacuum_hopper.range",

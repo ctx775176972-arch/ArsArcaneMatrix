@@ -80,7 +80,13 @@ sourceSets.main.resources {
     srcDir 'src/generated/resources'
 }
 
-def arsNouveauJar = file('libs/ars_nouveau-1.21.1-5.13.0.jar')
+def localArsNouveauJar = file('libs/ars_nouveau-1.21.1-5.13.4.jar')
+def arsNouveauDependency = configurations.detachedConfiguration(
+        dependencies.create('maven.modrinth:ars-nouveau:CHw9k5Va'))
+arsNouveauDependency.transitive = false
+def arsNouveauJar = providers.provider {
+    localArsNouveauJar.isFile() ? localArsNouveauJar : arsNouveauDependency.singleFile
+}
 def nuggetsJarName = 'nuggets-neoforge-1.21.1-1.1.0.48.jar'
 def extractedNuggetsJar = layout.buildDirectory.file("extractedDependencies/${nuggetsJarName}")
 
@@ -90,7 +96,7 @@ tasks.register('extractArsNouveauNuggets') {
 
     doLast {
         copy {
-            from zipTree(arsNouveauJar)
+            from zipTree(arsNouveauJar.get())
             include "META-INF/jarjar/${nuggetsJarName}"
             eachFile { details -> details.path = details.name }
             includeEmptyDirs = false

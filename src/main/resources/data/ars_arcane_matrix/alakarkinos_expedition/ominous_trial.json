@@ -1,6 +1,6 @@
 {
   "inputs": [
-    { "item": "minecraft:copper_block", "count": 16 }
+    { "item": "minecraft:tuff", "count": 1728 }
   ],
   "proof": "minecraft:ominous_trial_key",
   "work_ticks": 300,

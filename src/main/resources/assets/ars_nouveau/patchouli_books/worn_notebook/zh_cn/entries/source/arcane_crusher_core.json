@@ -14,6 +14,10 @@
     },
     {
       "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_crusher.passthrough"
+    },
+    {
+      "type": "patchouli:text",
       "text": "documentation.ars_arcane_matrix.multiblock.prototype"
     }
   ]
