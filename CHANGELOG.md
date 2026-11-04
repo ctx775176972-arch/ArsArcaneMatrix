@@ -7,6 +7,7 @@
 ## 0.5.7 - 2026-11-04
 
 - Updated the Advanced Storage Lectern for Ars Nouveau 5.13.4, fixing a startup crash. Ars Nouveau 5.13.4 or newer is required.
+- Fixed linked fluids not appearing when opening the Advanced Storage Lectern.
 - Added the Acceleration Glyph. It speeds up supported machines and random-ticking blocks for 30 seconds, from 2× up to 512× with Amplify. Its default mana cost is 4,000.
 - Reworked Alakarkinos expeditions with new treasure routes, clearer loot previews, and standardized expedition costs. Alakarkinos now pause their digging animation when Source runs out. Ordinary archaeology is unchanged.
 

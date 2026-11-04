@@ -92,8 +92,14 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
         fluidContentsSynced = true;
     }
     public net.neoforged.neoforge.fluids.FluidStack getLinkedFluidStack(int tank) {
-        return tank < 0 || tank >= fluidContents.size() ? net.neoforged.neoforge.fluids.FluidStack.EMPTY
-                : fluidContents.get(tank).copy();
+        if (tank < 0 || tank >= MAX_LINKED_FLUID_TYPES) return net.neoforged.neoforge.fluids.FluidStack.EMPTY;
+        if (fluidContentsSynced) return tank < fluidContents.size() ? fluidContents.get(tank).copy()
+                : net.neoforged.neoforge.fluids.FluidStack.EMPTY;
+        int amount = getLinkedFluidAmount(tank);
+        var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID.byId(getLinkedFluidType(tank));
+        return amount > 0 && fluid != net.minecraft.world.level.material.Fluids.EMPTY
+                ? new net.neoforged.neoforge.fluids.FluidStack(fluid, amount)
+                : net.neoforged.neoforge.fluids.FluidStack.EMPTY;
     }
     private final ContainerData sourceData;
     private final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
@@ -138,6 +144,7 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
         advancedStorage = opening.advanced();
         menuPlayer = inventory.player;
         sourceData = new SimpleContainerData(NETWORK_DATA_SIZE);
+        if (opening.fluids() != null) applyFluidContents(opening.fluids());
         storageCraftingActive = advancedStorage;
         storagePageActive = advancedStorage;
         addCraftingAndInventorySlots(inventory);
@@ -307,7 +314,18 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
                 storage.add(new StorageEntry(ItemStack.STREAM_CODEC.decode(data), data.readVarInt()));
             }
         }
-        return new OpeningData(pos, dimension, recipes, storage, advanced);
+        List<net.neoforged.neoforge.fluids.FluidStack> fluids = null;
+        if (advanced && data.isReadable()) {
+            int count = data.readVarInt();
+            if (count < 0 || count > MAX_LINKED_FLUID_TYPES) {
+                throw new IllegalArgumentException("Invalid opening fluid count");
+            }
+            fluids = new ArrayList<>(count);
+            for (int index = 0; index < count; index++) {
+                fluids.add(net.neoforged.neoforge.fluids.FluidStack.OPTIONAL_STREAM_CODEC.decode(data));
+            }
+        }
+        return new OpeningData(pos, dimension, recipes, storage, advanced, fluids);
     }
 
     public static void writeOpeningData(
@@ -327,7 +345,8 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
             BlockPos pos,
             ResourceKey<Level> dimension,
             List<CraftableRecipeInfo> recipes,
-            List<AdvancedStorageLecternBlockEntity.StoredStack> storage
+            List<AdvancedStorageLecternBlockEntity.StoredStack> storage,
+            List<net.neoforged.neoforge.fluids.FluidStack> fluids
     ) {
         data.writeBlockPos(pos);
         data.writeResourceLocation(dimension.location());
@@ -338,6 +357,9 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
             ItemStack.STREAM_CODEC.encode(data, entry.stack());
             data.writeVarInt(entry.count());
         });
+        data.writeVarInt(Math.min(MAX_LINKED_FLUID_TYPES, fluids.size()));
+        fluids.stream().limit(MAX_LINKED_FLUID_TYPES).forEach(stack ->
+                net.neoforged.neoforge.fluids.FluidStack.OPTIONAL_STREAM_CODEC.encode(data, stack));
     }
 
     private static void writeRecipes(
@@ -1278,7 +1300,8 @@ public final class WixieOrderTerminalMenu extends AbstractContainerMenu {
 
     private record OpeningData(
             BlockPos pos, ResourceKey<Level> dimension, List<CraftableRecipeInfo> recipes,
-            List<StorageEntry> storage, boolean advanced
+            List<StorageEntry> storage, boolean advanced,
+            List<net.neoforged.neoforge.fluids.FluidStack> fluids
     ) {
     }
 }

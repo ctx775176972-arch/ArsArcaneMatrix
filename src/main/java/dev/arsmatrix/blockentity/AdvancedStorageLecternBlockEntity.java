@@ -541,7 +541,7 @@ public final class AdvancedStorageLecternBlockEntity extends CraftingLecternTile
     public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf data) {
         WixieOrderTerminalMenu.writeOpeningData(
                 data, worldPosition, level == null ? Level.OVERWORLD : level.dimension(),
-                getCraftableRecipeInfos(), getStoredStacks());
+                getCraftableRecipeInfos(), getStoredStacks(), getStoredFluids());
     }
 
     public List<StoredStack> getStoredStacks() {
