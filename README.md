@@ -12,4 +12,6 @@ Ars Arcane Matrix requires Minecraft with NeoForge and Ars Nouveau.
 
 Ars Arcane Matrix is licensed under the [MIT License](LICENSE).
 
+Ars Nouveau textures used or modified with permission remain under their original ownership and are excluded from the MIT license. See the [asset permission record](docs/permissions/README.md).
+
 Ars Nouveau, Minecraft, NeoForge, and other referenced projects retain their respective licenses and trademarks.
