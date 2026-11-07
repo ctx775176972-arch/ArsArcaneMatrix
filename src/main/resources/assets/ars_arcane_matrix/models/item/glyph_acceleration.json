@@ -1,0 +1,6 @@
+{
+  "parent": "ars_nouveau:item/blank_glyph",
+  "textures": {
+    "layer1": "ars_arcane_matrix:item/glyph_acceleration"
+  }
+}

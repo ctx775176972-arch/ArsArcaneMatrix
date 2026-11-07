@@ -430,7 +430,8 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
             Optional<ArcaneMineOreRule> existing = ArcaneMineOreManager.find(targetRuleId);
             if (existing.isPresent() && existing.get().requiredLayers() <= completedLayers
                     && isRuleAllowed(existing.get())
-                    && !targetOutput.isEmpty()) {
+                    && !targetOutput.isEmpty()
+                    && isRuleItemAllowed(existing.get(), targetOutput.getItem())) {
                 return existing.get();
             }
             clearTargetSelection();
@@ -445,7 +446,8 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
         if (selected.isEmpty()) {
             return null;
         }
-        ItemStack output = selected.get().createOutput(currentLevel.random);
+        ItemStack output = selected.get().createOutput(currentLevel.random,
+                item -> isRuleItemAllowed(selected.get(), item));
         if (output.isEmpty()) {
             return null;
         }
@@ -459,7 +461,16 @@ public class ArcaneMineCoreBlockEntity extends BlockEntity
 
     private boolean isRuleAllowed(ArcaneMineOreRule rule) {
         return (whitelistedRules.isEmpty() || whitelistedRules.contains(rule.id()))
-                && !blacklistedRules.contains(rule.id());
+                && !blacklistedRules.contains(rule.id())
+                && (!MatrixConfig.MINE_REQUIRE_MODDED_ORE_WHITELIST.get()
+                    || whitelistedRules.contains(rule.id()) || rule.hasVanillaOutput());
+    }
+
+    private boolean isRuleItemAllowed(ArcaneMineOreRule rule, Item item) {
+        return !MatrixConfig.MINE_REQUIRE_MODDED_ORE_WHITELIST.get()
+                || whitelistedRules.contains(rule.id())
+                || net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item)
+                        .getNamespace().equals("minecraft");
     }
 
     private void pullMaterialPoints(int targetPoints) {

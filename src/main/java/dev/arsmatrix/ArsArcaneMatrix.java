@@ -49,6 +49,8 @@ public class ArsArcaneMatrix {
         // The reaction vessel and fluid controller treat the vanilla milk bucket as a fluid container.
         NeoForgeMod.enableMilkFluid();
         ModGlyphs.register();
+        NeoForge.EVENT_BUS.addListener(dev.arsmatrix.spell.EffectAcceleration::onLevelTick);
+        NeoForge.EVENT_BUS.addListener(dev.arsmatrix.spell.EffectAcceleration::onServerStopped);
         // 🟢 核心修复：在此处注册数据同步附件，让 NeoForge 在启动时强制绑定槽位，彻底消除 Unbound 崩溃
         ModDataComponents.register(modBus);
         ModRecipeTypes.register(modBus);
@@ -76,6 +78,7 @@ public class ArsArcaneMatrix {
         NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,
                 dev.arsmatrix.world.SkyblockFinalCleanup::onChunkLoad);
         if (FMLEnvironment.dist == Dist.CLIENT) {
+            NeoForge.EVENT_BUS.addListener(dev.arsmatrix.client.AccelerationStatusHud::render);
             modContainer.registerConfig(ModConfig.Type.CLIENT, MatrixClientConfig.SPEC,
                     "ars_arcane_matrix-client.toml");
             if (net.neoforged.fml.ModList.get().isLoaded("cloth_config")) {

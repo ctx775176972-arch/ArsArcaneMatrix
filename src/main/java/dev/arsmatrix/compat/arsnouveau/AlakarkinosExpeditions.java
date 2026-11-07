@@ -20,6 +20,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -46,6 +47,9 @@ import java.util.WeakHashMap;
 
 /** Pedestal-marked, container-fed exploration cycles layered onto the native Alakarkinos. */
 public final class AlakarkinosExpeditions {
+    private static final TagKey<Item> EXPLORATION_LOOT_BLACKLIST = TagKey.create(
+            Registries.ITEM, ResourceLocation.fromNamespaceAndPath(
+                    "ars_arcane_matrix", "exploration_loot_blacklist"));
     private static final int SCAN_INTERVAL = 20;
     private static final int HOME_RANGE = 3;
     private static final int SOURCE_RANGE = 5;
@@ -77,6 +81,7 @@ public final class AlakarkinosExpeditions {
                 state.task = findCandidate(level, pedestalItems, inputs);
                 state.progress = 0;
                 state.pendingLoot = List.of();
+                state.nextSourceCheck = 0;
             }
             state.nextScan = now + SCAN_INTERVAL;
         }
@@ -91,6 +96,14 @@ public final class AlakarkinosExpeditions {
             state.suppressingNative = true;
         }
         crab.findBlockCooldown = Math.max(crab.findBlockCooldown, SCAN_INTERVAL + 2);
+        if (now >= state.nextSourceCheck) {
+            state.sourceAvailable = canPaySource(level, home, state.task.sourceCost());
+            state.nextSourceCheck = now + SCAN_INTERVAL;
+        }
+        if (!state.sourceAvailable) {
+            pauseAnimation(crab);
+            return;
+        }
         crab.getEntityData().set(Alakarkinos.BLOWING_AT, java.util.Optional.of(home));
         crab.setBlowingBubbles(true);
 
@@ -113,10 +126,18 @@ public final class AlakarkinosExpeditions {
             return;
         }
         if (state.pendingLoot.isEmpty()) state.pendingLoot = createLoot(level, crab, state.task);
-        if (state.pendingLoot.isEmpty() || !canFitAll(output, state.pendingLoot)
-                || !canPaySource(level, home, state.task.sourceCost())) return;
+        if (state.pendingLoot.isEmpty() || !canFitAll(output, state.pendingLoot)) {
+            pauseAnimation(crab);
+            return;
+        }
 
-        if (!paySource(level, crab, home, state.task.sourceCost())) return;
+        if (!canPaySource(level, home, state.task.sourceCost())
+                || !paySource(level, crab, home, state.task.sourceCost())) {
+            state.sourceAvailable = false;
+            state.nextSourceCheck = now + SCAN_INTERVAL;
+            pauseAnimation(crab);
+            return;
+        }
         if (!extractInputs(inputs, state.task)) return;
         for (ItemStack stack : state.pendingLoot) {
             ItemStack leftover = ItemHandlerHelper.insertItemStacked(output, stack.copy(), false);
@@ -134,6 +155,14 @@ public final class AlakarkinosExpeditions {
         state.task = null;
         state.progress = 0;
         state.pendingLoot = List.of();
+        state.nextSourceCheck = 0;
+        state.sourceAvailable = false;
+    }
+
+    private static void pauseAnimation(Alakarkinos crab) {
+        crab.setBlowingBubbles(false);
+        crab.getEntityData().set(Alakarkinos.BLOWING_AT, java.util.Optional.empty());
+        crab.getNavigation().stop();
     }
 
     private static void stop(Alakarkinos crab) {
@@ -141,7 +170,7 @@ public final class AlakarkinosExpeditions {
         if (state != null && state.suppressingNative) {
             state.suppressingNative = false;
             reset(state);
-            crab.setBlowingBubbles(false);
+            pauseAnimation(crab);
         }
     }
 
@@ -286,6 +315,7 @@ public final class AlakarkinosExpeditions {
                 .withParameter(LootContextParams.THIS_ENTITY, ANFakePlayer.getPlayer(level))
                 .create(LootContextParamSets.CHEST);
         return table.getRandomItems(params, level.random).stream()
+                .filter(stack -> !stack.is(EXPLORATION_LOOT_BLACKLIST))
                 .filter(stack -> task.rule == null
                         || !task.rule.excludedOutputs().contains(BuiltInRegistries.ITEM.getKey(stack.getItem())))
                 .map(ItemStack::copy).toList();
@@ -366,6 +396,8 @@ public final class AlakarkinosExpeditions {
         private ExplorationTask task;
         private int progress;
         private long nextScan;
+        private long nextSourceCheck;
+        private boolean sourceAvailable;
         private List<ItemStack> pendingLoot = List.of();
         private boolean suppressingNative;
     }

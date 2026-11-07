@@ -24,6 +24,7 @@ runs/
 
 # Local inspection and extracted dependency files
 tmp/
+libs/ars_nouveau-1.21.1-5.13.4.jar
 
 # Generated
 bin/

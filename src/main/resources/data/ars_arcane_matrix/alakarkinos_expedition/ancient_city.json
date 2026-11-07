@@ -1,6 +1,6 @@
 {
   "inputs": [
-    { "item": "minecraft:sculk", "count": 64 }
+    { "item": "minecraft:sculk", "count": 1728 }
   ],
   "work_ticks": 200,
   "source_cost": 10000,

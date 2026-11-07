@@ -12,6 +12,7 @@ public final class MatrixConfig {
     public static final int MINE_AMPLIFIER_POSITIONS = 4;
 
     public static final ModConfigSpec SPEC;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> ACCELERATION_BLOCK_BLACKLIST;
     public static final ModConfigSpec.BooleanValue ENABLE_ALAKARKINOS_EXPEDITIONS;
     public static final ModConfigSpec.BooleanValue ENABLE_DRYGMY_TOOL_ENHANCEMENTS;
     public static final ModConfigSpec.IntValue SOURCE_CAPACITY;
@@ -40,6 +41,7 @@ public final class MatrixConfig {
     public static final ModConfigSpec.IntValue MINE_MAX_MATERIAL_CONTAINERS;
     public static final ModConfigSpec.BooleanValue MINE_ALLOW_CROSS_DIMENSION;
     public static final ModConfigSpec.BooleanValue MINE_AUTO_DISCOVER_ORES;
+    public static final ModConfigSpec.BooleanValue MINE_REQUIRE_MODDED_ORE_WHITELIST;
     public static final ModConfigSpec.BooleanValue MINE_ENABLE_PARTICLES;
     public static final ModConfigSpec.IntValue MINE_PARTICLE_INTERVAL;
     public static final ModConfigSpec.DoubleValue MINE_PARTICLE_DENSITY;
@@ -55,6 +57,15 @@ public final class MatrixConfig {
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+        builder.comment("Acceleration glyph restrictions. / 加速魔符限制。").push("acceleration");
+        ACCELERATION_BLOCK_BLACKLIST = builder
+                .comment("Block IDs that the acceleration glyph cannot accelerate. Empty list allows all blocks.",
+                        "禁止加速的方块ID；默认禁用矩阵核心。空列表不额外禁用。仅限制本模组加速魔符。")
+                .translation("config.ars_arcane_matrix.acceleration.blockBlacklist")
+                .defineListAllowEmpty("blockBlacklist", List.of("ars_arcane_matrix:matrix_core"),
+                        value -> value instanceof String id
+                                && net.minecraft.resources.ResourceLocation.tryParse(id) != null);
+        builder.pop();
         builder.comment("Arcane Matrix Core gameplay settings. / 矩阵核心运行设置。").push("matrix_core");
 
         SOURCE_CAPACITY = builder
@@ -183,6 +194,11 @@ public final class MatrixConfig {
                 .comment("Create conservative default rules for unconfigured c:ores/* item tags. / 是否自动为其他模组的矿物生成默认规则；关闭后只使用数据包明确指定的矿物。")
                 .translation("config.ars_arcane_matrix.arcane_mine.operation.autoDiscoverOres")
                 .define("autoDiscoverOres", true);
+        MINE_REQUIRE_MODDED_ORE_WHITELIST = builder
+                .comment("Require an ore-block whitelist sample before producing non-Minecraft ores. Default false preserves existing behavior.",
+                        "其他模组矿物必须放置原矿白名单样板才可生产；不消耗样板，不记录永久解锁。默认关闭，保留现有行为。")
+                .translation("config.ars_arcane_matrix.arcane_mine.operation.requireModdedOreWhitelist")
+                .define("requireModdedOreWhitelist", false);
         builder.pop();
 
         builder.comment("Arcane Mine visual and sound effects. / 矿井特效的服务器发送设置，影响所有玩家；个人光束与投影显示请修改客户端配置。").push("effects");

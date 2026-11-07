@@ -30,6 +30,8 @@ public final class ArcaneFluidReservoirRenderer
         Fluid fluid = reservoir.outputTankFluid();
         if (fluid == Fluids.EMPTY || reservoir.outputTankAmount() <= 0) return;
         ItemStack bucket = new ItemStack(fluid.getBucket());
+        ItemStack potion = dev.arsmatrix.util.PotionFluidDisplay.icon(reservoir.storedFluid(reservoir.outputFluid()));
+        if (!potion.isEmpty()) bucket = potion;
         if (bucket.isEmpty()) return;
 
         Direction facing = reservoir.getBlockState().getValue(ArcaneFluidReservoirBlock.FACING);

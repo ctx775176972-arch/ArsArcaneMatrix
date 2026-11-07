@@ -5,7 +5,7 @@
   },
   "required_layers": 4,
   "material_points": 512,
-  "source_cost": 51200,
+  "source_cost": 25600,
   "weight": 1,
   "enabled": true
 }

@@ -1,0 +1,29 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:mossy_cobblestone",
+      "count": 1728
+    }
+  ],
+  "work_ticks": 100,
+  "source_cost": 10000,
+  "loot_tables": [
+    {
+      "id": "minecraft:chests/jungle_temple"
+    }
+  ],
+  "display_outputs": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ]
+}

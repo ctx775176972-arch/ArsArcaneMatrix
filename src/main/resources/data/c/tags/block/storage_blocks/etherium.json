@@ -1,0 +1,6 @@
+{
+  "replace": false,
+  "values": [
+    { "id": "enigmaticlegacyplus:etherium_block", "required": false }
+  ]
+}

@@ -80,6 +80,7 @@ public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements I
         pushBoundOutputs();
         if (!structureFormed) { progressTicks = 0; setState(OperatingState.UNFORMED); return; }
         if (level.hasNeighborSignal(worldPosition)) { setState(OperatingState.REDSTONE_PAUSED); return; }
+        if (tickCounter % 20 == 1) forwardUnsupportedRawMaterials();
 
         Optional<CrusherRecipeRule> recipe = CrusherRecipeResolver.find(inputs.first());
         if (inputs.isEmpty()) { progressTicks = 0; setState(OperatingState.NO_INPUT); return; }
@@ -195,9 +196,36 @@ public final class ArcaneCrusherCoreBlockEntity extends BlockEntity implements I
         return highest;
     }
 
+    /** Pass unsupported raw metals through unchanged, without catalyst use or byproduct rolls. */
+    private void forwardUnsupportedRawMaterials() {
+        if (outputContainer == null || outputContainer.equals(inputContainer)) return;
+        IItemHandler source = resolveHandler(inputContainer, inputFace);
+        if (source == null) return;
+        int budget = MAX_BATCH;
+        boolean changed = false;
+        for (int slot = 0; slot < source.getSlots() && budget > 0; slot++) {
+            ItemStack available = source.getStackInSlot(slot);
+            if (!isRawMaterial(available) || CrusherRecipeResolver.find(available).isPresent()) continue;
+            int amount = Math.min(budget, Math.min(available.getCount(), available.getMaxStackSize()));
+            while (amount > 0 && !canStore(available.copyWithCount(amount))) amount--;
+            if (amount == 0) continue;
+            ItemStack extracted = source.extractItem(slot, amount, false);
+            if (extracted.isEmpty()) continue;
+            storeOutput(extracted);
+            budget -= extracted.getCount();
+            changed = true;
+        }
+        if (changed) { sync(); pushBoundOutputs(); }
+    }
+
+    private static boolean isRawMaterial(ItemStack stack) {
+        return !stack.isEmpty() && stack.getTags().map(TagKey::location).anyMatch(id ->
+                id.getNamespace().equals("c") && (id.getPath().equals("raw_materials")
+                        || id.getPath().startsWith("raw_materials/")));
+    }
+
     private static int crushingInputPriority(ItemStack stack) {
-        boolean raw = stack.getTags().map(TagKey::location).anyMatch(id ->
-                id.getNamespace().equals("c") && id.getPath().startsWith("raw_materials/"));
+        boolean raw = isRawMaterial(stack);
         return raw ? 2 : CrusherRecipeResolver.find(stack).isPresent() ? 1 : 0;
     }
 

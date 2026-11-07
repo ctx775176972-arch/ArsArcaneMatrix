@@ -1,6 +1,6 @@
 {
   "inputs": [
-    { "item": "minecraft:tuff", "count": 64 }
+    { "item": "minecraft:tuff", "count": 1728 }
   ],
   "proof": "minecraft:trial_key",
   "work_ticks": 200,

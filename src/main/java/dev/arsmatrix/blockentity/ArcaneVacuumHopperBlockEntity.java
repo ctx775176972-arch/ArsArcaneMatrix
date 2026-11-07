@@ -84,6 +84,7 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     private boolean collectExperience = true;
     private boolean destroyMatches;
     private boolean strictComponents;
+    private boolean matchMod;
     private FilterMode filterMode = FilterMode.DISABLED;
     private GemMode gemMode = GemMode.PAUSED;
     private RangeMode rangeMode = RangeMode.R12;
@@ -176,7 +177,10 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     private boolean matchesFilter(ItemStack stack) {
         for (int slot = 0; slot < filters.getSlots(); slot++) {
             ItemStack filter = filters.getStackInSlot(slot);
-            if (!filter.isEmpty() && (strictComponents
+            if (!filter.isEmpty() && (matchMod
+                    ? net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(filter.getItem()).getNamespace()
+                            .equals(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace())
+                    : strictComponents
                     ? ItemStack.isSameItemSameComponents(filter, stack)
                     : ItemStack.isSameItem(filter, stack))) return true;
         }
@@ -296,7 +300,13 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
     public void toggleItems() { collectItems = !collectItems; sync(); }
     public void toggleExperience() { collectExperience = !collectExperience; sync(); }
     public void toggleDestroyMatches() { destroyMatches = !destroyMatches; sync(); }
-    public void toggleStrictComponents() { strictComponents = !strictComponents; sync(); }
+    public void toggleStrictComponents() {
+        int next = (matchingMode() + 1) % 3;
+        strictComponents = next == 1;
+        matchMod = next == 2;
+        sync();
+    }
+    public int matchingMode() { return matchMod ? 2 : strictComponents ? 1 : 0; }
     public void cycleRangeMode() { rangeMode = rangeMode.next(); sync(); }
 
     public ItemStackHandler drops() { return drops; }
@@ -342,6 +352,7 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         tag.putBoolean("CollectExperience", collectExperience);
         tag.putBoolean("DestroyMatches", destroyMatches);
         tag.putBoolean("StrictComponents", strictComponents);
+        tag.putBoolean("MatchMod", matchMod);
         tag.putInt("FilterMode", filterMode.ordinal());
         tag.putInt("GemMode", gemMode.ordinal());
         tag.putInt("RangeMode", rangeMode.ordinal());
@@ -358,6 +369,7 @@ public final class ArcaneVacuumHopperBlockEntity extends BlockEntity
         collectExperience = !tag.contains("CollectExperience") || tag.getBoolean("CollectExperience");
         destroyMatches = tag.getBoolean("DestroyMatches");
         strictComponents = tag.getBoolean("StrictComponents");
+        matchMod = tag.getBoolean("MatchMod");
         filterMode = value(FilterMode.values(), tag.getInt("FilterMode"));
         gemMode = value(GemMode.values(), tag.getInt("GemMode"));
         rangeMode = tag.contains("RangeMode") ? value(RangeMode.values(), tag.getInt("RangeMode")) : RangeMode.R12;

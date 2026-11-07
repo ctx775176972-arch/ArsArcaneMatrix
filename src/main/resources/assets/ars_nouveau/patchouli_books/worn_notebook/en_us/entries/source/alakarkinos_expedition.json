@@ -21,6 +21,18 @@
       "type": "patchouli:text",
       "text": "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.text",
       "title": "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.title"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.extra"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.generator"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.ocean"
     }
   ]
 }

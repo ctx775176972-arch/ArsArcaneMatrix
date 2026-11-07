@@ -1,4 +1,74 @@
 {
+"jei.ars_arcane_matrix.alakarkinos_expedition.materials": "每次消耗：%s个方块",
+"jei.ars_arcane_matrix.alakarkinos_expedition.examples": "仅为奖励示例；每次随机抽取以下一种宝箱",
+"jei.ars_arcane_matrix.alakarkinos_expedition.chest_hint": "悬停奖励：查看具体宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.ancient_city": "古城宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.ancient_city_ice_box": "古城冰箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.end_city_treasure": "末地城宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.nether_bridge": "下界要塞宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.bastion_bridge": "堡垒遗迹：桥梁宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.bastion_hoglin_stable": "堡垒遗迹：疣猪兽棚宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.bastion_other": "堡垒遗迹：通用宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.bastion_treasure": "堡垒遗迹：藏宝室宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.ruined_portal": "废弃传送门宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.abandoned_mineshaft": "废弃矿井运输矿车",
+"jei.ars_arcane_matrix.expedition_chest.chests.desert_pyramid": "沙漠神殿宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.igloo_chest": "雪屋地下室宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.jungle_temple": "丛林神庙宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.pillager_outpost": "掠夺者前哨站宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.simple_dungeon": "地牢宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.spawn_bonus_chest": "出生奖励箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.stronghold_corridor": "要塞走廊宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.stronghold_crossing": "要塞交叉路口宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.stronghold_library": "要塞图书馆宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.woodland_mansion": "林地府邸宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.corridor": "试炼密室：走廊宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.entrance": "试炼密室：入口宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.intersection": "试炼密室：交叉路口宝箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.intersection_barrel": "试炼密室：交叉路口木桶",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.supply": "试炼密室：补给箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.reward": "试炼密室：普通宝库奖励",
+"jei.ars_arcane_matrix.expedition_chest.chests.trial_chambers.reward_ominous": "试炼密室：不祥宝库奖励",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_armorer": "村庄：盔甲匠箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_butcher": "村庄：屠夫箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_cartographer": "村庄：制图师箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_desert_house": "村庄：沙漠住宅箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_fisher": "村庄：渔夫箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_fletcher": "村庄：制箭师箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_mason": "村庄：石匠箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_plains_house": "村庄：平原住宅箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_savanna_house": "村庄：热带草原住宅箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_shepherd": "村庄：牧羊人箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_snowy_house": "村庄：雪原住宅箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_taiga_house": "村庄：针叶林住宅箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_tannery": "村庄：皮匠箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_temple": "村庄：教堂箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_toolsmith": "村庄：工具匠箱",
+"jei.ars_arcane_matrix.expedition_chest.chests.village.village_weaponsmith": "村庄：武器匠箱",
+  "documentation.ars_arcane_matrix.arcane_reaction_vessel.milk": "收容了牛的收容罐每秒向正下方流体容器供应最多1,000 mB牛奶，不消耗魔源。下方不接受或装满时停止，不积攒产量。可直接放在反应釜上方，输入空桶自动装成奶桶；旧的灌注室产奶配方仍可使用。",
+  "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.extra": "泥土：村庄。幽匿块：古城宝箱与冰箱。下界岩：下界要塞。黑石：堡垒遗迹。末地石：末地城，不含展示框鞘翅。凝灰岩：试炼密室，基座放对应钥匙选择普通或不祥路线，钥匙不消耗。JEI奖励悬停可查看具体宝箱。",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.bastion": "堡垒遗迹宝箱",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.desert_pyramid": "沙漠神殿宝箱",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.jungle_temple": "丛林神庙宝箱",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.stronghold": "要塞宝箱",
+  "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.generator": "造石机附近的基座放置苔石、砂岩、红沙或红砂岩，可选择对应方块的量产模式，每批64个，样板不会消耗。每种探险仍消耗27组对应方块和10,000魔源。普通沙砾考古保持不变。",
+  "config.ars_arcane_matrix.acceleration": "加速魔符",
+  "config.ars_arcane_matrix.acceleration.blockBlacklist": "禁止加速的方块",
+  "config.ars_arcane_matrix.acceleration.blockBlacklist.tooltip": "填写方块ID，默认包含矩阵核心。空列表不额外禁用方块；仅限制本模组的加速魔符，联机以服务器为准。",
+  "jei.ars_arcane_matrix.alakarkinos_expedition.route.buried_treasure": "埋藏的宝藏",
+  "jei.ars_arcane_matrix.expedition_chest.chests.buried_treasure": "埋藏的宝藏宝箱",
+  "documentation.ars_arcane_matrix.alakarkinos_expedition.routes.ocean": "海晶石：埋藏的宝藏。每次消耗1,728个海晶石和10,000魔源，抽取一次真实宝箱战利品，可获得海洋之心。海晶石可通过采集海底神殿或守卫者产线获得材料后合成。",
+  "documentation.ars_arcane_matrix.arcane_crusher.passthrough": "绑定输入中的粗矿若没有对应粉末配方，会原样转送到输出端，不消耗精华，也不产生富集结晶。输出缓存装满后停止抽取；红石暂停或结构不完整时不转送。其他杂物不会自动通过。",
+  "config.ars_arcane_matrix.arcane_mine.operation.requireModdedOreWhitelist": "模组矿物需要原矿白名单样板",
+  "config.ars_arcane_matrix.arcane_mine.operation.requireModdedOreWhitelist.tooltip": "默认关闭。开启后，非原版矿物仅在矿井白名单位置放置对应原矿方块时生产；样板不消耗，不永久解锁，仍受层数、费用和黑名单限制。",
+  "jei.ars_arcane_matrix.arcane_mining.whitelist_required": "需要原矿白名单样板启用",
+  "tooltip.ars_arcane_matrix.arcane_fluid_reservoir.fluid_contents": "槽%s：%s · %s mB",
+  "documentation.ars_arcane_matrix.arcane_fluid_controller.components": "储罐和控制器可以保存带药水效果等组件的流体。同一种流体的不同效果分别占用槽位，不会混合；无线传输和重进世界保留这些信息。高级讲台按完整流体区分显示。此功能用于储存与运输，不会自动添加药水酿造或装瓶配方。",
+  "hud.ars_arcane_matrix.acceleration": "加速 ×%s · 剩余 %s 秒",
+  "ars_arcane_matrix.glyph_name.glyph_acceleration": "加速",
+  "item.ars_arcane_matrix.glyph_acceleration": "加速魔符",
+  "ars_arcane_matrix.glyph_desc.glyph_acceleration": "使目标机器或随机刻方块加速30秒，基础2倍。每个强化翻倍，最多8个强化达到512倍。不接受延时；重复施法刷新时间，不叠乘倍率。依赖世界时间间隔的设备可能无法完整加速。目标卸载或被替换后效果结束。",
+  "ars_nouveau.augment_desc.glyph_acceleration_glyph_amplify": "增强加速倍率：每个强化使倍率翻倍，最高512倍。",
   "generator.ars_arcane_matrix.skyblock": "奥术矩阵空岛",
   "config.ars_arcane_matrix.enableSkyblock": "启用空岛开局与配方",
   "config.ars_arcane_matrix.enableSkyblock.tooltip": "无需重启游戏。单人世界内保存后自动重新加载配方；主菜单修改后进入世界生效。不会改变已有世界地形。",
@@ -650,12 +720,12 @@
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.source": "魔源：%s"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.info": "在探宝蟹家园三格内的奥术基座放置刷子，即可开启容器探索。它只抽取附近容器里的方块，不会破坏世界中的方块；家园容器接收产物。"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.automation": "沙子与砂砾沿用新生魔艺的考古奖励，其他方块对应不同的探险地点。需要钥匙等凭证时，将其放在另一座附近基座上。"
-  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.overworld_ruins": "主世界遗迹"
+  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.overworld_ruins": "废弃矿井与地牢"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.village": "村庄巡游"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.ocean": "海洋寻宝"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.ancient_city": "古城探索"
-  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.nether": "下界远征"
-  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.end": "末地远征"
+  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.nether": "下界要塞宝箱"
+  ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.end": "末地城宝箱"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.trial_chambers": "试炼密室"
   ,"jei.ars_arcane_matrix.alakarkinos_expedition.route.ominous_trial": "不祥试炼"
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.title": "探宝蟹遗迹远征"
@@ -663,7 +733,7 @@
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.layout.title": "家园与物流"
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.layout.text": "先按原版方式驯服探宝蟹、让它佩戴陶片并绑定一个容器作为家园。在家园三格内放置装有刷子的奥术基座，并将待探索方块放入同一范围内的容器。家园容器负责接收产物；材料、魔源或输出空间不足时不会提前扣除物品。"
   ,"documentation.ars_arcane_matrix.alakarkinos_expedition.routes.title": "远征路线"
-  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.routes.text": "圆石、泥土、幽匿块、下界岩与黑石、末地石和凝灰岩分别模拟不同地点的宝箱，JEI只展示部分示例奖励。其他模组为这些宝箱加入的奖励也有机会出现。古城路线所需幽匿块可由魔源造石机生产；试炼路线还会读取附近基座上的试炼钥匙或不祥试炼钥匙。"
+  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.routes.text": "圆石：废弃矿井与地牢。砂岩：沙漠神殿。苔石：丛林神庙。石砖：要塞走廊、交叉路口与图书馆。每次随机抽取该路线的一种宝箱，并非同时获得全部奖励。废弃传送门与出生奖励箱不再参与模拟探索。"
   ,"ars_arcane_matrix.section.getting_started": "入门与发展路线"
   ,"ars_arcane_matrix.section.source_network": "魔源与网络"
   ,"ars_arcane_matrix.section.mineral_processing": "矿物与处理"
@@ -721,7 +791,7 @@
   ,"documentation.ars_arcane_matrix.crafting_network.workflow.text": "在下单页面通过JEI或EMI记录支持的配方，将指南放入供应器。每种中间材料都需有对应指南，设备也要在范围内。下单前检查合成计划；运行中查看当前工作方块和已完成数量。中间产物返回共享输入，最终成品送往输出。"
   ,"documentation.ars_arcane_matrix.roadmap.summary": "第一次游玩请从这里了解设备顺序、材料循环与多方块搭建方式。"
   ,"documentation.ars_arcane_matrix.whirlisprig.summary": "使用容器中的土之精华或远古林地催化剂启用林地模式，并以周围植物多样性提高速度；没有催化剂时保持本体行为。"
-  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.summary": "探宝蟹消耗大宗建材与金属块，模拟探索原版遗迹宝箱。"
+  ,"documentation.ars_arcane_matrix.alakarkinos_expedition.summary": "探宝蟹每次消耗1,728个建材方块（27组）和10,000魔源，随机抽取一次遗迹宝箱。沙子与砂砾的普通考古不受此数量影响。"
   ,"documentation.ars_arcane_matrix.storage.summary": "高级存储讲台统一浏览连接容器、晶格目录和自动合成网络。"
   ,"documentation.ars_arcane_matrix.troubleshooting.summary": "设备停止时，从结构、红石、魔源、绑定、输出空间和配方六项开始检查。"
   ,"documentation.ars_arcane_matrix.order_pedestal.summary": "下单基座是终端发送虚拟合成任务的位置，不需要玩家摆放或回收成品样品。"
@@ -888,8 +958,9 @@
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.mode.below_only": "仅下方"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.mode.off": "关闭"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.destroy": "销毁：%s"
-  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt": "NBT：%s"
-  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt.ignore": "忽略"
+  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt": "匹配：%s"
+  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt.ignore": "物品"
+  ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt.mod": "模组"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.nbt.strict": "严格"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.range": "范围：%s"
   ,"screen.ars_arcane_matrix.arcane_vacuum_hopper.range.4": "4格"

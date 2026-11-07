@@ -8,6 +8,9 @@ public final class ModNetworking {
 
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToClient(FluidContentsPayload.TYPE, FluidContentsPayload.STREAM_CODEC, FluidContentsPayload::handle);
+        registrar.playToClient(AccelerationStatusPayload.TYPE, AccelerationStatusPayload.STREAM_CODEC,
+                AccelerationStatusPayload::handle);
         registrar.playToClient(
                 StorageEntriesDeltaPayload.TYPE,
                 StorageEntriesDeltaPayload.STREAM_CODEC,

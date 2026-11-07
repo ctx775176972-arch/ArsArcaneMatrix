@@ -67,6 +67,14 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     private static final Map<Integer, List<BlockPos>> RANGE_OFFSETS;
     private final int[] amounts = new int[3];
     private final int[] tankTypes = new int[]{-1, -1, -1};
+    private final FluidStack[] tankTemplates = {FluidStack.EMPTY, FluidStack.EMPTY, FluidStack.EMPTY};
+
+    public FluidStack storedFluid(int tank) {
+        if (tank < 0 || tank >= 3 || amounts[tank] <= 0 || tankTypes[tank] < 0) return FluidStack.EMPTY;
+        FluidStack template = tankTemplates[tank];
+        return template.isEmpty() ? new FluidStack(fluidByRegistryId(tankTypes[tank]), amounts[tank])
+                : template.copyWithAmount(amounts[tank]);
+    }
     private final ItemStackHandler upgrades = new ItemStackHandler(4) {
         public boolean isItemValid(int slot, ItemStack stack) {
             return ArcaneFluidReservoirBlockEntity.isUpgrade(stack);
@@ -268,13 +276,14 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
             }
             FluidStack simulated = target.drain(targetBudget, FluidAction.SIMULATE);
             if (simulated.isEmpty() || simulated.getFluid() == Fluids.EMPTY) continue;
-            int accepted = this.insertFluid(simulated.getFluid(), simulated.getAmount(), true);
+            int accepted = this.insertFluid(simulated, true);
             if (accepted <= 0) {
                 failure = State.OUTPUT_BLOCKED;
                 continue;
             }
             FluidStack drained = target.drain(simulated.copyWithAmount(accepted), FluidAction.EXECUTE);
-            int inserted = this.insertFluid(drained.getFluid(), drained.getAmount(), false);
+            int inserted = this.insertFluid(drained, false);
+            if (inserted < drained.getAmount()) target.fill(drained.copyWithAmount(drained.getAmount() - inserted), FluidAction.EXECUTE);
             remainingBudget -= Math.max(0, inserted);
             worked |= inserted > 0;
         }
@@ -306,10 +315,10 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
             if (target == null) continue;
 
             int offered = Math.min(targetBudget, this.amounts[tank]);
-            Fluid selectedFluid = fluidByRegistryId(this.tankTypes[tank]);
-            int accepted = target.fill(new FluidStack(selectedFluid, offered), FluidAction.SIMULATE);
+            FluidStack selectedFluid = storedFluid(tank);
+            int accepted = target.fill(selectedFluid.copyWithAmount(offered), FluidAction.SIMULATE);
             if (accepted <= 0) continue;
-            int inserted = target.fill(new FluidStack(selectedFluid, accepted), FluidAction.EXECUTE);
+            int inserted = target.fill(selectedFluid.copyWithAmount(accepted), FluidAction.EXECUTE);
             this.amounts[tank] -= Math.max(0, inserted);
             this.clearEmptyTank(tank);
             remainingBudget -= Math.max(0, inserted);
@@ -428,12 +437,18 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     }
 
     private int insertFluid(Fluid fluid, int amount, boolean simulate) {
+        return insertFluid(new FluidStack(fluid, amount), simulate);
+    }
+
+    private int insertFluid(FluidStack incoming, boolean simulate) {
+        Fluid fluid = incoming.getFluid();
+        int amount = incoming.getAmount();
         int type = BuiltInRegistries.FLUID.getId(fluid);
         if (fluid != Fluids.EMPTY && type >= 0 && amount > 0) {
             int tank = -1;
 
             for(int index = 0; index < this.unlockedTankCount(); ++index) {
-                if (this.tankTypes[index] == type) {
+                if (FluidStack.isSameFluidSameComponents(storedFluid(index), incoming)) {
                     tank = index;
                     break;
                 }
@@ -454,6 +469,7 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
                 int accepted = Math.min(amount, this.capacity() - this.amounts[tank]);
                 if (!simulate && accepted > 0) {
                     this.tankTypes[tank] = type;
+                    this.tankTemplates[tank] = incoming.copyWithAmount(1);
                     int[] var10000 = this.amounts;
                     var10000[tank] += accepted;
                     this.sync();
@@ -626,6 +642,12 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
     }
 
     public void getTooltip(List<Component> tooltip) {
+        for (int tank = 0; tank < unlockedTankCount(); tank++) {
+            FluidStack fluid = storedFluid(tank);
+            if (!fluid.isEmpty()) tooltip.add(Component.translatable(
+                    "tooltip.ars_arcane_matrix.arcane_fluid_reservoir.fluid_contents",
+                    tank + 1, fluid.getHoverName(), fluid.getAmount()));
+        }
         tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.mode", new Object[]{Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.mode." + this.mode.name().toLowerCase())}));
         tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.tanks", new Object[]{this.unlockedTankCount(), this.capacity()}));
         tooltip.add(Component.translatable("tooltip.ars_arcane_matrix.arcane_fluid_reservoir.wireless", new Object[]{Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.wireless_tier." + this.wirelessTier())}));
@@ -691,6 +713,7 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
 
         for(int tank = 0; tank < 3; ++tank) {
             if (this.tankTypes[tank] >= 0) {
+                tag.put("TankStack" + tank, storedFluid(tank).saveOptional(registries));
                 tag.putString("TankFluid" + tank, BuiltInRegistries.FLUID.getKey(fluidByRegistryId(this.tankTypes[tank])).toString());
             }
         }
@@ -744,6 +767,16 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
             }
         }
 
+        for (int tank = 0; tank < 3; tank++) {
+            tankTemplates[tank] = FluidStack.EMPTY;
+            if (tag.contains("TankStack" + tank)) {
+                FluidStack saved = FluidStack.parseOptional(registries, tag.getCompound("TankStack" + tank));
+                if (!saved.isEmpty() && amounts[tank] > 0) {
+                    tankTypes[tank] = BuiltInRegistries.FLUID.getId(saved.getFluid());
+                    tankTemplates[tank] = saved.copyWithAmount(1);
+                }
+            }
+        }
         this.mode = ArcaneFluidReservoirBlockEntity.Mode.values()[Math.floorMod(tag.getInt("Mode"), ArcaneFluidReservoirBlockEntity.Mode.values().length)];
         if (tag.getInt("TankFormat") >= 3) {
             ResourceLocation inputId = ResourceLocation.tryParse(tag.getString("InputFluidId"));
@@ -846,6 +879,7 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
         if (tank >= 0 && tank < 3 && this.amounts[tank] <= 0) {
             this.amounts[tank] = 0;
             this.tankTypes[tank] = -1;
+            this.tankTemplates[tank] = FluidStack.EMPTY;
         }
 
     }
@@ -892,7 +926,7 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
         }
 
         public FluidStack getFluidInTank(int tank) {
-            return tank >= 0 && tank < ArcaneFluidReservoirBlockEntity.this.unlockedTankCount() && ArcaneFluidReservoirBlockEntity.this.amounts[tank] > 0 && ArcaneFluidReservoirBlockEntity.this.tankTypes[tank] >= 0 ? new FluidStack(ArcaneFluidReservoirBlockEntity.fluidByRegistryId(ArcaneFluidReservoirBlockEntity.this.tankTypes[tank]), ArcaneFluidReservoirBlockEntity.this.amounts[tank]) : FluidStack.EMPTY;
+            return tank >= 0 && tank < unlockedTankCount() ? storedFluid(tank) : FluidStack.EMPTY;
         }
 
         public int getTankCapacity(int tank) {
@@ -901,21 +935,23 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
 
         public boolean isFluidValid(int tank, FluidStack stack) {
             int type = BuiltInRegistries.FLUID.getId(stack.getFluid());
-            return tank >= 0 && tank < ArcaneFluidReservoirBlockEntity.this.unlockedTankCount() && stack.getFluid() != Fluids.EMPTY && type >= 0 && (ArcaneFluidReservoirBlockEntity.this.tankTypes[tank] < 0 || ArcaneFluidReservoirBlockEntity.this.tankTypes[tank] == type);
+            return tank >= 0 && tank < unlockedTankCount() && !stack.isEmpty() && type >= 0
+                    && (amounts[tank] <= 0 || FluidStack.isSameFluidSameComponents(storedFluid(tank), stack));
         }
 
         public int fill(FluidStack resource, IFluidHandler.FluidAction action) {
-            return ArcaneFluidReservoirBlockEntity.this.insertFluid(resource.getFluid(), resource.getAmount(), !action.execute());
+            return ArcaneFluidReservoirBlockEntity.this.insertFluid(resource, !action.execute());
         }
 
         public FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
+            if (resource.isEmpty()) return FluidStack.EMPTY;
             int type = BuiltInRegistries.FLUID.getId(resource.getFluid());
             if (resource.getFluid() == Fluids.EMPTY || type < 0) return FluidStack.EMPTY;
             for (int tank = 0; tank < ArcaneFluidReservoirBlockEntity.this.unlockedTankCount(); ++tank) {
-                if (ArcaneFluidReservoirBlockEntity.this.tankTypes[tank] != type
+                if (!FluidStack.isSameFluidSameComponents(storedFluid(tank), resource)
                         || ArcaneFluidReservoirBlockEntity.this.amounts[tank] <= 0) continue;
                 int drained = Math.min(resource.getAmount(), ArcaneFluidReservoirBlockEntity.this.amounts[tank]);
-                FluidStack result = new FluidStack(resource.getFluid(), drained);
+                FluidStack result = storedFluid(tank).copyWithAmount(drained);
                 if (action.execute()) {
                     ArcaneFluidReservoirBlockEntity.this.amounts[tank] -= drained;
                     ArcaneFluidReservoirBlockEntity.this.clearEmptyTank(tank);
@@ -927,9 +963,10 @@ public final class ArcaneFluidReservoirBlockEntity extends BlockEntity implement
         }
 
         public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
+            if (maxDrain <= 0) return FluidStack.EMPTY;
             if (ArcaneFluidReservoirBlockEntity.this.outputFluid >= 0 && ArcaneFluidReservoirBlockEntity.this.outputFluid < ArcaneFluidReservoirBlockEntity.this.unlockedTankCount() && ArcaneFluidReservoirBlockEntity.this.amounts[ArcaneFluidReservoirBlockEntity.this.outputFluid] > 0 && ArcaneFluidReservoirBlockEntity.this.tankTypes[ArcaneFluidReservoirBlockEntity.this.outputFluid] >= 0) {
                 int drained = Math.min(maxDrain, ArcaneFluidReservoirBlockEntity.this.amounts[ArcaneFluidReservoirBlockEntity.this.outputFluid]);
-                FluidStack result = new FluidStack(ArcaneFluidReservoirBlockEntity.fluidByRegistryId(ArcaneFluidReservoirBlockEntity.this.tankTypes[ArcaneFluidReservoirBlockEntity.this.outputFluid]), drained);
+                FluidStack result = storedFluid(ArcaneFluidReservoirBlockEntity.this.outputFluid).copyWithAmount(drained);
                 if (action.execute()) {
                     int[] var10000 = ArcaneFluidReservoirBlockEntity.this.amounts;
                     int var10001 = ArcaneFluidReservoirBlockEntity.this.outputFluid;

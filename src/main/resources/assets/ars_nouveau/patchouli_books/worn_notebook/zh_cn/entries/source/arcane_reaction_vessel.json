@@ -24,6 +24,10 @@
       "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.nature"
     },
     {
+      "type": "patchouli:text",
+      "text": "documentation.ars_arcane_matrix.arcane_reaction_vessel.milk"
+    },
+    {
       "type": "patchouli:crafting",
       "recipe": "ars_arcane_matrix:arcane_reaction_vessel"
     }

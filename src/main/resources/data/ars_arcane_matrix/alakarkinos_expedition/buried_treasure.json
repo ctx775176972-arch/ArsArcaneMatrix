@@ -1,0 +1,12 @@
+{
+  "inputs": [{ "item": "minecraft:prismarine", "count": 1728 }],
+  "work_ticks": 200,
+  "source_cost": 10000,
+  "loot_table": "minecraft:chests/buried_treasure",
+  "display_outputs": [
+    { "item": "minecraft:heart_of_the_sea" },
+    { "item": "minecraft:diamond" },
+    { "item": "minecraft:emerald" },
+    { "item": "minecraft:gold_ingot" }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "pedestal_items": [{ "item": "minecraft:mossy_cobblestone" }],
+  "result": { "id": "minecraft:mossy_cobblestone", "count": 64 },
+  "processing_cost": 200
+}

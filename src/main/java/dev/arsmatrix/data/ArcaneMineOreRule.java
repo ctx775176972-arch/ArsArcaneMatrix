@@ -38,6 +38,21 @@ public record ArcaneMineOreRule(
     }
 
     public ItemStack createOutput(RandomSource random) {
+        return createOutput(random, item -> true);
+    }
+
+    public boolean hasVanillaOutput() {
+        if (!outputIsTag) {
+            Item item = BuiltInRegistries.ITEM.getOptional(output).orElse(Items.AIR);
+            return output.getNamespace().equals("minecraft") && isAllowedOutput(item);
+        }
+        return BuiltInRegistries.ITEM.getTag(TagKey.create(Registries.ITEM, output)).stream()
+                .flatMap(named -> named.stream().map(Holder::value))
+                .anyMatch(item -> isAllowedOutput(item)
+                        && BuiltInRegistries.ITEM.getKey(item).getNamespace().equals("minecraft"));
+    }
+
+    public ItemStack createOutput(RandomSource random, java.util.function.Predicate<Item> allowed) {
         Item item;
         if (outputIsTag) {
             TagKey<Item> tag = TagKey.create(Registries.ITEM, output);
@@ -45,6 +60,7 @@ public record ArcaneMineOreRule(
                     .stream()
                     .flatMap(named -> named.stream().map(Holder::value))
                     .filter(ArcaneMineOreRule::isAllowedOutput)
+                    .filter(allowed)
                     .toList();
             if (candidates.isEmpty()) {
                 return ItemStack.EMPTY;
@@ -53,7 +69,7 @@ public record ArcaneMineOreRule(
         } else {
             item = BuiltInRegistries.ITEM.getOptional(output).orElse(Items.AIR);
         }
-        return isAllowedOutput(item) ? new ItemStack(item, outputCount) : ItemStack.EMPTY;
+        return isAllowedOutput(item) && allowed.test(item) ? new ItemStack(item, outputCount) : ItemStack.EMPTY;
     }
 
     public boolean matchesTuningSample(ItemStack sample) {

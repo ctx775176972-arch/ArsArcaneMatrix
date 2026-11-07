@@ -128,9 +128,15 @@ public final class MatrixClothConfigScreen {
             entry = entries.startDoubleField(name, d).setDefaultValue((Double) value.getDefault())
                     .setTooltip(tooltip).setErrorSupplier(validation::apply).setSaveConsumer(save::accept).build();
         } else if (current instanceof List<?> list) {
+            if (path.equals("acceleration.blockBlacklist")) {
+                entry = entries.startStrList(name, new ArrayList<>((List<String>) list))
+                        .setDefaultValue((List<String>) value.getDefault()).setTooltip(tooltip)
+                        .setErrorSupplier(validation::apply).setSaveConsumer(save::accept).build();
+            } else {
             entry = entries.startIntList(name, new ArrayList<>((List<Integer>) list))
                     .setDefaultValue((List<Integer>) value.getDefault()).setTooltip(tooltip)
                     .setErrorSupplier(validation::apply).setSaveConsumer(save::accept).build();
+            }
         } else {
             return;
         }
@@ -143,6 +149,8 @@ public final class MatrixClothConfigScreen {
         if (!spec.test(candidate)) return false;
         if (candidate instanceof Double number && !Double.isFinite(number)) return false;
         if (candidate instanceof List<?> list) {
+            if (path.equals("acceleration.blockBlacklist")) return list.stream().allMatch(
+                    value -> value instanceof String id && net.minecraft.resources.ResourceLocation.tryParse(id) != null);
             if (list.size() != 4 || list.stream().anyMatch(v -> !(v instanceof Integer))) return false;
             int previous = 0;
             for (Object element : list) {

@@ -9,5 +9,6 @@ public final class ModGlyphs {
 
     public static void register() {
         GlyphRegistry.registerSpell(EffectCapture.INSTANCE);
+        GlyphRegistry.registerSpell(EffectAcceleration.INSTANCE);
     }
 }

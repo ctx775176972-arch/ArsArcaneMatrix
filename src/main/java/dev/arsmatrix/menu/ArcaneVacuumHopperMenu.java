@@ -59,7 +59,7 @@ public final class ArcaneVacuumHopperMenu extends AbstractContainerMenu {
                     case 6, 7 -> 0;
                     case 8 -> hopper.hasItemTarget() ? 1 : 0;
                     case 9 -> hopper.destroysMatches() ? 1 : 0;
-                    case 10 -> hopper.strictComponents() ? 1 : 0;
+                    case 10 -> hopper.matchingMode();
                     case 11 -> hopper.rangeMode().ordinal();
                     default -> 0;
                 };
@@ -91,7 +91,8 @@ public final class ArcaneVacuumHopperMenu extends AbstractContainerMenu {
     public int itemOutputMode() { return data.get(5); }
     public boolean itemBound() { return (data.get(8) & 1) != 0; }
     public boolean destroysMatches() { return data.get(9) != 0; }
-    public boolean strictComponents() { return data.get(10) != 0; }
+    public boolean strictComponents() { return data.get(10) == 1; }
+    public int matchingMode() { return data.get(10); }
     public int rangeMode() { return data.get(11); }
     @Override public ItemStack quickMoveStack(Player player, int index) {
         Slot slot = slots.get(index);

@@ -52,7 +52,7 @@ public final class ArcaneFluidReservoirScreen extends AbstractContainerScreen<Ar
             int tankType = menu.tankType(i);
             int height = menu.capacity() <= 0 ? 0 : Math.min(35,
                     (int) ((long) menu.amount(i) * 35L / menu.capacity()));
-            if (unlocked && tankType >= 0) drawFluid(graphics, tankType,
+            if (unlocked && tankType >= 0) drawFluid(graphics, menu.fluid(i),
                     x + 3, topPos + 89 - height, 18, height);
             else graphics.fill(x + 3, topPos + 89 - height, x + 21, topPos + 89, 0xFF241D2D);
             if (!unlocked) graphics.fill(x + 2, topPos + 54, x + 22, topPos + 90, 0xB0100D16);
@@ -85,9 +85,13 @@ public final class ArcaneFluidReservoirScreen extends AbstractContainerScreen<Ar
         for (int i = 0; i < 3; i++) {
             int x = leftPos + 76 + i * 34;
             if (mouseX >= x && mouseX < x + 24 && mouseY >= topPos + 45 && mouseY < topPos + 93) {
-                graphics.renderTooltip(font, Component.translatable(
+                java.util.List<Component> tooltip = new java.util.ArrayList<>();
+                tooltip.add(Component.translatable(
                         "screen.ars_arcane_matrix.arcane_fluid_reservoir.amount_exact",
-                        i + 1, tankStatus(i), menu.amount(i), menu.capacity()), mouseX, mouseY);
+                        i + 1, tankStatus(i), menu.amount(i), menu.capacity()));
+                var contents = menu.fluid(i).get(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
+                if (contents != null) contents.addPotionTooltip(tooltip::add, 1.0F, 20.0F);
+                graphics.renderTooltip(font, tooltip, java.util.Optional.empty(), net.minecraft.world.item.ItemStack.EMPTY, mouseX, mouseY);
             }
         }
     }
@@ -97,13 +101,13 @@ public final class ArcaneFluidReservoirScreen extends AbstractContainerScreen<Ar
                 ? Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.empty")
                 : new FluidStack(fluid, 1).getHoverName();
     }
-    private static void drawFluid(GuiGraphics graphics, int registryId, int x, int y, int width, int height) {
+    private static void drawFluid(GuiGraphics graphics, FluidStack stack, int x, int y, int width, int height) {
         if (height <= 0) return;
-        Fluid fluid = BuiltInRegistries.FLUID.byId(registryId);
+        Fluid fluid = stack.getFluid();
         if (fluid == Fluids.EMPTY) return;
         IClientFluidTypeExtensions properties = IClientFluidTypeExtensions.of(fluid);
-        ResourceLocation texture = properties.getStillTexture(new FluidStack(fluid, 1));
-        int tint = properties.getTintColor(new FluidStack(fluid, 1));
+        ResourceLocation texture = properties.getStillTexture(stack);
+        int tint = properties.getTintColor(stack);
         graphics.setColor(((tint >>> 16) & 255) / 255.0F, ((tint >>> 8) & 255) / 255.0F,
                 (tint & 255) / 255.0F, ((tint >>> 24) & 255) / 255.0F);
         TextureAtlas atlas = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS);
@@ -122,7 +126,7 @@ public final class ArcaneFluidReservoirScreen extends AbstractContainerScreen<Ar
         int type = menu.tankType(tank);
         return type < 0
                 ? Component.translatable("screen.ars_arcane_matrix.arcane_fluid_reservoir.empty")
-                : fluidName(type);
+                : menu.fluid(tank).isEmpty() ? fluidName(type) : menu.fluid(tank).getHoverName();
     }
     private static String compactAmount(int amount) {
         if (amount >= 1_000_000) return String.format(java.util.Locale.ROOT, "%.1fM", amount / 1_000_000.0D);
@@ -133,7 +137,8 @@ public final class ArcaneFluidReservoirScreen extends AbstractContainerScreen<Ar
         graphics.drawString(font, title, 8, 5, 0xE8D9FF, false);
         for (int i = 0; i < 3; i++) {
             Component name = tankStatus(i);
-            graphics.drawCenteredString(font, name, 88 + i * 34, 43, 0xCBBCE3);
+            String shortName = font.plainSubstrByWidth(name.getString(), 30);
+            graphics.drawCenteredString(font, shortName, 88 + i * 34, 43, 0xCBBCE3);
             graphics.drawCenteredString(font, compactAmount(menu.amount(i)), 88 + i * 34, 94, 0xD8B8FF);
         }
         ArcaneFluidReservoirBlockEntity.Mode mode = ArcaneFluidReservoirBlockEntity.Mode.values()[

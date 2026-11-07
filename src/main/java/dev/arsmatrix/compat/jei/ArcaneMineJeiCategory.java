@@ -73,7 +73,7 @@ public final class ArcaneMineJeiCategory implements IRecipeCategory<ArcaneMineOr
 
     @Override
     public int getHeight() {
-        return 68;
+        return 84;
     }
 
     @Override
@@ -116,6 +116,20 @@ public final class ArcaneMineJeiCategory implements IRecipeCategory<ArcaneMineOr
                 54,
                 0x404040
         );
+        boolean moddedOutput = recipeSlotsView.getSlotViews().stream()
+                .filter(slot -> slot.getRole() == mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT)
+                .flatMap(slot -> slot.getDisplayedItemStack().stream())
+                .anyMatch(stack -> !BuiltInRegistries.ITEM.getKey(stack.getItem())
+                        .getNamespace().equals("minecraft"));
+        if (MatrixConfig.MINE_REQUIRE_MODDED_ORE_WHITELIST.get() && moddedOutput) {
+            Component text = Component.translatable("jei.ars_arcane_matrix.arcane_mining.whitelist_required");
+            graphics.pose().pushPose();
+            float scale = Math.min(1.0F, (getWidth() - 4.0F) / Math.max(1, font.width(text)));
+            graphics.pose().translate(getWidth() / 2.0F, 70, 0);
+            graphics.pose().scale(scale, scale, 1);
+            graphics.drawString(font, text, -font.width(text) / 2, 0, 0x9B5520, false);
+            graphics.pose().popPose();
+        }
     }
 
     private void drawCenteredWithoutShadow(

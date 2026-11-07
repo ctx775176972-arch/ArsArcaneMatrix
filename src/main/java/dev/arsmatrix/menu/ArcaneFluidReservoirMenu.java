@@ -21,6 +21,9 @@ public final class ArcaneFluidReservoirMenu extends AbstractContainerMenu {
     private final BlockPos pos;
     private final ArcaneFluidReservoirBlockEntity reservoir;
     private final ContainerData data;
+    private final Player menuPlayer;
+    private java.util.List<net.neoforged.neoforge.fluids.FluidStack> fluidContents = java.util.List.of();
+    private long lastFluidSync = Long.MIN_VALUE;
 
     public ArcaneFluidReservoirMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buffer) {
         this(id, inventory, buffer.readBlockPos(), null);
@@ -32,6 +35,7 @@ public final class ArcaneFluidReservoirMenu extends AbstractContainerMenu {
                                      ArcaneFluidReservoirBlockEntity supplied) {
         super(ModMenus.ARCANE_FLUID_RESERVOIR.get(), id);
         this.pos = pos.immutable();
+        this.menuPlayer = inventory.player;
         this.reservoir = supplied != null ? supplied
                 : inventory.player.level().getBlockEntity(pos) instanceof ArcaneFluidReservoirBlockEntity found ? found : null;
         ItemStackHandler upgrades = reservoir == null ? new ItemStackHandler(4) : reservoir.getUpgrades();
@@ -76,6 +80,26 @@ public final class ArcaneFluidReservoirMenu extends AbstractContainerMenu {
         return true;
     }
     public int amount(int index) { return data.get(index); }
+    public void applyFluidContents(java.util.List<net.neoforged.neoforge.fluids.FluidStack> fluids) {
+        fluidContents = fluids.stream().map(net.neoforged.neoforge.fluids.FluidStack::copy).toList();
+    }
+    public net.neoforged.neoforge.fluids.FluidStack fluid(int index) {
+        return index < 0 || index >= fluidContents.size() ? net.neoforged.neoforge.fluids.FluidStack.EMPTY
+                : fluidContents.get(index).copy();
+    }
+    @Override public void broadcastChanges() {
+        super.broadcastChanges();
+        if (reservoir == null || !(menuPlayer instanceof net.minecraft.server.level.ServerPlayer player)) return;
+        long now = player.level().getGameTime();
+        if (lastFluidSync != Long.MIN_VALUE && now - lastFluidSync < 5) return;
+        lastFluidSync = now;
+        var fluids = java.util.stream.IntStream.range(0, 3).mapToObj(reservoir::storedFluid).toList();
+        if (!dev.arsmatrix.network.FluidContentsPayload.same(fluidContents, fluids)) {
+            applyFluidContents(fluids);
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player,
+                    new dev.arsmatrix.network.FluidContentsPayload(containerId, fluids));
+        }
+    }
     public int capacity() { return data.get(3); }
     public int inputFluid() { return data.get(4); }
     public int outputFluid() { return data.get(5); }
