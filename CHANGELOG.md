@@ -4,6 +4,11 @@
 
 - No unreleased changes.
 
+## 0.5.8 - 2026-11-09
+
+- Added native EMI displays for Matrix recipes, including Source Stone Generation, Arcane Mining, and Alakarkinos Expeditions.
+- Abbreviated large EMI slot counts while preserving the exact amounts in tooltips.
+
 ## 0.5.7 - 2026-11-04
 
 - Updated the Advanced Storage Lectern for Ars Nouveau 5.13.4, fixing a startup crash. Ars Nouveau 5.13.4 or newer is required.

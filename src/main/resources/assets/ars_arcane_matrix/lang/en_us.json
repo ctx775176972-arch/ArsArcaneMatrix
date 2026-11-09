@@ -1,4 +1,6 @@
 {
+"emi.ars_arcane_matrix.exact_amount": "Exact quantity: %s",
+"emi.ars_arcane_matrix.catalyst": "Pedestal sample; not consumed",
 "jei.ars_arcane_matrix.alakarkinos_expedition.materials": "Blocks consumed: %s",
 "jei.ars_arcane_matrix.alakarkinos_expedition.examples": "Examples only; one chest pool is rolled per expedition",
 "jei.ars_arcane_matrix.alakarkinos_expedition.chest_hint": "Hover reward for chest sources",
