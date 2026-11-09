@@ -24,6 +24,7 @@ import java.util.List;
 public final class ArsMatrixEmiPlugin implements EmiPlugin {
     @Override
     public void register(EmiRegistry registry) {
+        MatrixEmiDisplays.register(registry);
         registry.addStackProvider(dev.arsmatrix.client.WixieOrderTerminalScreen.class,
                 (screen, x, y) -> screen.getVirtualIngredientUnderMouse(x, y)
                         .map(ingredient -> new dev.emi.emi.api.stack.EmiStackInteraction(

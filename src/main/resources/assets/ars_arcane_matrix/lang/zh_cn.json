@@ -1,4 +1,6 @@
 {
+"emi.ars_arcane_matrix.exact_amount": "完整数量：%s",
+"emi.ars_arcane_matrix.catalyst": "基座样板，不消耗",
 "jei.ars_arcane_matrix.alakarkinos_expedition.materials": "每次消耗：%s个方块",
 "jei.ars_arcane_matrix.alakarkinos_expedition.examples": "仅为奖励示例；每次随机抽取以下一种宝箱",
 "jei.ars_arcane_matrix.alakarkinos_expedition.chest_hint": "悬停奖励：查看具体宝箱",
